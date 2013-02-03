@@ -1,2 +1,8 @@
 Tempo/Debug/*
 !Tempo/Debug/*.dll
+Tempo/*.opensdf
+Tempo/*.sdf
+Tempo/*.sln
+Tempo/*.suo
+Tempo/*.vcxproj*
+Tempo/ipch
