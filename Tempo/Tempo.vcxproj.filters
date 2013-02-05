@@ -24,12 +24,21 @@
     <ClCompile Include="surfaceHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="LUtil.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="surfaceHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="spriteClipper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LUtil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LOpenGL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

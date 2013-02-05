@@ -37,10 +37,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\FYDP\lib\SDL-1.2.15\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\FYDP\lib\SDL-1.2.15\include;C:\FYDP\lib\freeglut-2.8.0-1\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LibraryPath>C:\FYDP\lib\SDL-1.2.15\lib\x86;$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\FYDP\lib\SDL-1.2.15\lib\x86;C:\FYDP\lib\freeglut-2.8.0-1\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -50,7 +50,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL.lib;SDLmain.lib;SDL_image.lib;SDL_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL.lib;SDLmain.lib;SDL_image.lib;SDL_ttf.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
     </Link>
   </ItemDefinitionGroup>
@@ -68,11 +68,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="LUtil.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="spriteClipper.cpp" />
     <ClCompile Include="surfaceHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="LOpenGL.h" />
+    <ClInclude Include="LUtil.h" />
     <ClInclude Include="spriteClipper.h" />
     <ClInclude Include="surfaceHelper.h" />
   </ItemGroup>

@@ -1,4 +1,5 @@
 #include "spriteClipper.h"
+#include "LUtil.h"
 
 SDL_Surface *screen = NULL;
 SDL_Surface *imageSurface = NULL;
@@ -36,7 +37,7 @@ bool init() {
 	}
 
 	// SDL_SWSURFACE implies that the surface is set up in software memory.
-	screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP, SDL_SWSURFACE );
+	screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP, SDL_OPENGL );
 	if (screen == NULL) {
 		return false;
 	}
@@ -47,6 +48,10 @@ bool init() {
 	}
 
 	if (!initClipper()) {
+		return false;
+	}
+
+	if (!initGL()) {
 		return false;
 	}
 
@@ -160,7 +165,15 @@ bool Timer::is_paused()
 }
 
 int main( int argc, char* args[] ) {
-		
+
+	//glutInit(&argc, args);
+	//glutInitContextVersion(2,1);
+
+	// Create double buffered window
+	//glutInitDisplayMode(GLUT_DOUBLE);
+	//glutInitWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+	//glutCreateWindow
+
 	SDL_Surface *background = NULL;
 	SDL_Event event;
 	bool eventTriggered = false;
@@ -184,7 +197,8 @@ int main( int argc, char* args[] ) {
 	SDL_Surface *dots = getSpriteMap();
 	SDL_Rect *clip = getClipBounds();
 
-	applySurface(0, 0, dots, screen, &clip[0]);
+	//SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGBA(screen->format, 0xFF, 0xFF, 0xFF, 0xFF));
+	/*applySurface(0, 0, dots, screen, &clip[0]);
 	applySurface(540, 0, dots, screen, &clip[1]);
     applySurface(0, 380, dots, screen, &clip[2]);
     applySurface(540, 380, dots, screen, &clip[3]);
@@ -192,7 +206,9 @@ int main( int argc, char* args[] ) {
 	// Force update
 	if (SDL_Flip(screen) == -1) {
 		return 1;
-	}
+	}*/
+
+	glClear(GL_COLOR_BUFFER_BIT);
 
 	update.start();
 	fps.start();
@@ -215,17 +231,27 @@ int main( int argc, char* args[] ) {
 
 			update.start();
 		}
+
+		if (!eventTriggered) {
+			glBegin(GL_QUADS);
+				glVertex2f(-0.5f,  -0.5f);
+				glVertex2f(	0.5f,  -0.5f);
+				glVertex2f(	0.5f,	0.5f);
+				glVertex2f(-0.5f,	0.5f);
+			glEnd();
+		}
+		SDL_GL_SwapBuffers();
 		
-		applySurface(0, 0, imageSurface, screen);
+		/*applySurface(0, 0, imageSurface, screen);
 		applySurface(0, 150, debugInfoSurface, screen);
 		applySurface(0, 0, dots, screen, &clip[0]);
 		applySurface(540, 0, dots, screen, &clip[1]);
-	   applySurface(0, 380, dots, screen, &clip[2]);
-	   applySurface(540, 380, dots, screen, &clip[3]);
+		applySurface(0, 380, dots, screen, &clip[2]);
+		applySurface(540, 380, dots, screen, &clip[3]);
 		// Force update
 		if (SDL_Flip(screen) == -1) {
 			return 1;
-		}
+		}*/
 	}
 	
 	clean_up();
