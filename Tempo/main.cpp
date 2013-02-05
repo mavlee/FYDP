@@ -1,12 +1,4 @@
-#include "SDL.h"
-#include "SDL_image.h"
-#include "SDL_ttf.h"
-#include <string>
-#include <sstream>
-
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
-const int SCREEN_BPP = 32;
+#include "spriteClipper.h"
 
 SDL_Surface *screen = NULL;
 SDL_Surface *imageSurface = NULL;
@@ -54,6 +46,10 @@ bool init() {
 		return false;
 	}
 
+	if (!initClipper()) {
+		return false;
+	}
+
 	// Set the caption on the window.
 	SDL_WM_SetCaption("Tempo", NULL);
 	return true;
@@ -65,40 +61,11 @@ void clean_up() {
 
 	TTF_CloseFont(font);
 	TTF_Quit();
+
+	cleanUpClipper();
 	
 	// Quit SDL. Also handles cleanup of the screen object.
 	SDL_Quit();
-}
-
-SDL_Surface *load_image(std::string filename) {
-	SDL_Surface *loadedImage = NULL;
-	SDL_Surface *optimizedImage = NULL;
-	
-	loadedImage = IMG_Load(filename.c_str());
-
-	// if the image isn't null, stick the image onto another surface. doing this wil ensure that the loaded image is in the same format as the screen.
-	if (loadedImage != NULL) {
-		optimizedImage = SDL_DisplayFormat(loadedImage);
-		SDL_FreeSurface(loadedImage);
-
-		//If the surface was optimized
-        if( optimizedImage != NULL )
-        {
-            //Color key surface
-            SDL_SetColorKey( optimizedImage, SDL_SRCCOLORKEY, SDL_MapRGB( optimizedImage->format, 0, 0xFF, 0xFF ) );
-        }
-	}
-	return optimizedImage;
-}
-
-void apply_surface(int x, int y, SDL_Surface *source, SDL_Surface *dest) {
-	// SDL_Rect represents a rectangle, has x, y, width, height.
-	SDL_Rect offset;
-
-	offset.x = x;
-	offset.y = y;
-
-	SDL_BlitSurface(source, NULL, dest, &offset);
 }
 
 Timer::Timer()
@@ -208,11 +175,20 @@ int main( int argc, char* args[] ) {
 		return 1;
 	}
 
-	imageSurface = load_image("../../res/images/wallpaper.jpg");
+	imageSurface = loadImage("../../res/images/wallpaper.jpg");
 	font = TTF_OpenFont("../../res/fonts/EunjinNakseo.ttf", 28);
 	debugInfoSurface = TTF_RenderText_Solid(font, "Test", textColor);
-	apply_surface(0, 0, imageSurface, screen);
-	apply_surface(0, 150, debugInfoSurface, screen);
+	applySurface(0, 0, imageSurface, screen);
+	applySurface(0, 150, debugInfoSurface, screen);
+
+	SDL_Surface *dots = getSpriteMap();
+	SDL_Rect *clip = getClipBounds();
+
+	applySurface(0, 0, dots, screen, &clip[0]);
+	applySurface(540, 0, dots, screen, &clip[1]);
+    applySurface(0, 380, dots, screen, &clip[2]);
+    applySurface(540, 380, dots, screen, &clip[3]);
+
 	// Force update
 	if (SDL_Flip(screen) == -1) {
 		return 1;
@@ -240,8 +216,12 @@ int main( int argc, char* args[] ) {
 			update.start();
 		}
 		
-		apply_surface(0, 0, imageSurface, screen);
-		apply_surface(0, 150, debugInfoSurface, screen);
+		applySurface(0, 0, imageSurface, screen);
+		applySurface(0, 150, debugInfoSurface, screen);
+		applySurface(0, 0, dots, screen, &clip[0]);
+		applySurface(540, 0, dots, screen, &clip[1]);
+	   applySurface(0, 380, dots, screen, &clip[2]);
+	   applySurface(540, 380, dots, screen, &clip[3]);
 		// Force update
 		if (SDL_Flip(screen) == -1) {
 			return 1;
