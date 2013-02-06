@@ -5,7 +5,7 @@ and may not be redistributed without written permission.*/
 #ifndef LOPENGL_H
 #define LOPENGL_H
 
-#include <GL/freeglut.h>
+#include "surfaceHelper.h"
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <stdio.h>

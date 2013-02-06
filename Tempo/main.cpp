@@ -166,14 +166,6 @@ bool Timer::is_paused()
 
 int main( int argc, char* args[] ) {
 
-	//glutInit(&argc, args);
-	//glutInitContextVersion(2,1);
-
-	// Create double buffered window
-	//glutInitDisplayMode(GLUT_DOUBLE);
-	//glutInitWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-	//glutCreateWindow
-
 	SDL_Surface *background = NULL;
 	SDL_Event event;
 	bool eventTriggered = false;
@@ -182,7 +174,7 @@ int main( int argc, char* args[] ) {
 	// Timer to calculate the fps
 	Timer fps;
 	// Timer to update the fps caption
-	Timer update;
+	Timer updateTimer;
 
 	if (init() == false) {
 		return 1;
@@ -197,61 +189,34 @@ int main( int argc, char* args[] ) {
 	SDL_Surface *dots = getSpriteMap();
 	SDL_Rect *clip = getClipBounds();
 
-	//SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGBA(screen->format, 0xFF, 0xFF, 0xFF, 0xFF));
-	/*applySurface(0, 0, dots, screen, &clip[0]);
-	applySurface(540, 0, dots, screen, &clip[1]);
-    applySurface(0, 380, dots, screen, &clip[2]);
-    applySurface(540, 380, dots, screen, &clip[3]);
-
-	// Force update
-	if (SDL_Flip(screen) == -1) {
-		return 1;
-	}*/
-
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	update.start();
+	updateTimer.start();
 	fps.start();
 
 	while (!eventTriggered) {
 		while (SDL_PollEvent(&event)) {
 			if (event.type == SDL_QUIT) {
 				eventTriggered = true;
+			} else if (event.type = SDL_KEYDOWN) {
+				handleKeys(event.key.keysym.sym);
 			}
 		}
 		
 		frameCount++;
 
-		if (update.get_ticks() > 1000) {
+		if (updateTimer.get_ticks() > 1000) {
 			std::stringstream caption;
 
 			caption << "Average FPS: " << frameCount / (fps.get_ticks() / 1000.f);
 			std::string temp = caption.str();
 			debugInfoSurface = TTF_RenderText_Solid(font, temp.c_str(), textColor);
 
-			update.start();
+			updateTimer.start();
 		}
 
-		if (!eventTriggered) {
-			glBegin(GL_QUADS);
-				glVertex2f(-0.5f,  -0.5f);
-				glVertex2f(	0.5f,  -0.5f);
-				glVertex2f(	0.5f,	0.5f);
-				glVertex2f(-0.5f,	0.5f);
-			glEnd();
-		}
-		SDL_GL_SwapBuffers();
-		
-		/*applySurface(0, 0, imageSurface, screen);
-		applySurface(0, 150, debugInfoSurface, screen);
-		applySurface(0, 0, dots, screen, &clip[0]);
-		applySurface(540, 0, dots, screen, &clip[1]);
-		applySurface(0, 380, dots, screen, &clip[2]);
-		applySurface(540, 380, dots, screen, &clip[3]);
-		// Force update
-		if (SDL_Flip(screen) == -1) {
-			return 1;
-		}*/
+		update();
+		render();
 	}
 	
 	clean_up();
