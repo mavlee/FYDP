@@ -202,7 +202,7 @@ int main( int argc, char* args[] ) {
 				handleKeys(event.key.keysym.sym);
 			}
 		}
-		
+
 		frameCount++;
 
 		if (updateTimer.get_ticks() > 1000) {
@@ -218,7 +218,7 @@ int main( int argc, char* args[] ) {
 		update();
 		render();
 	}
-	
+
 	clean_up();
 
 	return 0;
