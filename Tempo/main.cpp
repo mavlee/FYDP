@@ -180,8 +180,8 @@ int main( int argc, char* args[] ) {
 		return 1;
 	}
 
-	imageSurface = loadImage("../../res/images/wallpaper.jpg");
-	font = TTF_OpenFont("../../res/fonts/EunjinNakseo.ttf", 28);
+	imageSurface = loadImage("../res/images/wallpaper.jpg");
+	font = TTF_OpenFont("../res/fonts/EunjinNakseo.ttf", 28);
 	debugInfoSurface = TTF_RenderText_Solid(font, "Test", textColor);
 	applySurface(0, 0, imageSurface, screen);
 	applySurface(0, 150, debugInfoSurface, screen);

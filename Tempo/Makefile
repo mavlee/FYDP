@@ -3,11 +3,11 @@ OBJFILES := $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 
 ifeq ($(MACHINE),Darwin)
 	#INCLUDES = -I/Library/Frameworks/SDL.framework/Headers -I/Library/Frameworks/SDL_image.framework/Headers -I/Library/Frameworks/SDL_mixer.framework/Headers -I/Library/Frameworks/SDL_ttf.framework/Headers -I/System/Library/Frameworks/OpenGL.framework/Headers
-	INCLUDES = -I/Library/Frameworks/SDL.framework/Headers -I/System/Library/Frameworks/OpenGL.framework/Headers
-	LIBS = -m32 -framework SDL -framework Cocoa -framework OpenGL
+	INCLUDES = -I/Library/Frameworks/SDL.framework/Headers -I/Library/Frameworks/SDL_ttf.framework/Headers -I/Library/Frameworks/SDL_image.framework/Headers -I/System/Library/Frameworks/OpenGL.framework/Headers
+	LIBS = -m32 -framework SDL -framework SDL_ttf -framework SDL_image -framework Cocoa -framework OpenGL
 
 	# SDL isn't in a great state on 64-bit Macs, so force 32-bit for now
-	CXXFLAGS = -g -c -m32 -Wno-deprecated
+	CXXFLAGS = -g -O0 -c -m32 -Wno-deprecated
 
 	# to compile on OS X you need to include this Objective C file
 	OSXCOMPAT = SDLMain.m

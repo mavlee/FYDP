@@ -36,7 +36,7 @@ SDL_Rect *getClipBounds() {
 
 bool initClipper() {
     //Load the sprite map
-    dots = loadImage("../../res/images/dots.png");
+    dots = loadImage("../res/images/dots.png");
 
     //If there was an problem loading the sprite map
     if( dots == NULL ) {
