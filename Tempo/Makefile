@@ -7,7 +7,7 @@ ifeq ($(MACHINE),Darwin)
 	LIBS = -m32 -framework SDL -framework SDL_ttf -framework SDL_image -framework Cocoa -framework OpenGL
 
 	# SDL isn't in a great state on 64-bit Macs, so force 32-bit for now
-	CXXFLAGS = -g -O0 -c -m32 -Wno-deprecated
+	CXXFLAGS = -g -O0 -c -m32 -Wno-deprecated -DUSE_MAC_INCLUDES
 
 	# to compile on OS X you need to include this Objective C file
 	OSXCOMPAT = SDLMain.m

@@ -6,8 +6,18 @@ and may not be redistributed without written permission.*/
 #define LOPENGL_H
 
 #include "surfaceHelper.h"
+#include <stdio.h>
+
+#ifdef USE_MAC_INCLUDES
+
 #include <gl.h>
 #include <glu.h>
-#include <stdio.h>
+
+#else
+
+#include <GL/gl.h>
+#include <GL/glu.h>
+
+#endif
 
 #endif
