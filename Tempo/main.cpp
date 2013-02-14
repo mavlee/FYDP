@@ -188,10 +188,15 @@ int main( int argc, char* args[] ) {
 
 	while (!eventTriggered) {
 		while (SDL_PollEvent(&event)) {
-			if (event.type == SDL_QUIT) {
-				eventTriggered = true;
-			} else if (event.type = SDL_KEYDOWN) {
-				handleKeys(event.key.keysym.sym);
+			switch (event.type) {
+				case SDL_QUIT:
+					eventTriggered = true;
+					break;
+				case SDL_KEYDOWN:
+					handleKeys(event.key.keysym.sym);
+					break;
+				default:
+					break;
 			}
 		}
 

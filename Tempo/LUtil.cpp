@@ -81,6 +81,8 @@ void handleKeys(int key) {
 			//Toggle color mode
 			if(gColorMode == COLOR_MODE_CYAN) {
 				gColorMode = COLOR_MODE_MULTI;
+			} else {
+				gColorMode = COLOR_MODE_CYAN;
 			}
 			break;
 		case SDLK_w:
