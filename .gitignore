@@ -5,3 +5,7 @@ Tempo/Debug/*
 *.o
 *.d
 tempo
+*.sdf
+*.suo
+*.user
+ipch/
