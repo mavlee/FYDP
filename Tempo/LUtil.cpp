@@ -27,6 +27,9 @@ bool initGL()
     //Initialize clear color
     glClearColor( 0.f, 0.f, 0.f, 1.f );
 
+	//glEnable(GL_CULL_FACE);
+	//glEnable(GL_DEPTH_TEST);
+
     //Check for error
     GLenum error = glGetError();
     if( error != GL_NO_ERROR )
@@ -40,7 +43,7 @@ bool initGL()
 
 void update()
 {
-	angle += 0.005f;
+	angle += 0.05f;
 	if (angle > 360) {
 	//	angle -= 360.f;
 	}
@@ -57,12 +60,11 @@ void render()
 	glPushMatrix();
 
 	glTranslatef(SCREEN_WIDTH / 2.f, SCREEN_HEIGHT / 2.f, 0.f);
-	//glRotatef(angle, 0.f, 0.f, 1.f);
-	//glRotatef(angle, 0.f, 1.f, 0.f);
-	glRotatef(angle, 1.f, 0.f, 0.f);
+	glRotatef(angle, 0.f, 1.f, 1.f);
 
     //Render quad
     glBegin( GL_QUADS );
+		// back face
 		if (gColorMode == COLOR_MODE_MULTI) {
 			glColor3f( 1.f, 0.f, 0.f);
 		} else {
@@ -70,21 +72,48 @@ void render()
 		}
 		glVertex3f( -50.f, -50.f, -50.f);
 		glVertex3f(  50.f, -50.f, -50.f);
-		if (gColorMode == COLOR_MODE_MULTI) {
-			glColor3f( 1.f, 1.f, 0.f);
-		}
 	    glVertex3f(  50.f,  50.f, -50.f);
 		glVertex3f( -50.f,  50.f, -50.f);
+		// front face
 		if (gColorMode == COLOR_MODE_MULTI) {
 			glColor3f( 0.f, 1.f, 0.f);
 		}
 		glVertex3f( -50.f, -50.f,  50.f);
 		glVertex3f(  50.f, -50.f,  50.f);
-	    if (gColorMode == COLOR_MODE_MULTI) {
-			glColor3f( 0.f, 0.f, 1.f);
-		}
 		glVertex3f(  50.f,  50.f,  50.f);
 		glVertex3f( -50.f,  50.f,  50.f);
+		// left face
+		if (gColorMode == COLOR_MODE_MULTI) {
+			glColor3f( 0.f, 0.f, 1.f);
+		}
+		glVertex3f( -50.f, -50.f, -50.f);
+		glVertex3f( -50.f, -50.f,  50.f);
+	    glVertex3f( -50.f,  50.f, -50.f);
+		glVertex3f( -50.f,  50.f,  50.f);
+		// right face
+		if (gColorMode == COLOR_MODE_MULTI) {
+			glColor3f( 1.f, 1.f, 0.f);
+		}
+		glVertex3f(  50.f, -50.f, -50.f);
+		glVertex3f(  50.f, -50.f,  50.f);
+	    glVertex3f(  50.f,  50.f, -50.f);
+		glVertex3f(  50.f,  50.f,  50.f);
+		// top face
+		if (gColorMode == COLOR_MODE_MULTI) {
+			glColor3f( 0.f, 1.f, 1.f);
+		}
+		glVertex3f( -50.f,  50.f, -50.f);
+		glVertex3f( -50.f,  50.f,  50.f);
+	    glVertex3f(  50.f,  50.f, -50.f);
+		glVertex3f(  50.f,  50.f,  50.f);
+		// bottom face
+		if (gColorMode == COLOR_MODE_MULTI) {
+			glColor3f( 1.f, 0.f, 1.f);
+		}
+		glVertex3f( -50.f, -50.f, -50.f);
+		glVertex3f( -50.f, -50.f,  50.f);
+	    glVertex3f(  50.f, -50.f, -50.f);
+		glVertex3f(  50.f, -50.f,  50.f);
     glEnd();
 
     //Update screen
