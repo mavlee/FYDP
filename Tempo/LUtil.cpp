@@ -9,13 +9,14 @@ int gColorMode = COLOR_MODE_CYAN;
 GLfloat gProjectionScale = 1.f;
 GLfloat cameraX = 0.f;
 GLfloat cameraY = 0.f;
+float angle = 0.f;
 
 bool initGL()
 {
     //Initialize Projection Matrix
     glMatrixMode( GL_PROJECTION );
     glLoadIdentity();
-	glOrtho( 0.0, SCREEN_WIDTH, SCREEN_HEIGHT, 0.0, 1.0, -1.0);
+	glOrtho( 0.0, SCREEN_WIDTH, SCREEN_HEIGHT, 0.0, 100.0, -100.0);
 
     //Initialize Modelview Matrix
     glMatrixMode( GL_MODELVIEW );
@@ -39,7 +40,10 @@ bool initGL()
 
 void update()
 {
-
+	angle += 0.005f;
+	if (angle > 360) {
+	//	angle -= 360.f;
+	}
 }
 
 void render()
@@ -53,21 +57,34 @@ void render()
 	glPushMatrix();
 
 	glTranslatef(SCREEN_WIDTH / 2.f, SCREEN_HEIGHT / 2.f, 0.f);
+	//glRotatef(angle, 0.f, 0.f, 1.f);
+	//glRotatef(angle, 0.f, 1.f, 0.f);
+	glRotatef(angle, 1.f, 0.f, 0.f);
 
     //Render quad
     glBegin( GL_QUADS );
-		if (gColorMode == COLOR_MODE_CYAN) {
-			glColor3f( 0.f, 1.f, 1.f);
-			glVertex2f( -50.f, -50.f );
-			glVertex2f(  50.f, -50.f );
-		    glVertex2f(  50.f,  50.f );
-			glVertex2f( -50.f,  50.f );
+		if (gColorMode == COLOR_MODE_MULTI) {
+			glColor3f( 1.f, 0.f, 0.f);
 		} else {
-			glColor3f( 1.f, 0.f, 0.f); glVertex2f( -50.f, -50.f);
-			glColor3f( 1.f, 1.f, 0.f); glVertex2f(  50.f, -50.f);
-			glColor3f( 0.f, 1.f, 0.f); glVertex2f(  50.f,  50.f);
-			glColor3f( 0.f, 0.f, 1.f); glVertex2f( -50.f,  50.f);
+			glColor3f( 0.f, 1.f, 1.f);
 		}
+		glVertex3f( -50.f, -50.f, -50.f);
+		glVertex3f(  50.f, -50.f, -50.f);
+		if (gColorMode == COLOR_MODE_MULTI) {
+			glColor3f( 1.f, 1.f, 0.f);
+		}
+	    glVertex3f(  50.f,  50.f, -50.f);
+		glVertex3f( -50.f,  50.f, -50.f);
+		if (gColorMode == COLOR_MODE_MULTI) {
+			glColor3f( 0.f, 1.f, 0.f);
+		}
+		glVertex3f( -50.f, -50.f,  50.f);
+		glVertex3f(  50.f, -50.f,  50.f);
+	    if (gColorMode == COLOR_MODE_MULTI) {
+			glColor3f( 0.f, 0.f, 1.f);
+		}
+		glVertex3f(  50.f,  50.f,  50.f);
+		glVertex3f( -50.f,  50.f,  50.f);
     glEnd();
 
     //Update screen
