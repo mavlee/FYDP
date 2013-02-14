@@ -22,13 +22,13 @@ endif
 # object files have corresponding source files
 CXX = g++
 
-all: brainparty
+all: tempo
 
-brainparty: $(OBJFILES)
-	$(CXX) -o brainparty $(INCLUDES) $(OSXCOMPAT) $(OBJFILES) $(LIBS)
+tempo: $(OBJFILES)
+	$(CXX) -o tempo $(INCLUDES) $(OSXCOMPAT) $(OBJFILES) $(LIBS)
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $<
 
 clean:
-	rm -f brainparty *.o
+	rm -f tempo *.o

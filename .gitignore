@@ -2,3 +2,6 @@ Tempo/Debug/*
 !Tempo/Debug/*.dll
 *~
 *.swp
+*.o
+*.d
+tempo
