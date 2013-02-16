@@ -1,5 +1,4 @@
 #include "spriteClipper.h"
-#include "LUtil.h"
 #include "timer.h"
 #include "canvas.h"
 #include "game.h"

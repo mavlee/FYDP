@@ -1,5 +1,5 @@
-#include "LUtil.h"
 #include "timer.h"
+#include "LOpenGL.h"
 
 Timer::Timer() {
   // Initialize the variables
