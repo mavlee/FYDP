@@ -4,8 +4,8 @@ Tempo/Debug/*
 *.swp
 *.o
 *.d
-tempo
 *.sdf
 *.suo
 *.user
 ipch/
+Tempo/tempo
