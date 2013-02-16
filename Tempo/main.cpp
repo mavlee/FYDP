@@ -54,34 +54,15 @@ void clean_up() {
 }
 
 int main( int argc, char* args[] ) {
-
-  SDL_Surface *background = NULL;
   SDL_Event event;
-  bool eventTriggered = false;
 
-  int frameCount = 0;
-  // Timer to calculate the fps
-  Timer fps;
-  // Timer to update the fps caption
-  Timer updateTimer;
+  bool eventTriggered = false;
 
   if (init() == false) {
     return 1;
   }
 
-  imageSurface = loadImage("../res/images/wallpaper.jpg");
-  font = TTF_OpenFont("../res/fonts/EunjinNakseo.ttf", 28);
-  debugInfoSurface = TTF_RenderText_Solid(font, "Test", textColor);
-  applySurface(0, 0, imageSurface, screen);
-  applySurface(0, 150, debugInfoSurface, screen);
-
-  SDL_Surface *dots = getSpriteMap();
-  SDL_Rect *clip = getClipBounds();
-
   glClear(GL_COLOR_BUFFER_BIT);
-
-  updateTimer.start();
-  fps.start();
 
   while (!eventTriggered) {
     while (SDL_PollEvent(&event)) {
@@ -95,18 +76,6 @@ int main( int argc, char* args[] ) {
         default:
           break;
       }
-    }
-
-    frameCount++;
-
-    if (updateTimer.get_ticks() > 1000) {
-      std::stringstream caption;
-
-      caption << "Average FPS: " << frameCount / (fps.get_ticks() / 1000.f);
-      std::string temp = caption.str();
-      debugInfoSurface = TTF_RenderText_Solid(font, temp.c_str(), textColor);
-
-      updateTimer.start();
     }
 
     update();
