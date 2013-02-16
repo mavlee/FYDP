@@ -1,4 +1,4 @@
-32L, 973C writtenelper.h"
+#include "surfaceHelper.h"
 
 SDL_Surface *loadImage(std::string filename) {
   SDL_Surface *loadedImage = NULL;
