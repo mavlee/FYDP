@@ -68,16 +68,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="LUtil.cpp" />
+    <ClCompile Include="canvas.cpp" />
+    <ClCompile Include="game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="spriteClipper.cpp" />
     <ClCompile Include="surfaceHelper.cpp" />
+    <ClCompile Include="timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="canvas.h" />
+    <ClInclude Include="game.h" />
     <ClInclude Include="LOpenGL.h" />
-    <ClInclude Include="LUtil.h" />
     <ClInclude Include="spriteClipper.h" />
     <ClInclude Include="surfaceHelper.h" />
+    <ClInclude Include="timer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
