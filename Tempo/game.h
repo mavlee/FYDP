@@ -1,3 +1,6 @@
+#ifndef GAME_H
+#define GAME_H
+
 #include "canvas.h"
 
 class Game {
@@ -7,11 +10,15 @@ class Game {
     int gameWidth;
     int gameHeight;
     int gameDepth;
-    Canvas canvas;
+    Canvas *canvas;
 
   public:
-    Game();
+    Game(int width, int height);
+    ~Game();
 
     void draw();
+    void update();
     void handleKeys(int key);
 };
+
+#endif
