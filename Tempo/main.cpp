@@ -9,6 +9,15 @@ int main( int argc, char* args[] ) {
   game = new Game(SCREEN_WIDTH, SCREEN_HEIGHT);
   SDL_Event event;
 
+  // FPS counter and regulator code
+  //Timer clock;
+  //Timer fps;
+
+  int frame = 0;
+
+  //clock.start();
+  //fps.start();
+
   bool eventTriggered = false;
 
   while (!eventTriggered) {
@@ -25,7 +34,12 @@ int main( int argc, char* args[] ) {
       }
     }
 
-    game->update();
+	/*frame++;
+	if (clock.get_ticks() > 1000) {
+		game->update(frame);
+	} else {*/
+		game->update();
+	//}
     game->draw();
   }
 
