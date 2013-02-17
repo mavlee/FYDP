@@ -3,7 +3,6 @@
 #include "canvas.h"
 #include "game.h"
 #include "constants.h"
-#include "kinect.h"
 #include "util.h"
 
 int main( int argc, char* args[] ) {

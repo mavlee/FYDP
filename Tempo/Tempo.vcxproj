@@ -37,10 +37,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\FYDP\lib\freetype-2.4.11\include;C:\FYDP\lib\SDL-1.2.15\include;C:\FYDP\lib\freeglut-2.8.0-1\include;C:\FYDP\lib\DevIL-SDK-x86-1.7.8\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\lib\freetype-2.4.11\include;..\lib\SDL-1.2.15\include;..\lib\freeglut-2.8.0-1\include;..\lib\DevIL-SDK-x86-1.7.8\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LibraryPath>C:\FYDP\lib\SDL-1.2.15\lib\x86;C:\FYDP\lib\freeglut-2.8.0-1\lib;C:\FYDP\lib;C:\FYDP\lib\DevIL-SDK-x86-1.7.8\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\lib\SDL-1.2.15\lib\x86;..\lib\freeglut-2.8.0-1\lib;..\lib;..\lib\DevIL-SDK-x86-1.7.8\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
