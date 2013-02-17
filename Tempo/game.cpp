@@ -29,6 +29,16 @@ Game::~Game() {
   delete canvas;
 }
 
+// Wien's stuff goes here
+void Game::analyzeMusic() {
+
+}
+
+// based on whatever music analysis gives us, generate game features
+void Game::generateGameFeatures() {
+
+}
+
 void Game::draw() {
   // Clear color buffer & depth buffer
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -55,7 +65,7 @@ void Game::draw() {
 			glColor3fv(cube.ver[currentVer].col);
 		  } else {
 			glColor3f( 0.f, 1.f, 1.f);
-		  }	
+		  }
 		  glVertex3fv(cube.ver[currentVer].pos);
 	  }
   }
@@ -66,7 +76,7 @@ void Game::draw() {
 	glColor3f( 0.f, 1.f, 1.f);
   } else {
 	glColor3f( 0.f, 1.f, 1.f);
-  }	
+  }
   glVertex3f( -50.f, -50.f, -50.f);
   glVertex3f(  50.f, -50.f, -50.f);
   glVertex3f(  50.f,  50.f, -50.f);
