@@ -14,17 +14,16 @@ GLfloat cameraY = 0.f;
 float angle = 0.f;
 
 Text *text;
+std::stringstream fps_caption;
 
 Game::Game(int width, int height) {
   canvasWidth = width;
   canvasHeight = height;
   canvas = new Canvas(width, height);
   canvas->initCanvas();
-  // Centre the origin to the middle of the screen
-  //glTranslatef(canvasWidth / 2.f, canvasHeight / 2.f, 0.f);
 
+  // Instantiate components displayed on the screen
   initCube();
-
   text = new Text(width, height);
 }
 
@@ -75,7 +74,7 @@ void Game::draw() {
   
   glPopMatrix();
 
-  text->renderText(canvasWidth, canvasHeight, canvasWidth / 2.f, canvasHeight / 2.f, "Sup haters");
+  text->renderText(canvasWidth, canvasHeight, 0, canvasHeight - 50, "fps_caption.str()");
 
   // Update screen
   SDL_GL_SwapBuffers();
@@ -83,6 +82,12 @@ void Game::draw() {
 
 void Game::update() {
   angle += 0.1f;
+/*  if (nFrames != -1) {
+	  fps_caption << "Average FPS: " << nFrames / 1000.f;
+  } else if (fps_caption == NULL) {*/
+	  // Within the first second of the game running
+	  fps_caption << "Tempo Inc.";
+//  }
 }
 
 void Game::handleKeys(int key) {
