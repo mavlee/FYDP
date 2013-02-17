@@ -23,7 +23,3 @@ class Text {
 		SDL_Surface *surface;
 		GLuint texture;		
 };
-
-void SDL_GL_Enter2DMode(int width, int height);
-
-void SDL_GL_Leave2DMode();
