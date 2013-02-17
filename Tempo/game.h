@@ -16,6 +16,9 @@ class Game {
     Game(int width, int height);
     ~Game();
 
+    void analyzeMusic();
+    void generateGameFeatures();
+
     void draw();
     void update();
     void handleKeys(int key);
