@@ -4,12 +4,12 @@
 bool Text::initText() {
 	bool result = true;
 
-	#ifndef TEXT 
+	#ifndef TEXT
 	FT_Error error = FT_Init_FreeType(&mLibrary);
 	if (error) {
 		result = false;
 	}
-	#endif	
+	#endif
 
 	return result;
 }

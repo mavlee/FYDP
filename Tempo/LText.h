@@ -3,24 +3,24 @@
 #include "LOpenGL.h"
 
 class Text {
-	public:
-		// initializes FreeType for text
-		static bool initText();
+  public:
+    // initializes FreeType for text
+    static bool initText();
 
-		// Constructor
-		Text();
+    // Constructor
+    Text();
 
-		// Deconstructor
-		~Text();
+    // Deconstructor
+    ~Text();
 
-		// Loads bitmap font
-		bool loadBitmap( std::string path );
+    // Loads bitmap font
+    bool loadBitmap( std::string path );
 
-		bool loadFreeType(std::string path, GLuint pixelSize);
+    bool loadFreeType(std::string path, GLuint pixelSize);
 
-		void freeFont();
+    void freeFont();
 
-		void renderText(GLfloat x, GLfloat y, std::string text);
+	void renderText(GLfloat x, GLfloat y, std::string text);
 }
 
 void SDL_GL_Enter2DMode(int width, int height);
