@@ -47,18 +47,14 @@ void Game::draw() {
   // Clear color buffer & depth buffer
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  //glMatrixMode(GL_MODELVIEW);
-  //glPopMatrix();
-
   glPushMatrix();
 
-  glTranslatef(canvasWidth/2, canvasHeight/2, 0);
+  glTranslatef(canvasWidth/2 + cameraX, canvasHeight/2 + cameraY, 0);
   glRotatef(angle, 0.f, 1.f, 1.f);
 
   int i, j;
   Cube cube = getCube();
   int currentVer;
-
   // Render the cube
   glBegin( GL_QUADS );
   for (i = 0; i < cube.nFaces; i++) {
@@ -75,8 +71,10 @@ void Game::draw() {
 	  }
   }
   glEnd();
-  glTranslatef(-canvasWidth/2, -canvasHeight/2, 0);
+  glTranslatef(-(canvasWidth/2 + cameraX), -(canvasHeight/2 + cameraY), 0);
   
+  glPopMatrix();
+
   text->renderText(canvasWidth, canvasHeight, canvasWidth / 2.f, canvasHeight / 2.f, "Sup haters");
 
   // Update screen
@@ -137,13 +135,5 @@ void Game::handleKeys(int key) {
       break;
     default:
       break;
-  }
-  if (translation) {
-    glMatrixMode(GL_MODELVIEW);
-    glPopMatrix();
-    glLoadIdentity();
-
-    glTranslatef(cameraX, cameraY, 0.f);
-    glPushMatrix();
   }
 }
