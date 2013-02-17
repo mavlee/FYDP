@@ -76,8 +76,8 @@ void Game::draw() {
   }
   glEnd();
   glTranslatef(-canvasWidth/2, -canvasHeight/2, 0);
-
-  //text->renderText(canvasWidth, canvasHeight, canvasWidth / 2.f, canvasHeight / 2.f, "Sup haters");
+  
+  text->renderText(canvasWidth, canvasHeight, canvasWidth / 2.f, canvasHeight / 2.f, "Sup haters");
 
   // Update screen
   SDL_GL_SwapBuffers();
