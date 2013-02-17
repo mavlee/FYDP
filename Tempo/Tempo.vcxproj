@@ -70,6 +70,7 @@
   <ItemGroup>
     <ClCompile Include="canvas.cpp" />
     <ClCompile Include="game.cpp" />
+    <ClCompile Include="LText.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="objects.cpp" />
     <ClCompile Include="spriteClipper.cpp" />
@@ -81,6 +82,7 @@
     <ClInclude Include="constants.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="LOpenGL.h" />
+    <ClInclude Include="LText.h" />
     <ClInclude Include="objects.h" />
     <ClInclude Include="spriteClipper.h" />
     <ClInclude Include="surfaceHelper.h" />

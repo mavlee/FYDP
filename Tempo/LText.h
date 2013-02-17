@@ -21,13 +21,8 @@ class Text {
 		void freeFont();
 
 		void renderText(GLfloat x, GLfloat y, std::string text);
-	private:
-		//Font TTF library
-        static FT_Library mLibrary;
-
-        //Spacing variables
-        GLfloat mSpace;
-        GLfloat mLineHeight;
-        GLfloat mNewLine;
-		
 }
+
+void SDL_GL_Enter2DMode(int width, int height);
+
+void SDL_GL_Leave2DMode();
