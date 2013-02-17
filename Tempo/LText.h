@@ -3,31 +3,30 @@
 #include "LOpenGL.h"
 
 class Text {
-	public:
-		// initializes FreeType for text
-		static bool initText();
+  public:
+    // initializes FreeType for text
+    static bool initText();
 
-		// Constructor
-		Text();
+    // Constructor
+    Text();
 
-		// Deconstructor
-		~Text();
+    // Deconstructor
+    ~Text();
 
-		// Loads bitmap font
-		bool loadBitmap( std::string path );
+    // Loads bitmap font
+    bool loadBitmap( std::string path );
 
-		bool loadFreeType(std::string path, GLuint pixelSize);
+    bool loadFreeType(std::string path, GLuint pixelSize);
 
-		void freeFont();
+    void freeFont();
 
-		void renderText(GLfloat x, GLfloat y, std::string text);
-	private:
-		//Font TTF library
-        static FT_Library mLibrary;
+    void renderText(GLfloat x, GLfloat y, std::string text);
+  private:
+    //Font TTF library
+    static FT_Library mLibrary;
 
-        //Spacing variables
-        GLfloat mSpace;
-        GLfloat mLineHeight;
-        GLfloat mNewLine;
-		
+    //Spacing variables
+    GLfloat mSpace;
+    GLfloat mLineHeight;
+    GLfloat mNewLine;
 }
