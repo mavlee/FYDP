@@ -88,6 +88,9 @@
     <ClInclude Include="surfaceHelper.h" />
     <ClInclude Include="timer.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\res\fonts\EunjinNakseo.ttf" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
