@@ -52,21 +52,19 @@ void Canvas::initCanvas() {
   // Initialize clear color
   glClearColor( 0.f, 0.f, 0.f, 1.f );
 
-  //glEnable(GL_CULL_FACE);
+  glEnable(GL_CULL_FACE);
   //glEnable(GL_DEPTH_TEST);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_COLOR, GL_ONE_MINUS_SRC_ALPHA);
 
   //Check for error
   GLenum error = glGetError();
   if (error != GL_NO_ERROR) {
     printf( "Error initializing OpenGL! %s\n", gluErrorString( error ) );
-    //return false;
   }
-
-  //return true;
 
   // Set the caption on the window.
   SDL_WM_SetCaption("Tempo", NULL);
-  //return true;
 }
 
 void Canvas::cleanupCanvas() {

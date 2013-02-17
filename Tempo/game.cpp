@@ -4,6 +4,7 @@
 #include "game.h"
 #include "constants.h"
 #include "objects.h"
+#include "LText.h"
 
 int gColorMode = COLOR_MODE_CYAN;
 
@@ -12,16 +13,19 @@ GLfloat cameraX = 0.f;
 GLfloat cameraY = 0.f;
 float angle = 0.f;
 
+Text *text;
+
 Game::Game(int width, int height) {
   canvasWidth = width;
   canvasHeight = height;
   canvas = new Canvas(width, height);
   canvas->initCanvas();
   // Centre the origin to the middle of the screen
-  glTranslatef(canvasWidth / 2.f, canvasHeight / 2.f, 0.f);
-  glEnable(GL_CULL_FACE);
+  //glTranslatef(canvasWidth / 2.f, canvasHeight / 2.f, 0.f);
 
   initCube();
+
+  text = new Text(width, height);
 }
 
 Game::~Game() {
@@ -71,64 +75,7 @@ void Game::draw() {
   }
   glEnd();
 
-  /*glBegin( GL_QUADS );
-  if (gColorMode == COLOR_MODE_MULTI) {
-	glColor3f( 0.f, 1.f, 1.f);
-  } else {
-	glColor3f( 0.f, 1.f, 1.f);
-  }
-  glVertex3f( -50.f, -50.f, -50.f);
-  glVertex3f(  50.f, -50.f, -50.f);
-  glVertex3f(  50.f,  50.f, -50.f);
-  glVertex3f( -50.f,  50.f, -50.f);
-
-  // front face
-  if (gColorMode == COLOR_MODE_MULTI) {
-    glColor3f( 0.f, 1.f, 0.f);
-  }
-  glVertex3f( -50.f, -50.f,  50.f);
-  glVertex3f(  50.f, -50.f,  50.f);
-  glVertex3f(  50.f,  50.f,  50.f);
-  glVertex3f( -50.f,  50.f,  50.f);
-
-  // left face
-  if (gColorMode == COLOR_MODE_MULTI) {
-    glColor3f( 0.f, 0.f, 1.f);
-  }
-  glVertex3f( -50.f, -50.f, -50.f);
-  glVertex3f( -50.f, -50.f,  50.f);
-  glVertex3f( -50.f,  50.f, -50.f);
-  glVertex3f( -50.f,  50.f,  50.f);
-
-  // right face
-  if (gColorMode == COLOR_MODE_MULTI) {
-    glColor3f( 1.f, 1.f, 0.f);
-  }
-  glVertex3f(  50.f, -50.f, -50.f);
-  glVertex3f(  50.f, -50.f,  50.f);
-  glVertex3f(  50.f,  50.f, -50.f);
-  glVertex3f(  50.f,  50.f,  50.f);
-
-  // top face
-  if (gColorMode == COLOR_MODE_MULTI) {
-    glColor3f( 0.f, 1.f, 1.f);
-  }
-  glVertex3f( -50.f,  50.f, -50.f);
-  glVertex3f( -50.f,  50.f,  50.f);
-  glVertex3f(  50.f,  50.f, -50.f);
-  glVertex3f(  50.f,  50.f,  50.f);
-
-  // bottom face
-  if (gColorMode == COLOR_MODE_MULTI) {
-    glColor3f( 1.f, 0.f, 1.f);
-  }
-  glVertex3f( -50.f, -50.f, -50.f);
-  glVertex3f( -50.f, -50.f,  50.f);
-  glVertex3f(  50.f, -50.f, -50.f);
-  glVertex3f(  50.f, -50.f,  50.f);
-  glEnd();
-
-  glPopMatrix();*/
+  text->renderText(canvasWidth, canvasHeight, 200, 200, "Sup haters");
 
   // Update screen
   SDL_GL_SwapBuffers();
