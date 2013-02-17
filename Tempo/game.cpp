@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include "canvas.h"
 #include "game.h"
+#include "constants.h"
+#include "objects.h"
 
-const int COLOR_MODE_CYAN = 0;
-const int COLOR_MODE_MULTI = 1;
 int gColorMode = COLOR_MODE_CYAN;
 
 GLfloat gProjectionScale = 1.f;
@@ -17,6 +17,11 @@ Game::Game(int width, int height) {
   canvasHeight = height;
   canvas = new Canvas(width, height);
   canvas->initCanvas();
+  // Centre the origin to the middle of the screen
+  glTranslatef(canvasWidth / 2.f, canvasHeight / 2.f, 0.f);
+  glEnable(GL_CULL_FACE);
+
+  initCube();
 }
 
 Game::~Game() {
@@ -25,26 +30,43 @@ Game::~Game() {
 }
 
 void Game::draw() {
-  // Clear color buffer
-  glClear( GL_COLOR_BUFFER_BIT );
+  // Clear color buffer & depth buffer
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  glMatrixMode(GL_MODELVIEW);
-  glPopMatrix();
+  //glMatrixMode(GL_MODELVIEW);
+  //glPopMatrix();
 
   glPushMatrix();
 
-  glTranslatef(canvasWidth / 2.f, canvasHeight / 2.f, 0.f);
   glRotatef(angle, 0.f, 1.f, 1.f);
+
+  int i, j;
+  Cube cube = getCube();
+  int currentVer;
 
   // Render quad
   glBegin( GL_QUADS );
-  // back face
-  if (gColorMode == COLOR_MODE_MULTI) {
-    glColor3f( 1.f, 0.f, 0.f);
-  } else {
-    glColor3f( 0.f, 1.f, 1.f);
-  }
+  for (i = 0; i < cube.nFaces; i++) {
+	  for (j = 0; j < 4; j++) {
+		  currentVer = cube.face[i].ver[j];
 
+		  // back face
+		  if (gColorMode == COLOR_MODE_MULTI) {
+			glColor3fv(cube.ver[currentVer].col);
+		  } else {
+			glColor3f( 0.f, 1.f, 1.f);
+		  }	
+		  glVertex3fv(cube.ver[currentVer].pos);
+	  }
+  }
+  glEnd();
+
+  /*glBegin( GL_QUADS );
+  if (gColorMode == COLOR_MODE_MULTI) {
+	glColor3f( 0.f, 1.f, 1.f);
+  } else {
+	glColor3f( 0.f, 1.f, 1.f);
+  }	
   glVertex3f( -50.f, -50.f, -50.f);
   glVertex3f(  50.f, -50.f, -50.f);
   glVertex3f(  50.f,  50.f, -50.f);
@@ -96,12 +118,14 @@ void Game::draw() {
   glVertex3f(  50.f, -50.f,  50.f);
   glEnd();
 
+  glPopMatrix();*/
+
   // Update screen
   SDL_GL_SwapBuffers();
 }
 
 void Game::update() {
-  angle += 0.05f;
+  angle += 0.1f;
 }
 
 void Game::handleKeys(int key) {
@@ -149,8 +173,8 @@ void Game::handleKeys(int key) {
       glMatrixMode( GL_PROJECTION );
       glLoadIdentity();
       glOrtho( 0.0, canvasWidth * gProjectionScale, canvasHeight * gProjectionScale, 0.0, 1.0, -1.0 );
-      glTranslatef((gProjectionScale - 1.f) * canvasWidth / 2.f,
-          (gProjectionScale - 1.f) * canvasHeight / 2.f, 0.f);
+      //glTranslatef((gProjectionScale - 1.f) * canvasWidth / 2.f,
+      //    (gProjectionScale - 1.f) * canvasHeight / 2.f, 0.f);
       break;
     default:
       break;
