@@ -2,10 +2,11 @@
 #include "timer.h"
 #include "canvas.h"
 #include "game.h"
+#include "constants.h"
 
 int main( int argc, char* args[] ) {
   Game *game;
-  game = new Game(640, 480);
+  game = new Game(SCREEN_WIDTH, SCREEN_HEIGHT);
   SDL_Event event;
 
   bool eventTriggered = false;
