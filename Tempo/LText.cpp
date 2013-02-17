@@ -1,5 +1,6 @@
 #include "LText.h"
 #include <SDL_ttf.h>
+#include <math.h>
 
 bool Text::initText() {
 	bool result = true;
@@ -17,7 +18,7 @@ bool Text::initText() {
 Text::Text(int width, int height) {
 	font = TTF_OpenFont("C:/FYDP/res/fonts/EunjinNakseo.ttf", 28);
 	// TODO: i don't know how to declare color directly...
-	SDL_Color mer = { 0, 169, 255 };
+	SDL_Color mer = { 0, 169, 255, 0 };
 	color = mer;
 	surface = SDL_SetVideoMode( width, height, SCREEN_BPP, SDL_OPENGL );
 }
@@ -25,44 +26,73 @@ Text::Text(int width, int height) {
 Text::~Text() {
 }
 
+int round(double x) {
+	return (int)(x + 0.5);
+}
+
+int nextpoweroftwo(int x) {
+	double logbase2 = log((float) x) / log(2.f);
+	return round(pow(2,ceil(logbase2)));
+}
+
 void Text::renderText(int width, int height, GLfloat x, GLfloat y, std::string text) {
-	surface = SDL_DisplayFormatAlpha(TTF_RenderText_Solid(font, text.c_str(), color));
+	surface = SDL_DisplayFormatAlpha(TTF_RenderUTF8_Blended(font, text.c_str(), color));
 	SDL_Rect area;
 	area.x = 0;
 	area.y = 0;
-	area.w = surface->w;
-	area.h = surface->h;
+	area.w = nextpoweroftwo(surface->w);
+	area.h = nextpoweroftwo(surface->h);
 
-	SDL_Surface *temp = SDL_CreateRGBSurface(SDL_HWSURFACE|SDL_SRCALPHA, surface->w, surface->h, SCREEN_BPP, 0x00000ff, 0x0000ff00, 0x00ff0000, 0x000000ff);
+	SDL_Surface *temp = SDL_CreateRGBSurface(SDL_HWSURFACE|SDL_SRCALPHA, area.w, area.h, SCREEN_BPP, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
 	SDL_BlitSurface(surface, &area, temp, NULL);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, temp->pixels);
-	/*SDL_GL_Enter2DMode(width, height);
+	GLint nColors = surface->format->BytesPerPixel;
+	GLenum texture_format;
+	if (nColors == 4) {
+		if (surface->format->Rmask == 0x000000ff) {
+			texture_format = GL_RGBA;
+		} else {
+			texture_format = GL_BGRA;
+		}
+	} else if (nColors == 3) {
+		if (surface->format->Rmask == 0x000000ff) {
+			texture_format = GL_RGB;
+		} else {
+			texture_format = GL_BGR;
+		}
+	} else {
+		// this should never happen
+		// TODO: throw an exception
+	}
+
 	// Generate a texture object handle
 	glGenTextures(1, &texture);
-
-	// Bind the texture
-	glBindTexture(GL_TEXTURE_2D, texture);*/
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glTexImage2D(GL_TEXTURE_2D, 0, texture_format, area.w, area.h, 0, GL_RGBA, GL_UNSIGNED_BYTE, temp->pixels);
 
 	// Set the texture's stretching properties
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 
-	glBegin(GL_TEXTURE_2D);
+	glEnable(GL_TEXTURE_2D);
+
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glColor3f( 0.0f, 0.6f, 1.0f);
 	glBegin(GL_QUADS);
-		glTexCoord2d(0, 0); glVertex3f(0, 0, 0);
-		glTexCoord2d(1, 0); glVertex3f(0 + surface->w, 0, 0);
-		glTexCoord2d(1, 1); glVertex3f(0 + surface->w, 0 + surface->h, 0);
-		glTexCoord2d(0, 1); glVertex3f(0, 0 + surface->h, 0);
+		glTexCoord2f(0.0f, 0.0f); glVertex3f(x, y, 0);
+		glTexCoord2f(1.0f, 0.0f); glVertex3f(x + area.w, y, 0);
+		glTexCoord2f(1.0f, 1.0f); glVertex3f(x + area.w, y + area.h, 0);
+		glTexCoord2f(0.0f, 1.0f); glVertex3f(x, y + area.h, 0);
 	glEnd();
+
+	glFinish();
+
 	glDisable(GL_TEXTURE_2D);
 	SDL_FreeSurface(surface);
 	SDL_FreeSurface(temp);
-	
-	// Edit the texture object's image data using the information SDL_Surface gives us
-	/*glTexImage2D( GL_TEXTURE_2D, 0, surface->format->BytesPerPixel, surface->w, surface->h, 0,
-                      GL_RGB, GL_UNSIGNED_BYTE, surface->pixels );
-*/
+
+	glDeleteTextures(1, &texture);
+
 	//SDL_GL_Leave2DMode();
 }
 

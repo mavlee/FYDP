@@ -52,13 +52,14 @@ void Game::draw() {
 
   glPushMatrix();
 
+  glTranslatef(canvasWidth/2, canvasHeight/2, 0);
   glRotatef(angle, 0.f, 1.f, 1.f);
 
   int i, j;
   Cube cube = getCube();
   int currentVer;
 
-  // Render quad
+  // Render the cube
   glBegin( GL_QUADS );
   for (i = 0; i < cube.nFaces; i++) {
 	  for (j = 0; j < 4; j++) {
@@ -74,8 +75,9 @@ void Game::draw() {
 	  }
   }
   glEnd();
+  glTranslatef(-canvasWidth/2, -canvasHeight/2, 0);
 
-  text->renderText(canvasWidth, canvasHeight, 200, 200, "Sup haters");
+  text->renderText(canvasWidth, canvasHeight, canvasWidth / 2.f, canvasHeight / 2.f, "Sup haters");
 
   // Update screen
   SDL_GL_SwapBuffers();
