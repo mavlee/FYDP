@@ -9,3 +9,4 @@ Tempo/Debug/*
 *.user
 ipch/
 Tempo/tempo
+Tempo/*.opensdf
