@@ -2,19 +2,6 @@
 #include <SDL_ttf.h>
 #include <math.h>f
 
-bool Text::initText() {
-	bool result = true;
-
-	#ifndef TEXT
-	FT_Error error = FT_Init_FreeType(&mLibrary);
-	if (error) {
-		result = false;
-	}
-	#endif
-
-	return result;
-}
-
 Text::Text(int width, int height) {
 	// TODO: just don't render text if the font can't be found
 	font = TTF_OpenFont("C:/FYDP/res/fonts/EunjinNakseo.ttf", 28);

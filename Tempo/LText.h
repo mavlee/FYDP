@@ -3,8 +3,6 @@
 
 class Text {
 	public:
-		// initializes FreeType for text
-		bool initText();
 
 		// Constructor
 		Text(int width, int hewight);
