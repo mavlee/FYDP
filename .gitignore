@@ -10,3 +10,4 @@ Tempo/Debug/*
 ipch/
 Tempo/tempo
 Tempo/*.opensdf
+Tempo/*.vcxproj
