@@ -19,6 +19,6 @@ Utility functions
 void ErrorHandler(LPTSTR lpszFunction);
 
 /* Attaches a console to our GUI application, just call this once */
-static void OpenConsole();
+void OpenConsole();
 
 #endif
