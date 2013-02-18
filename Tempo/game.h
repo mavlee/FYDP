@@ -20,7 +20,8 @@ class Game {
     void generateGameFeatures();
 
     void draw();
-    void update();
+    void update(int nFrames = 0, float timeElapsed = 1.0f);
+	//void update();
     void handleKeys(int key);
 };
 

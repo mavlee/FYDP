@@ -15,16 +15,16 @@ float angle = 0.f;
 
 Text *text;
 
+float avgFps;
+
 Game::Game(int width, int height) {
   canvasWidth = width;
   canvasHeight = height;
   canvas = new Canvas(width, height);
   canvas->initCanvas();
-  // Centre the origin to the middle of the screen
-  //glTranslatef(canvasWidth / 2.f, canvasHeight / 2.f, 0.f);
 
+  // Instantiate components displayed on the screen
   initCube();
-
   text = new Text(width, height);
 }
 
@@ -47,18 +47,14 @@ void Game::draw() {
   // Clear color buffer & depth buffer
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  //glMatrixMode(GL_MODELVIEW);
-  //glPopMatrix();
-
   glPushMatrix();
 
-  glTranslatef(canvasWidth/2, canvasHeight/2, 0);
+  glTranslatef(canvasWidth/2 + cameraX, canvasHeight/2 + cameraY, 0);
   glRotatef(angle, 0.f, 1.f, 1.f);
 
   int i, j;
   Cube cube = getCube();
   int currentVer;
-
   // Render the cube
   glBegin( GL_QUADS );
   for (i = 0; i < cube.nFaces; i++) {
@@ -75,16 +71,23 @@ void Game::draw() {
 	  }
   }
   glEnd();
-  glTranslatef(-canvasWidth/2, -canvasHeight/2, 0);
+  glTranslatef(-(canvasWidth/2 + cameraX), -(canvasHeight/2 + cameraY), 0);
+  
+  glPopMatrix();
 
-  //text->renderText(canvasWidth, canvasHeight, canvasWidth / 2.f, canvasHeight / 2.f, "Sup haters");
+  std::stringstream fps_caption;
+  fps_caption << "Average FPS: " << avgFps;
+  text->renderText(canvasWidth, canvasHeight, 0, canvasHeight - 50, fps_caption.str());
 
   // Update screen
   SDL_GL_SwapBuffers();
 }
 
-void Game::update() {
+void Game::update(int nFrames, float timeElapsed) {
   angle += 0.1f;
+  if (timeElapsed != 1.0f) {
+	avgFps = nFrames / timeElapsed;
+  }
 }
 
 void Game::handleKeys(int key) {
@@ -137,13 +140,5 @@ void Game::handleKeys(int key) {
       break;
     default:
       break;
-  }
-  if (translation) {
-    glMatrixMode(GL_MODELVIEW);
-    glPopMatrix();
-    glLoadIdentity();
-
-    glTranslatef(cameraX, cameraY, 0.f);
-    glPushMatrix();
   }
 }

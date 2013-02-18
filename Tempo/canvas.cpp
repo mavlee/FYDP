@@ -54,8 +54,8 @@ void Canvas::initCanvas() {
 
   glEnable(GL_CULL_FACE);
   //glEnable(GL_DEPTH_TEST);
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_COLOR, GL_ONE_MINUS_SRC_ALPHA);
+  //glEnable(GL_BLEND);
+  //glBlendFunc(GL_SRC_COLOR, GL_ONE_MINUS_SRC_ALPHA);
 
   //Check for error
   GLenum error = glGetError();
