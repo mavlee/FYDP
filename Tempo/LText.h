@@ -3,7 +3,6 @@
 
 class Text {
 	public:
-
 		// Constructor
 		Text(int width, int hewight);
 
@@ -17,5 +16,5 @@ class Text {
 	private:
 		TTF_Font *font;
 		SDL_Surface *surface;
-		GLuint texture;		
+		GLuint texture;
 };

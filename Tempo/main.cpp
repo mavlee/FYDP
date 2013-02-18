@@ -10,7 +10,9 @@ int main( int argc, char* args[] ) {
   game = new Game(SCREEN_WIDTH, SCREEN_HEIGHT);
   SDL_Event event;
 
+#ifndef USE_MAC_INCLUDES
   OpenConsole();
+#endif
 
   // FPS counter and regulator code
   Timer timer;
@@ -37,15 +39,16 @@ int main( int argc, char* args[] ) {
       }
     }
 
-	frame++;
-	if (timer.get_ticks() > 1000) {
-		game->update(frame, (clock.get_ticks() / 1000.f));
-		timer.start();
-	} else {
-		game->update();
-	}
+    frame++;
+    if (timer.get_ticks() > 1000) {
+      game->update(frame, (clock.get_ticks() / 1000.f));
+      timer.start();
+    } else {
+      game->update();
+    }
     game->draw();
   }
+
   delete game;
 
   return 0;
