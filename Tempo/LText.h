@@ -1,5 +1,3 @@
-#include <ft2build.h>
-#include FT_FREETYPE_H
 #include "LOpenGL.h"
 #include "surfaceHelper.h"
 

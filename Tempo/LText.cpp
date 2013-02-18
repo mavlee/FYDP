@@ -1,6 +1,6 @@
 #include "LText.h"
 #include <SDL_ttf.h>
-#include <math.h>
+#include <math.h>f
 
 bool Text::initText() {
 	bool result = true;
