@@ -4,7 +4,7 @@
 
 Text::Text(int width, int height) {
 	// TODO: just don't render text if the font can't be found
-	font = TTF_OpenFont("../../res/fonts/EunjinNakseo.ttf", 28);
+	font = TTF_OpenFont("C:/FYDP/res/fonts/EunjinNakseo.ttf", 28);
 	// TODO: i don't know how to declare color directly...
 	SDL_Color mer = { 255, 169, 255, 0 };
 	color = mer;

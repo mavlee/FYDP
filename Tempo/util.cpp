@@ -1,7 +1,8 @@
 #include "util.h"
 
-void OpenConsole()
-{
+#ifndef USE_MAC_INCLUDES
+
+void OpenConsole() {
     int outHandle, errHandle, inHandle;
     FILE *outFile, *errFile, *inFile;
     AllocConsole();
@@ -27,20 +28,18 @@ void OpenConsole()
     setvbuf( stdin, NULL, _IONBF, 0 );
 
     std::ios::sync_with_stdio();
-
 }
 
-
-void ErrorHandler(LPTSTR lpszFunction) 
-{ 
+void ErrorHandler(LPTSTR lpszFunction)
+{
     // Retrieve the system error message for the last-error code.
 
     LPVOID lpMsgBuf;
     LPVOID lpDisplayBuf;
-    DWORD dw = GetLastError(); 
+    DWORD dw = GetLastError();
 
     FormatMessage(
-        FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+        FORMAT_MESSAGE_ALLOCATE_BUFFER |
         FORMAT_MESSAGE_FROM_SYSTEM |
         FORMAT_MESSAGE_IGNORE_INSERTS,
         NULL,
@@ -51,16 +50,18 @@ void ErrorHandler(LPTSTR lpszFunction)
 
     // Display the error message.
 
-    lpDisplayBuf = (LPVOID)LocalAlloc(LMEM_ZEROINIT, 
-        (lstrlen((LPCTSTR) lpMsgBuf) + lstrlen((LPCTSTR) lpszFunction) + 40) * sizeof(TCHAR)); 
-    StringCchPrintf((LPTSTR)lpDisplayBuf, 
+    lpDisplayBuf = (LPVOID)LocalAlloc(LMEM_ZEROINIT,
+        (lstrlen((LPCTSTR) lpMsgBuf) + lstrlen((LPCTSTR) lpszFunction) + 40) * sizeof(TCHAR));
+    StringCchPrintf((LPTSTR)lpDisplayBuf,
         LocalSize(lpDisplayBuf) / sizeof(TCHAR),
-        TEXT("%s failed with error %d: %s"), 
-        lpszFunction, dw, lpMsgBuf); 
-    MessageBox(NULL, (LPCTSTR) lpDisplayBuf, TEXT("Error"), MB_OK); 
+        TEXT("%s failed with error %d: %s"),
+        lpszFunction, dw, lpMsgBuf);
+    MessageBox(NULL, (LPCTSTR) lpDisplayBuf, TEXT("Error"), MB_OK);
 
     // Free error-handling buffer allocations.
 
     LocalFree(lpMsgBuf);
     LocalFree(lpDisplayBuf);
 }
+
+#endif
