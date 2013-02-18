@@ -10,13 +10,13 @@ int main( int argc, char* args[] ) {
   SDL_Event event;
 
   // FPS counter and regulator code
-  //Timer clock;
-  //Timer fps;
+  Timer timer;
+  Timer clock;
 
   int frame = 0;
 
-  //clock.start();
-  //fps.start();
+  timer.start();
+  clock.start();
 
   bool eventTriggered = false;
 
@@ -34,12 +34,13 @@ int main( int argc, char* args[] ) {
       }
     }
 
-	/*frame++;
-	if (clock.get_ticks() > 1000) {
-		game->update(frame);
-	} else {*/
+	frame++;
+	if (timer.get_ticks() > 1000) {
+		game->update(frame, (clock.get_ticks() / 1000.f));
+		timer.start();
+	} else {
 		game->update();
-	//}
+	}
     game->draw();
   }
 
