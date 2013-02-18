@@ -76,6 +76,7 @@
     <ClCompile Include="spriteClipper.cpp" />
     <ClCompile Include="surfaceHelper.cpp" />
     <ClCompile Include="timer.cpp" />
+    <ClCompile Include="util.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="canvas.h" />
@@ -87,6 +88,7 @@
     <ClInclude Include="spriteClipper.h" />
     <ClInclude Include="surfaceHelper.h" />
     <ClInclude Include="timer.h" />
+    <ClInclude Include="util.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\res\fonts\EunjinNakseo.ttf" />

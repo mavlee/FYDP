@@ -1,6 +1,6 @@
 #include "util.h"
 
-static void OpenConsole()
+void OpenConsole()
 {
     int outHandle, errHandle, inHandle;
     FILE *outFile, *errFile, *inFile;
