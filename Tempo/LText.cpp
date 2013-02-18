@@ -1,6 +1,6 @@
 #include "LText.h"
 #include <SDL_ttf.h>
-#include <math.h>f
+#include <math.h>
 
 Text::Text(int width, int height) {
 	// TODO: just don't render text if the font can't be found
