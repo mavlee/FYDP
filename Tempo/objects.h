@@ -17,6 +17,9 @@ class Object {
 		virtual bool draw() = 0;
 
 		void setCentre(float x, float y, float z);
+		
+		// Should be 0.f by default
+		float shiftZ;
 
 	private:
 		struct {
