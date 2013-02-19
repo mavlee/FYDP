@@ -41,11 +41,13 @@ void Canvas::initCanvas() {
   // Initialize Projection Matrix
   glMatrixMode( GL_PROJECTION );
   glLoadIdentity();
-  glOrtho( 0.0, width, height, 0.0, 100.0, -100.0);
+  glFrustum( 0.0, width, height, 0.0, 1.0, 1000.0);
 
   // Initialize Modelview Matrix
   glMatrixMode( GL_MODELVIEW );
   glLoadIdentity();
+
+  glViewport(0, 0, width, height);
 
   glPushMatrix();
 
