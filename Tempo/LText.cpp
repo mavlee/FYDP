@@ -15,6 +15,10 @@ Text::Text(int width, int height) {
 }
 
 Text::~Text() {
+	if (!font) {
+		TTF_CloseFont(font);
+		TTF_Quit();
+	}
 }
 
 void Text::renderText(int width, int height, GLfloat x, GLfloat y, std::string text) {

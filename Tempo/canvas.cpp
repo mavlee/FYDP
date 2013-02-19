@@ -53,9 +53,7 @@ void Canvas::initCanvas() {
   glClearColor( 0.f, 0.f, 0.f, 1.f );
 
   glEnable(GL_CULL_FACE);
-  //glEnable(GL_DEPTH_TEST);
-  //glEnable(GL_BLEND);
-  //glBlendFunc(GL_SRC_COLOR, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable(GL_DEPTH_TEST);
 
   //Check for error
   GLenum error = glGetError();
@@ -68,11 +66,6 @@ void Canvas::initCanvas() {
 }
 
 void Canvas::cleanupCanvas() {
-  //TTF_CloseFont(font);
-  TTF_Quit();
-
-  //cleanUpClipper();
-
   // Quit SDL. Also handles cleanup of the screen object.
   SDL_Quit();
 }

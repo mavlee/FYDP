@@ -5,6 +5,7 @@
 #include "constants.h"
 #include "objects.h"
 #include "LText.h"
+#include "util.h"
 
 int gColorMode = COLOR_MODE_CYAN;
 
@@ -71,8 +72,22 @@ void Game::draw() {
 	  }
   }
   glEnd();
+
   glTranslatef(-(canvasWidth/2 + cameraX), -(canvasHeight/2 + cameraY), 0);
+
+  glPopMatrix();
   
+  // Obstacles
+  glPushMatrix();
+  
+  glTranslatef(canvasWidth/2, canvasHeight/2, 0);
+  if(!drawObstacles()) {
+	  //ErrorHandler(TEXT("Obstacle drawing failed"));
+  } else {
+	  //ErrorHandler(TEXT("Obstacles drawn successfully"));
+  }
+  glTranslatef(-canvasWidth/2, -canvasHeight/2, 0);
+
   glPopMatrix();
 
   std::stringstream fps_caption;
