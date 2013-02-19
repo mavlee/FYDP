@@ -1,3 +1,5 @@
+#include <list>
+
 #ifndef OBJECT_H
 #define OBJECT_H
 
@@ -11,9 +13,11 @@ class Object {
 	public:
 		// defines the number of vertices per face.
 		static const int nFaces;
+
+		virtual bool draw() = 0;
 };
 
-class Cube:Object {
+class Cube: public Object {
 	public:
 		static const int nFaces = 6;
 		Ver ver[8];
@@ -22,10 +26,16 @@ class Cube:Object {
 		struct {
 			unsigned int ver[4];
 		} face[6];
+
+		bool draw();
 };
 
 void initCube();
 
 Cube getCube();
+
+std::list<Object*> getObstacles();
+
+bool drawObstacles();
 
 #endif
