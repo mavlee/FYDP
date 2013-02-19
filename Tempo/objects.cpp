@@ -63,6 +63,7 @@ Cube::Cube(float centreX, float centreY, float centreZ,
 bool Cube::draw() {
 	int i, j;
 	int currentVer;
+	glTranslatef(0, 0,  shiftZ);
 	// Render the cube
 	glBegin( GL_QUADS );
 	for (i = 0; i < nFaces; i++) {
@@ -72,6 +73,7 @@ bool Cube::draw() {
 			glVertex3fv(ver[currentVer].pos);
 		}
 	}
+	glTranslatef(0, 0, -shiftZ);
 	glEnd();
 	return true;
 }
@@ -99,6 +101,7 @@ bool drawObstacles() {
 	for (std::list<Object*>::iterator i = obstacles.begin(); i != obstacles.end(); ++i) {
 		if (dynamic_cast <Cube*> (*i)) {
 			result = (dynamic_cast <Cube*> (*i))->draw();
+			(dynamic_cast <Cube*> (*i))->shiftZ -= 0.01f;
 		}
 
 		// verify if the draw succeeded
