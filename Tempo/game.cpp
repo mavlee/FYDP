@@ -54,21 +54,21 @@ void Game::draw() {
   glRotatef(angle, 0.f, 1.f, 1.f);
 
   int i, j;
-  Cube cube = getCube();
+  Cube* cube = getCube();
   int currentVer;
   // Render the cube
   glBegin( GL_QUADS );
-  for (i = 0; i < cube.nFaces; i++) {
+  for (i = 0; i < cube->nFaces; i++) {
 	  for (j = 0; j < 4; j++) {
-		  currentVer = cube.face[i].ver[j];
+		  currentVer = cube->face[i].ver[j];
 
 		  // back face
 		  if (gColorMode == COLOR_MODE_MULTI) {
-			glColor3fv(cube.ver[currentVer].col);
+			glColor3fv(cube->ver[currentVer].col);
 		  } else {
 			glColor3f( 0.f, 1.f, 1.f);
 		  }
-		  glVertex3fv(cube.ver[currentVer].pos);
+		  glVertex3fv(cube->ver[currentVer].pos);
 	  }
   }
   glEnd();

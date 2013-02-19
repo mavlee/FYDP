@@ -15,10 +15,26 @@ class Object {
 		static const int nFaces;
 
 		virtual bool draw() = 0;
+
+		void setCentre(float x, float y, float z);
+
+	private:
+		struct {
+			float x;
+			float y;
+			float z;
+		} centre;
 };
 
 class Cube: public Object {
 	public:
+		enum ColourSet {
+			Multi = 0,
+		};
+
+		Cube(float centreX, float centreY, float centreZ, 
+				float width, float height, float depth, ColourSet color);
+
 		static const int nFaces = 6;
 		Ver ver[8];
 
@@ -28,11 +44,16 @@ class Cube: public Object {
 		} face[6];
 
 		bool draw();
+
+	private:
+		float width;
+		float height;
+		float depth;
 };
 
 void initCube();
 
-Cube getCube();
+Cube* getCube();
 
 std::list<Object*> getObstacles();
 
