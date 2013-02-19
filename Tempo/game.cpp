@@ -5,7 +5,6 @@
 #include "constants.h"
 #include "objects.h"
 #include "LText.h"
-#include "util.h"
 
 int gColorMode = COLOR_MODE_CYAN;
 
@@ -82,9 +81,7 @@ void Game::draw() {
   
   glTranslatef(canvasWidth/2, canvasHeight/2, 0);
   if(!drawObstacles()) {
-	  //ErrorHandler(TEXT("Obstacle drawing failed"));
-  } else {
-	  //ErrorHandler(TEXT("Obstacles drawn successfully"));
+	  printf("Obstacle drawing failed");
   }
   glTranslatef(-canvasWidth/2, -canvasHeight/2, 0);
 
