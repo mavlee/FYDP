@@ -1,6 +1,7 @@
 #include "LOpenGL.h"
 #include <stdio.h>
 #include "canvas.h"
+#include "constants.h"
 
 Canvas::Canvas(int width, int height) {
   this->width = width;
@@ -41,7 +42,7 @@ void Canvas::initCanvas() {
   // Initialize Projection Matrix
   glMatrixMode( GL_PROJECTION );
   glLoadIdentity();
-  glFrustum( 0.0, width, height, 0.0, 1.0, 1000.0);
+  glFrustum( -width/2, width/2, height/2, -height/2, Z_NEAR, Z_FAR);
 
   // Initialize Modelview Matrix
   glMatrixMode( GL_MODELVIEW );
