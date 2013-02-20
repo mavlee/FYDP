@@ -145,9 +145,9 @@ void Game::handleKeys(int key) {
       //Update projection matrix
       glMatrixMode( GL_PROJECTION );
       glLoadIdentity();
-      glOrtho( 0.0, canvasWidth * gProjectionScale, canvasHeight * gProjectionScale, 0.0, 1.0, -1.0 );
-      //glTranslatef((gProjectionScale - 1.f) * canvasWidth / 2.f,
-      //    (gProjectionScale - 1.f) * canvasHeight / 2.f, 0.f);
+	  glFrustum( -canvasWidth/2 * gProjectionScale, canvasWidth/2 * gProjectionScale,
+		  canvasHeight/2 * gProjectionScale, -canvasHeight/2 + gProjectionScale,
+		  Z_NEAR / gProjectionScale, Z_FAR / gProjectionScale);
       break;
     default:
       break;
