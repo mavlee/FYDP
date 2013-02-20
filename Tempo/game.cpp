@@ -49,8 +49,9 @@ void Game::draw() {
 
   glPushMatrix();
 
-  glTranslatef(canvasWidth/2 + cameraX, canvasHeight/2 + cameraY, 0);
+  glTranslatef(0, 0, -(Z_NEAR + 200.f));
   glRotatef(angle, 0.f, 1.f, 1.f);
+  glTranslatef(0, 0, (Z_NEAR + 200.f));
 
   int i, j;
   Cube* cube = getCube();
@@ -72,18 +73,16 @@ void Game::draw() {
   }
   glEnd();
 
-  glTranslatef(-(canvasWidth/2 + cameraX), -(canvasHeight/2 + cameraY), 0);
-
   glPopMatrix();
   
   // Obstacles
   glPushMatrix();
   
-  glTranslatef(canvasWidth/2, canvasHeight/2, 0);
+  glTranslatef(-cameraX, -cameraY, 0);
+
   if(!drawObstacles()) {
 	  printf("Obstacle drawing failed");
   }
-  glTranslatef(-canvasWidth/2, -canvasHeight/2, 0);
 
   glPopMatrix();
 

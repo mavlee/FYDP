@@ -1,15 +1,16 @@
 #include "LOpenGL.h"
 #include "objects.h"
+#include "constants.h"
 
 float cubeColours[1][8][3] = {
 	{
-		{0.5f, 0.0f, 0.0f},
-		{0.5f, 1.0f, 0.0f},
-		{0.5f, 0.0f, 0.0f},
-		{0.5f, 0.0f, 1.0f},
-		{0.5f, 1.0f, 1.0f},
-		{0.0f, 0.0f, 0.9f},
-		{1.0f, 0.8f, 0.7f},
+		{1.0f, 1.0f, 0.0f},
+		{1.0f, 0.0f, 0.0f},
+		{1.0f, 0.0f, 1.0f},
+		{0.0f, 0.0f, 1.0f},
+		{0.0f, 1.0f, 1.0f},
+		{0.0f, 1.0f, 0.0f},
+		{1.0f, 1.0f, 0.0f},
 		{1.0f, 0.0f, 0.0f},
 	},
 };
@@ -79,12 +80,13 @@ bool Cube::draw() {
 }
 
 void initCube() {
-	testCube = new Cube(0.f, 0.f, 0.f, 100.f, 100.f, 100.f, Cube::ColourSet::Multi);
+	testCube = new Cube(0.f, 0.f, -(Z_NEAR + 200.f), 100.f, 100.f, 100.f, Cube::ColourSet::Multi);
 
-	Cube* obstacle = new Cube(-150.f, -50.f, 0.f, 100.f, 100.f, 100.f, Cube::ColourSet::Multi);
+	Cube* obstacle;
+	obstacle = new Cube(-150.f, -50.f, -Z_FAR, 100.f, 100.f, 100.f, Cube::ColourSet::Multi);
 	obstacles.push_back(obstacle);
 
-	obstacle = new Cube(150.f, 200.f, 0.f, 100.f, 100.f, 100.f, Cube::ColourSet::Multi);
+	obstacle = new Cube(150.f, 200.f, -Z_FAR, 100.f, 100.f, 100.f, Cube::ColourSet::Multi);
 	obstacles.push_back(obstacle);
 }
 
@@ -101,7 +103,7 @@ bool drawObstacles() {
 	for (std::list<Object*>::iterator i = obstacles.begin(); i != obstacles.end(); ++i) {
 		if (dynamic_cast <Cube*> (*i)) {
 			result = (dynamic_cast <Cube*> (*i))->draw();
-			(dynamic_cast <Cube*> (*i))->shiftZ -= 0.01f;
+			(dynamic_cast <Cube*> (*i))->shiftZ += 2.f;
 		}
 
 		// verify if the draw succeeded
