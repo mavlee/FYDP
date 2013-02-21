@@ -7,6 +7,7 @@ Tempo/Debug/*
 *.sdf
 *.suo
 *.user
+*.opensdf
 ipch/
 Tempo/tempo
 Tempo/*.opensdf
