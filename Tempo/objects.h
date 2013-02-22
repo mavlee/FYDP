@@ -17,7 +17,7 @@ class Object {
 		virtual bool draw() = 0;
 
 		void setCentre(float x, float y, float z);
-		
+
 		// Should be 0.f by default
 		float shiftZ;
 
@@ -35,7 +35,7 @@ class Cube: public Object {
 			Multi = 0,
 		};
 
-		Cube(float centreX, float centreY, float centreZ, 
+		Cube(float centreX, float centreY, float centreZ,
 				float width, float height, float depth, ColourSet color);
 
 		static const int nFaces = 6;

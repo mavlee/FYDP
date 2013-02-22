@@ -33,7 +33,7 @@ void Object::setCentre(float x, float y, float z) {
 	centre.z = z;
 }
 
-Cube::Cube(float centreX, float centreY, float centreZ, 
+Cube::Cube(float centreX, float centreY, float centreZ,
 				float width, float height, float depth, ColourSet color) {
 	float vertices[8][3] = {
 		{ centreX - width/2, centreY + height/2, centreZ + depth/2},
@@ -80,13 +80,13 @@ bool Cube::draw() {
 }
 
 void initCube() {
-	testCube = new Cube(0.f, 0.f, -(Z_NEAR + 200.f), 100.f, 100.f, 100.f, Cube::ColourSet::Multi);
+	testCube = new Cube(0.f, 0.f, -(Z_NEAR + 200.f), 100.f, 100.f, 100.f, Cube::Multi);
 
 	Cube* obstacle;
-	obstacle = new Cube(-150.f, -50.f, -Z_FAR, 100.f, 100.f, 100.f, Cube::ColourSet::Multi);
+	obstacle = new Cube(-150.f, -50.f, -Z_FAR, 100.f, 100.f, 100.f, Cube::Multi);
 	obstacles.push_back(obstacle);
 
-	obstacle = new Cube(150.f, 200.f, -Z_FAR, 100.f, 100.f, 100.f, Cube::ColourSet::Multi);
+	obstacle = new Cube(150.f, 200.f, -Z_FAR, 100.f, 100.f, 100.f, Cube::Multi);
 	obstacles.push_back(obstacle);
 }
 
