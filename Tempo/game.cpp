@@ -49,10 +49,10 @@ void Game::generateGameFeatures() {
 	playerCube = new Cube(0.f, 0.f, -(Z_NEAR + 200.f), 100.f, 100.f, 100.f, Cube::Multi);
 
 	Cube* obstacle;
-	obstacle = new Cube(-150.f, -50.f, -Z_FAR, 100.f, 100.f, 100.f, Cube::Multi);
+	obstacle = new Cube(-150.f, 0.f, -(Z_NEAR + 500.f), 100.f, 100.f, 100.f, Cube::Multi);
 	obstacles.push_back(obstacle);
 
-	obstacle = new Cube(150.f, 200.f, -Z_FAR, 100.f, 100.f, 100.f, Cube::Multi);
+	obstacle = new Cube(150.f, 0.f, -(Z_NEAR + 500.f), 100.f, 100.f, 100.f, Cube::Multi);
 	obstacles.push_back(obstacle);
 }
 
@@ -70,6 +70,15 @@ void Game::drawObstacles() {
 }
 
 void Game::draw() {
+  // TODO
+  //
+  // clean this up - canvas.prepForDrawing() maybe
+  // and canvas.finishedDrawing()
+  // should be using playerCube.draw() ??
+  // draw fps stuff at the end
+
+
+
   // Clear color buffer & depth buffer
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -122,8 +131,15 @@ void Game::update(int nFrames, float timeElapsed) {
   if (timeElapsed != 1.0f) {
 	  avgFps = nFrames / timeElapsed;
   }
+  // TODO
+  // update player cube position
+  // update camera position
+  // check for collision
+  checkForCollisions();
+  // calculate score
 }
 
+// WASD should move the playerCube, not the camera
 void Game::handleKeys(int key) {
   bool translation = false;
   switch (key) {
