@@ -6,16 +6,9 @@
 #include "objects.h"
 #include "LText.h"
 
-int gColorMode = COLOR_MODE_CYAN;
-
-GLfloat gProjectionScale = 1.f;
-GLfloat cameraX = 0.f;
-GLfloat cameraY = 0.f;
-float angle = 0.f;
+//float angle = 0.f;
 
 Text *text;
-
-float avgFps;
 
 Game::Game(int width, int height) {
   canvasWidth = width;
@@ -24,13 +17,22 @@ Game::Game(int width, int height) {
   canvas->initCanvas();
 
   // Instantiate components displayed on the screen
-  initCube();
+  analyzeMusic();
+  generateGameFeatures();
   text = new Text(width, height);
+
+  // color stuff and camera
+  gColorMode = COLOR_MODE_CYAN;
+
+  gProjectionScale = 1.f;
+  cameraX = 0.f;
+  cameraY = 0.f;
 }
 
 Game::~Game() {
   canvas->cleanupCanvas();
   delete canvas;
+  delete playerCube;
 }
 
 // Wien's stuff goes here
@@ -40,7 +42,24 @@ void Game::analyzeMusic() {
 
 // based on whatever music analysis gives us, generate game features
 void Game::generateGameFeatures() {
+  // TODO: do this dynamically
+  // this is filled with some static cubes for now
+	playerCube = new Cube(0.f, 0.f, -(Z_NEAR + 200.f), 100.f, 100.f, 100.f, Cube::Multi);
 
+	Cube* obstacle;
+	obstacle = new Cube(-150.f, -50.f, -Z_FAR, 100.f, 100.f, 100.f, Cube::Multi);
+	obstacles.push_back(obstacle);
+
+	obstacle = new Cube(150.f, 200.f, -Z_FAR, 100.f, 100.f, 100.f, Cube::Multi);
+	obstacles.push_back(obstacle);
+}
+
+// draw the obstacles
+void Game::drawObstacles() {
+  for (std::list<Cube*>::iterator i = obstacles.begin(); i != obstacles.end(); i++) {
+    (*i)->draw();
+    (*i)->shiftZ += 2.f;
+  }
 }
 
 void Game::draw() {
@@ -50,26 +69,25 @@ void Game::draw() {
   glPushMatrix();
 
   glTranslatef(0, 0, -(Z_NEAR + 200.f));
-  glRotatef(angle, 0.f, 1.f, 1.f);
+  //glRotatef(angle, 0.f, 1.f, 1.f);
   glTranslatef(0, 0, (Z_NEAR + 200.f));
 
   int i, j;
-  Cube* cube = getCube();
   int currentVer;
   // Render the cube
   glBegin( GL_QUADS );
-  for (i = 0; i < cube->nFaces; i++) {
-	  for (j = 0; j < 4; j++) {
-		  currentVer = cube->face[i].ver[j];
+  for (i = 0; i < playerCube->nFaces; i++) {
+    for (j = 0; j < 4; j++) {
+      currentVer = playerCube->face[i].ver[j];
 
-		  // back face
-		  if (gColorMode == COLOR_MODE_MULTI) {
-			glColor3fv(cube->ver[currentVer].col);
-		  } else {
-			glColor3f( 0.f, 1.f, 1.f);
-		  }
-		  glVertex3fv(cube->ver[currentVer].pos);
-	  }
+      // back face
+      if (gColorMode == COLOR_MODE_MULTI) {
+        glColor3fv(playerCube->ver[currentVer].col);
+      } else {
+        glColor3f( 0.f, 1.f, 1.f);
+      }
+      glVertex3fv(playerCube->ver[currentVer].pos);
+    }
   }
   glEnd();
 
@@ -80,9 +98,7 @@ void Game::draw() {
 
   glTranslatef(-cameraX, -cameraY, 0);
 
-  if(!drawObstacles()) {
-	  printf("Obstacle drawing failed");
-  }
+  drawObstacles();
 
   glPopMatrix();
 
@@ -95,7 +111,7 @@ void Game::draw() {
 }
 
 void Game::update(int nFrames, float timeElapsed) {
-  angle += 0.1f;
+  //angle += 0.1f;
   if (timeElapsed != 1.0f) {
 	  avgFps = nFrames / timeElapsed;
   }
@@ -138,11 +154,11 @@ void Game::handleKeys(int key) {
         gProjectionScale = 0.5f;
       }
       else if( gProjectionScale == 0.5f ) {
-        //Regular zoom
+        // Regular zoom
         gProjectionScale = 1.f;
       }
 
-      //Update projection matrix
+      // Update projection matrix
       glMatrixMode( GL_PROJECTION );
       glLoadIdentity();
 	  glFrustum(-canvasWidth / 2 * gProjectionScale, canvasWidth / 2 * gProjectionScale,

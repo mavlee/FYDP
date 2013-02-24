@@ -24,9 +24,6 @@ int cubeFaces[6][4] = {
 	{4, 7, 6, 5},
 };
 
-Cube* testCube;
-std::list<Object*> obstacles;
-
 void Object::setCentre(float x, float y, float z) {
 	centre.x = x;
 	centre.y = y;
@@ -76,39 +73,4 @@ void Cube::draw() {
 	}
 	glTranslatef(0, 0, -shiftZ);
 	glEnd();
-}
-
-void initCube() {
-	testCube = new Cube(0.f, 0.f, -(Z_NEAR + 200.f), 100.f, 100.f, 100.f, Cube::Multi);
-
-	Cube* obstacle;
-	obstacle = new Cube(-150.f, -50.f, -Z_FAR, 100.f, 100.f, 100.f, Cube::Multi);
-	obstacles.push_back(obstacle);
-
-	obstacle = new Cube(150.f, 200.f, -Z_FAR, 100.f, 100.f, 100.f, Cube::Multi);
-	obstacles.push_back(obstacle);
-}
-
-Cube* getCube() {
-	return testCube;
-}
-
-std::list<Object*> getObstacles() {
-	return obstacles;
-}
-
-bool drawObstacles() {
-	bool result = true;
-	for (std::list<Object*>::iterator i = obstacles.begin(); i != obstacles.end(); ++i) {
-		if (dynamic_cast <Cube*> (*i)) {
-			//result = (dynamic_cast <Cube*> (*i))->draw();
-			(dynamic_cast <Cube*> (*i))->shiftZ += 2.f;
-		}
-
-		// verify if the draw succeeded
-		if (!result) {
-			break;
-		}
-	}
-	return result;
 }
