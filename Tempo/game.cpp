@@ -74,10 +74,10 @@ void Game::draw() {
   glEnd();
 
   glPopMatrix();
-  
+
   // Obstacles
   glPushMatrix();
-  
+
   glTranslatef(-cameraX, -cameraY, 0);
 
   if(!drawObstacles()) {
@@ -97,7 +97,7 @@ void Game::draw() {
 void Game::update(int nFrames, float timeElapsed) {
   angle += 0.1f;
   if (timeElapsed != 1.0f) {
-	avgFps = nFrames / timeElapsed;
+	  avgFps = nFrames / timeElapsed;
   }
 }
 
@@ -145,8 +145,8 @@ void Game::handleKeys(int key) {
       //Update projection matrix
       glMatrixMode( GL_PROJECTION );
       glLoadIdentity();
-	  glFrustum( -canvasWidth/2 * gProjectionScale, canvasWidth/2 * gProjectionScale,
-		  canvasHeight/2 * gProjectionScale, -canvasHeight/2 + gProjectionScale,
+	  glFrustum(-canvasWidth / 2 * gProjectionScale, canvasWidth / 2 * gProjectionScale,
+		  canvasHeight / 2 * gProjectionScale, -canvasHeight / 2 + gProjectionScale,
 		  Z_NEAR / gProjectionScale, Z_FAR / gProjectionScale);
       break;
     default:
