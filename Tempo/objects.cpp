@@ -61,7 +61,7 @@ Cube::Cube(float centreX, float centreY, float centreZ,
 	}
 }
 
-bool Cube::draw() {
+void Cube::draw() {
 	int i, j;
 	int currentVer;
 	glTranslatef(0, 0,  shiftZ);
@@ -76,7 +76,6 @@ bool Cube::draw() {
 	}
 	glTranslatef(0, 0, -shiftZ);
 	glEnd();
-	return true;
 }
 
 void initCube() {
@@ -102,7 +101,7 @@ bool drawObstacles() {
 	bool result = true;
 	for (std::list<Object*>::iterator i = obstacles.begin(); i != obstacles.end(); ++i) {
 		if (dynamic_cast <Cube*> (*i)) {
-			result = (dynamic_cast <Cube*> (*i))->draw();
+			//result = (dynamic_cast <Cube*> (*i))->draw();
 			(dynamic_cast <Cube*> (*i))->shiftZ += 2.f;
 		}
 

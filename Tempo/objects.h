@@ -3,7 +3,7 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
-class Ver {
+class Vertex {
 	public:
 		float pos[3];
 		float col[3];
@@ -14,7 +14,7 @@ class Object {
 		// defines the number of vertices per face.
 		static const int nFaces;
 
-		virtual bool draw() = 0;
+		virtual void draw() = 0;
 
 		void setCentre(float x, float y, float z);
 
@@ -39,14 +39,14 @@ class Cube: public Object {
 				float width, float height, float depth, ColourSet color);
 
 		static const int nFaces = 6;
-		Ver ver[8];
+		Vertex ver[8];
 
 		// defines which vertices should be linked to create a face
 		struct {
 			unsigned int ver[4];
 		} face[6];
 
-		bool draw();
+		void draw();
 
 	private:
 		float width;
