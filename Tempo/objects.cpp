@@ -36,14 +36,14 @@ void Object::setCentre(float x, float y, float z) {
 Cube::Cube(float centreX, float centreY, float centreZ,
 				float width, float height, float depth, ColourSet color) {
 	float vertices[8][3] = {
-		{ centreX - width/2, centreY + height/2, centreZ + depth/2},
-		{ centreX + width/2, centreY + height/2, centreZ + depth/2},
-		{ centreX + width/2, centreY + height/2, centreZ - depth/2},
-		{ centreX - width/2, centreY + height/2, centreZ - depth/2},
-		{ centreX - width/2, centreY - height/2, centreZ + depth/2},
-		{ centreX + width/2, centreY - height/2, centreZ + depth/2},
-		{ centreX + width/2, centreY - height/2, centreZ - depth/2},
-		{ centreX - width/2, centreY - height/2, centreZ - depth/2},
+		{ centreX - width / 2, centreY + height / 2, centreZ + depth / 2 },
+		{ centreX + width / 2, centreY + height / 2, centreZ + depth / 2 },
+		{ centreX + width / 2, centreY + height / 2, centreZ - depth / 2 },
+		{ centreX - width / 2, centreY + height / 2, centreZ - depth / 2 },
+		{ centreX - width / 2, centreY - height / 2, centreZ + depth / 2 },
+		{ centreX + width / 2, centreY - height / 2, centreZ + depth / 2 },
+		{ centreX + width / 2, centreY - height / 2, centreZ - depth / 2 },
+		{ centreX - width / 2, centreY - height / 2, centreZ - depth / 2 },
 	};
 
 	int i, j;
