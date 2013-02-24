@@ -2,6 +2,9 @@
 #define GAME_H
 
 #include "canvas.h"
+#include "LOpenGL.h"
+#include <list>
+#include "objects.h"
 
 class Game {
   private:
@@ -11,6 +14,18 @@ class Game {
     int gameHeight;
     int gameDepth;
     Canvas *canvas;
+
+    // random stuff for color and camera
+    GLfloat cameraX;
+    GLfloat cameraY;
+    GLfloat gProjectionScale;
+    int gColorMode;
+    float avgFps;
+
+    Cube* playerCube;
+
+    std::list<Cube*> obstacles;
+    void drawObstacles();
 
   public:
     Game(int width, int height);

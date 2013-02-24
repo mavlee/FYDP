@@ -54,12 +54,4 @@ class Cube: public Object {
 		float depth;
 };
 
-void initCube();
-
-Cube* getCube();
-
-std::list<Object*> getObstacles();
-
-bool drawObstacles();
-
 #endif
