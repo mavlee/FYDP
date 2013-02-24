@@ -62,6 +62,7 @@ void Cube::draw() {
 	int i, j;
 	int currentVer;
 	glTranslatef(0, 0,  shiftZ);
+
 	// Render the cube
 	glBegin( GL_QUADS );
 	for (i = 0; i < nFaces; i++) {
