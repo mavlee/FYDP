@@ -8,6 +8,7 @@
 
 class Game {
   private:
+    // board and camera stuff
     int canvasWidth;
     int canvasHeight;
     int gameWidth;
@@ -22,21 +23,23 @@ class Game {
     int gColorMode;
     float avgFps;
 
+    // player and obstacles
+    int points;
     Cube* playerCube;
-
     std::list<Cube*> obstacles;
+
+    // private functions
+    void analyzeMusic();
+    void generateGameFeatures();
     void drawObstacles();
+    void checkForCollisions();
 
   public:
     Game(int width, int height);
     ~Game();
 
-    void analyzeMusic();
-    void generateGameFeatures();
-
     void draw();
     void update(int nFrames = 0, float timeElapsed = 1.0f);
-	//void update();
     void handleKeys(int key);
 };
 

@@ -27,6 +27,8 @@ Game::Game(int width, int height) {
   gProjectionScale = 1.f;
   cameraX = 0.f;
   cameraY = 0.f;
+
+  points = 0;
 }
 
 Game::~Game() {
@@ -52,6 +54,11 @@ void Game::generateGameFeatures() {
 
 	obstacle = new Cube(150.f, 200.f, -Z_FAR, 100.f, 100.f, 100.f, Cube::Multi);
 	obstacles.push_back(obstacle);
+}
+
+// this probably shouldn't be void in the end, some tamper with points somehow too
+void Game::checkForCollisions() {
+
 }
 
 // draw the obstacles
