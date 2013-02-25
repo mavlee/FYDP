@@ -5,10 +5,12 @@
 #include "constants.h"
 #include "objects.h"
 #include "LText.h"
+#include <string>
 
 //float angle = 0.f;
 
 Text *text;
+Text *pointsText;
 
 Game::Game(int width, int height) {
   canvasWidth = width;
@@ -20,6 +22,7 @@ Game::Game(int width, int height) {
   analyzeMusic();
   generateGameFeatures();
   text = new Text(width, height);
+  pointsText = new Text(width, height);
 
   // color stuff and camera
   gColorMode = COLOR_MODE_CYAN;
@@ -117,6 +120,9 @@ void Game::draw() {
   std::stringstream fps_caption;
   fps_caption << "Average FPS: " << avgFps;
   text->renderText(canvasWidth, canvasHeight, 0, canvasHeight - 50, fps_caption.str());
+  std::stringstream points_caption;
+  points_caption << "Points: " << points;
+  pointsText->renderText(canvasWidth, canvasHeight, 0, canvasHeight - 100, points_caption.str());
 
   // Update screen
   SDL_GL_SwapBuffers();
@@ -133,6 +139,7 @@ void Game::update(int nFrames, float timeElapsed) {
   // check for collision
   checkForCollisions();
   // calculate score
+  points += 1;
 }
 
 // WASD should move the playerCube, not the camera
