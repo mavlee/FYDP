@@ -84,9 +84,9 @@ void Game::draw() {
 
   glPushMatrix();
 
-  glTranslatef(0, 0, -(Z_NEAR + 200.f));
+  //glTranslatef(0, 0, -(Z_NEAR + 200.f));
   //glRotatef(angle, 0.f, 1.f, 1.f);
-  glTranslatef(0, 0, (Z_NEAR + 200.f));
+  //glTranslatef(0, 0, (Z_NEAR + 200.f));
 
   int i, j;
   int currentVer;
@@ -106,16 +106,12 @@ void Game::draw() {
     }
   }
   glEnd();
-
   glPopMatrix();
 
   // Obstacles
   glPushMatrix();
-
   glTranslatef(-cameraX, -cameraY, 0);
-
   drawObstacles();
-
   glPopMatrix();
 
   std::stringstream fps_caption;
