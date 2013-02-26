@@ -175,6 +175,27 @@ void Game::handleKeys(int key, int* movementKeyDown) {
       translation = true;
       cameraX += 16.f;
       break;
+    case SDLK_e:
+      // Cycle through projection scales
+      if (gProjectionScale == 1.f) {
+        // Zoom out
+        gProjectionScale = 2.f;
+      } else if( gProjectionScale == 2.f ) {
+        // Zoom in
+        gProjectionScale = 0.5f;
+      }
+      else if( gProjectionScale == 0.5f ) {
+        // Regular zoom
+        gProjectionScale = 1.f;
+      }
+
+      // Update projection matrix
+      glMatrixMode( GL_PROJECTION );
+      glLoadIdentity();
+      glFrustum(-canvasWidth / 2 * gProjectionScale, canvasWidth / 2 * gProjectionScale,
+          canvasHeight / 2 * gProjectionScale, -canvasHeight / 2 + gProjectionScale,
+          Z_NEAR / gProjectionScale, Z_FAR / gProjectionScale);
+      break;
     default:
       break;
   }
