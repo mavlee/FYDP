@@ -61,7 +61,6 @@ Cube::Cube(float centreX, float centreY, float centreZ,
 void Cube::draw() {
 	int i, j;
 	int currentVer;
-	glTranslatef(0, 0,  shiftZ);
 
 	// Render the cube
 	glBegin( GL_QUADS );
@@ -72,6 +71,5 @@ void Cube::draw() {
 			glVertex3fv(ver[currentVer].pos);
 		}
 	}
-	glTranslatef(0, 0, -shiftZ);
 	glEnd();
 }

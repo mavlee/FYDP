@@ -12,6 +12,8 @@
 Text *text;
 Text *pointsText;
 
+float shiftZ = 0.f;
+
 Game::Game(int width, int height) {
   canvasWidth = width;
   canvasHeight = height;
@@ -52,10 +54,10 @@ void Game::generateGameFeatures() {
 	playerCube = new Cube(0.f, 0.f, -(Z_NEAR + 200.f), 100.f, 100.f, 100.f, Cube::Multi);
 
 	Cube* obstacle;
-	obstacle = new Cube(-150.f, 0.f, -(Z_NEAR + 500.f), 100.f, 100.f, 100.f, Cube::Multi);
+	obstacle = new Cube(-150.f, 0.f, -(Z_NEAR + 5000.f), 100.f, 100.f, 100.f, Cube::Multi);
 	obstacles.push_back(obstacle);
 
-	obstacle = new Cube(150.f, 0.f, -(Z_NEAR + 500.f), 100.f, 100.f, 100.f, Cube::Multi);
+	obstacle = new Cube(150.f, 0.f, -Z_FAR, 100.f, 100.f, 100.f, Cube::Multi);
 	obstacles.push_back(obstacle);
 }
 
@@ -68,7 +70,6 @@ void Game::checkForCollisions() {
 void Game::drawObstacles() {
   for (std::list<Cube*>::iterator i = obstacles.begin(); i != obstacles.end(); i++) {
     (*i)->draw();
-    (*i)->shiftZ += 2.f;
   }
 }
 
@@ -80,16 +81,12 @@ void Game::draw() {
   // should be using playerCube.draw() ??
   // draw fps stuff at the end
 
-
-
   // Clear color buffer & depth buffer
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   glPushMatrix();
-
-  //glTranslatef(0, 0, -(Z_NEAR + 200.f));
-  //glRotatef(angle, 0.f, 1.f, 1.f);
-  //glTranslatef(0, 0, (Z_NEAR + 200.f));
+  glTranslatef(cameraX, cameraY, 0);
+  glTranslatef(0, 0, shiftZ);
 
   int i, j;
   int currentVer;
@@ -113,7 +110,6 @@ void Game::draw() {
 
   // Obstacles
   glPushMatrix();
-  glTranslatef(-cameraX, -cameraY, 0);
   drawObstacles();
   glPopMatrix();
 
@@ -140,10 +136,15 @@ void Game::update(int nFrames, float timeElapsed) {
   checkForCollisions();
   // calculate score
   points += 1;
+
+  shiftZ -= SHIFT_INTERVAL;
+  printf("player cube position: %f\n", shiftZ);
+
+  glTranslatef(0, 0, SHIFT_INTERVAL);
 }
 
 // WASD should move the playerCube, not the camera
-void Game::handleKeys(int key) {
+void Game::handleKeys(int key, int* movementKeyDown) {
   bool translation = false;
   switch (key) {
     case SDLK_q:
@@ -155,41 +156,24 @@ void Game::handleKeys(int key) {
       }
       break;
     case SDLK_w:
+		*movementKeyDown = 1;
       translation = true;
       cameraY -= 16.f;
       break;
     case SDLK_s:
+		*movementKeyDown = 1;
       translation = true;
       cameraY += 16.f;
       break;
     case SDLK_a:
+		*movementKeyDown = 1;
       translation = true;
       cameraX -= 16.f;
       break;
     case SDLK_d:
+		*movementKeyDown = 1;
       translation = true;
       cameraX += 16.f;
-      break;
-    case SDLK_e:
-      // Cycle through projection scales
-      if (gProjectionScale == 1.f) {
-        // Zoom out
-        gProjectionScale = 2.f;
-      } else if( gProjectionScale == 2.f ) {
-        // Zoom in
-        gProjectionScale = 0.5f;
-      }
-      else if( gProjectionScale == 0.5f ) {
-        // Regular zoom
-        gProjectionScale = 1.f;
-      }
-
-      // Update projection matrix
-      glMatrixMode( GL_PROJECTION );
-      glLoadIdentity();
-	  glFrustum(-canvasWidth / 2 * gProjectionScale, canvasWidth / 2 * gProjectionScale,
-		  canvasHeight / 2 * gProjectionScale, -canvasHeight / 2 + gProjectionScale,
-		  Z_NEAR / gProjectionScale, Z_FAR / gProjectionScale);
       break;
     default:
       break;
