@@ -40,7 +40,7 @@ class Game {
 
     void draw();
     void update(int nFrames = 0, float timeElapsed = 1.0f);
-    void handleKeys(int key);
+    void handleKeys(int key, int* movementKeyDown);
 };
 
 #endif

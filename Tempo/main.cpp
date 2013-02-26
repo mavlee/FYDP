@@ -24,6 +24,9 @@ int main( int argc, char* args[] ) {
   clock.start();
 
   bool eventTriggered = false;
+  int *movementKeyDown = new int;
+  *movementKeyDown = 0;
+  int currentKey = 0;
 
   while (!eventTriggered) {
     while (SDL_PollEvent(&event)) {
@@ -32,12 +35,20 @@ int main( int argc, char* args[] ) {
           eventTriggered = true;
           break;
         case SDL_KEYDOWN:
-          game->handleKeys(event.key.keysym.sym);
+			currentKey = event.key.keysym.sym;
+          game->handleKeys(currentKey, movementKeyDown);
           break;
+		case SDL_KEYUP:
+			*movementKeyDown = 0;
+			break;
         default:
           break;
       }
     }
+
+	if (*movementKeyDown == 1) {
+		game->handleKeys(currentKey, movementKeyDown);
+	}
 
     frame++;
     if (timer.get_ticks() > 1000) {
