@@ -27,10 +27,11 @@ class Game {
     Text *text;
     Text *pointsText;
 
-    // player and obstacles
+    // data about the game
     int points;
     int comboLevel;
     int combo;
+    float shiftZ;
     Cube* playerCube;
     std::list<Cube*> obstacles;
 
