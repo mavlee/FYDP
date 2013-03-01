@@ -29,6 +29,8 @@ class Game {
 
     // player and obstacles
     int points;
+    int comboLevel;
+    int combo;
     Cube* playerCube;
     std::list<Cube*> obstacles;
 
@@ -36,7 +38,8 @@ class Game {
     void analyzeMusic();
     void generateGameFeatures();
     void drawObstacles();
-    void checkForCollisions();
+    bool checkForCollisions();
+    void updateScore();
 
   public:
     Game(int width, int height);
