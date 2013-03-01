@@ -7,8 +7,6 @@
 #include "LText.h"
 #include <string>
 
-//float angle = 0.f;
-
 Text *text;
 Text *pointsText;
 
@@ -125,7 +123,6 @@ void Game::draw() {
 }
 
 void Game::update(int nFrames, float timeElapsed) {
-  //angle += 0.1f;
   if (timeElapsed != 1.0f) {
 	  avgFps = nFrames / timeElapsed;
   }

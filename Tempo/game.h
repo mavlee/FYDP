@@ -3,6 +3,7 @@
 
 #include "canvas.h"
 #include "LOpenGL.h"
+#include "LText.h"
 #include <list>
 #include "objects.h"
 
@@ -17,11 +18,14 @@ class Game {
     Canvas *canvas;
 
     // random stuff for color and camera
+    // and drawing in general
     GLfloat cameraX;
     GLfloat cameraY;
     GLfloat gProjectionScale;
     int gColorMode;
     float avgFps;
+    Text *text;
+    Text *pointsText;
 
     // player and obstacles
     int points;
