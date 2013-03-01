@@ -1,3 +1,6 @@
+#ifndef LTEXT_H
+#define LTEXT_H
+
 #include "LOpenGL.h"
 #include "surfaceHelper.h"
 
@@ -18,3 +21,5 @@ class Text {
 		SDL_Surface *surface;
 		GLuint texture;
 };
+
+#endif
