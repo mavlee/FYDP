@@ -7,8 +7,6 @@
 #include "LText.h"
 #include <string>
 
-float shiftZ = 0.f;
-
 Game::Game(int width, int height) {
   canvasWidth = width;
   canvasHeight = height;
@@ -31,6 +29,8 @@ Game::Game(int width, int height) {
   points = 0;
   combo = 0;
   comboLevel = 1;
+
+  shiftZ = 0.f;
 }
 
 Game::~Game() {
