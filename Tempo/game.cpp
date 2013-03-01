@@ -7,9 +7,6 @@
 #include "LText.h"
 #include <string>
 
-Text *text;
-Text *pointsText;
-
 float shiftZ = 0.f;
 
 Game::Game(int width, int height) {
@@ -32,6 +29,8 @@ Game::Game(int width, int height) {
   cameraY = 0.f;
 
   points = 0;
+  combo = 0;
+  comboLevel = 1;
 }
 
 Game::~Game() {
@@ -60,8 +59,21 @@ void Game::generateGameFeatures() {
 }
 
 // this probably shouldn't be void in the end, some tamper with points somehow too
-void Game::checkForCollisions() {
+bool Game::checkForCollisions() {
+  return false;
+}
 
+void Game::updateScore() {
+  bool collision = checkForCollisions();
+
+  if (collision) {
+    combo = 0;
+    comboLevel = 1;
+  }
+  if (combo % 100000 == 0) {
+    comboLevel++;
+  }
+  points += 1 * comboLevel;
 }
 
 // draw the obstacles
@@ -130,9 +142,9 @@ void Game::update(int nFrames, float timeElapsed) {
   // update player cube position
   // update camera position
   // check for collision
-  checkForCollisions();
+  bool col = checkForCollisions();
   // calculate score
-  points += 1;
+  updateScore();
 
   shiftZ -= SHIFT_INTERVAL;
   printf("player cube position: %f\n", shiftZ);
