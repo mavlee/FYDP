@@ -1,4 +1,3 @@
-#include "spriteClipper.h"
 #include "timer.h"
 #include "canvas.h"
 #include "game.h"

@@ -5,7 +5,12 @@ and may not be redistributed without written permission.*/
 #ifndef LOPENGL_H
 #define LOPENGL_H
 
-#include "surfaceHelper.h"
+#include "SDL.h"
+#include "SDL_image.h"
+#include "SDL_ttf.h"
+#include "SDL_opengl.h"
+#include <string>
+#include <sstream>
 #include <stdio.h>
 
 #ifdef USE_MAC_INCLUDES

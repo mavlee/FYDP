@@ -18,12 +18,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="spriteClipper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="surfaceHelper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="canvas.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -44,12 +38,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="surfaceHelper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="spriteClipper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="LOpenGL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
