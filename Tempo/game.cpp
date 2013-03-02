@@ -198,16 +198,6 @@ void Game::handleKeys(int key, int* movementKeyDown) {
         gColorMode = COLOR_MODE_CYAN;
       }
       break;
-    case SDLK_w:
-		*movementKeyDown = 1;
-      translation = true;
-      cameraY -= 16.f;
-      break;
-    case SDLK_s:
-		*movementKeyDown = 1;
-      translation = true;
-      cameraY += 16.f;
-      break;
     case SDLK_a:
 		*movementKeyDown = 1;
       translation = true;
