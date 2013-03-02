@@ -2,7 +2,6 @@
 #define LTEXT_H
 
 #include "LOpenGL.h"
-#include "surfaceHelper.h"
 
 class Text {
 	public:

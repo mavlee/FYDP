@@ -73,8 +73,6 @@
     <ClCompile Include="LText.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="objects.cpp" />
-    <ClCompile Include="spriteClipper.cpp" />
-    <ClCompile Include="surfaceHelper.cpp" />
     <ClCompile Include="timer.cpp" />
     <ClCompile Include="util.cpp" />
   </ItemGroup>
@@ -85,8 +83,6 @@
     <ClInclude Include="LOpenGL.h" />
     <ClInclude Include="LText.h" />
     <ClInclude Include="objects.h" />
-    <ClInclude Include="spriteClipper.h" />
-    <ClInclude Include="surfaceHelper.h" />
     <ClInclude Include="timer.h" />
     <ClInclude Include="util.h" />
   </ItemGroup>
