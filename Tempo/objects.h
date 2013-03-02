@@ -54,6 +54,8 @@ class Cube: public Object {
 
 		void draw();
 
+		bool collided;
+
 	private:
 		float width;
 		float height;

@@ -56,8 +56,8 @@ void Game::generateGameFeatures() {
 	obstacle = new Cube(-150.f, 0.f, -(Z_NEAR + 5000.f), 100.f, 100.f, 100.f, Cube::Multi);
 	obstacles.push_back(obstacle);
 
-	obstacle = new Cube(-150.f, 0.f, -(Z_NEAR + 51.f), 100.f, 100.f, 100.f, Cube::Multi);
-	obstacles.push_back(obstacle);
+//	obstacle = new Cube(-150.f, 0.f, -(Z_NEAR + 51.f), 100.f, 100.f, 100.f, Cube::Multi);
+//	obstacles.push_back(obstacle);
 
 	obstacle = new Cube(350.f, 0.f, -(Z_NEAR + 5000.f), 100.f, 100.f, 100.f, Cube::Red);
 	obstacles.push_back(obstacle);
@@ -74,14 +74,20 @@ void Game::generateGameFeatures() {
 
 // this probably shouldn't be void in the end, some tamper with points somehow too
 bool Game::checkForCollisions() {
-	printf("checking collision\n");
 	for (std::list<Cube*>::const_iterator iterator = obstacles.begin(), end = obstacles.end(); iterator != end; ++iterator) {
-			if ((*iterator)->zNear < shiftZ && (*iterator)->zFar > shiftZ) {
-				printf("passing through cube");
-				if ((*iterator)->wRight > playerCube->wLeft || (*iterator)->wLeft < playerCube->wRight) {
+		if (!(*iterator)->collided) {
+			if ((*iterator)->zNear + Z_NEAR > shiftZ + playerCube->zFar + Z_NEAR && (*iterator)->zFar + Z_NEAR < shiftZ + playerCube->zFar + Z_NEAR) {
+				if (((*iterator)->wRight > playerCube->wLeft + cameraX && (*iterator)->wLeft < playerCube->wLeft + cameraX) 
+					|| ((*iterator)->wLeft < playerCube->wRight + cameraX && (*iterator)->wRight > playerCube->wRight + cameraX)) {
+					(*iterator)->collided = true;
+					printf("Collision detected at:\nCurrent Depth: %f\nCurrent Left: %f\nCurrent Right: %f\nDepth: %f\nLeft: %f\nRight: %f\n", shiftZ - playerCube->zFar, playerCube->wLeft + cameraX, playerCube->wRight + cameraX, (*iterator)->zNear, (*iterator)->wLeft, (*iterator)->wRight);
 					return true;
+				} else {
+					(*iterator)->collided = true;
+					printf("NOW\n");
 				}
 			}
+		}
 	}
 
   return false;
@@ -167,7 +173,7 @@ void Game::update(int nFrames, float timeElapsed) {
   bool col = checkForCollisions();
 
   if (col) {
-	  printf("Collision");
+	  printf("Collision\n");
   }
 
   // calculate score
