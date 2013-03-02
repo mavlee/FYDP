@@ -37,6 +37,8 @@ Game::~Game() {
   canvas->cleanupCanvas();
   delete canvas;
   delete playerCube;
+  delete text;
+  delete pointsText;
 }
 
 // Wien's stuff goes here
@@ -54,12 +56,34 @@ void Game::generateGameFeatures() {
 	obstacle = new Cube(-150.f, 0.f, -(Z_NEAR + 5000.f), 100.f, 100.f, 100.f, Cube::Multi);
 	obstacles.push_back(obstacle);
 
+	obstacle = new Cube(-150.f, 0.f, -(Z_NEAR + 51.f), 100.f, 100.f, 100.f, Cube::Multi);
+	obstacles.push_back(obstacle);
+
+	obstacle = new Cube(350.f, 0.f, -(Z_NEAR + 5000.f), 100.f, 100.f, 100.f, Cube::Red);
+	obstacles.push_back(obstacle);
+
+	obstacle = new Cube(450.f, 0.f, -(Z_NEAR + 6000.f), 100.f, 100.f, 100.f, Cube::Green);
+	obstacles.push_back(obstacle);
+
+	obstacle = new Cube(-150.f, 0.f, -(Z_NEAR + 7500.f), 100.f, 100.f, 100.f, Cube::Blue);
+	obstacles.push_back(obstacle);
+
 	obstacle = new Cube(150.f, 0.f, -Z_FAR, 100.f, 100.f, 100.f, Cube::Multi);
 	obstacles.push_back(obstacle);
 }
 
 // this probably shouldn't be void in the end, some tamper with points somehow too
 bool Game::checkForCollisions() {
+	printf("checking collision\n");
+	for (std::list<Cube*>::const_iterator iterator = obstacles.begin(), end = obstacles.end(); iterator != end; ++iterator) {
+			if ((*iterator)->zNear < shiftZ && (*iterator)->zFar > shiftZ) {
+				printf("passing through cube");
+				if ((*iterator)->wRight > playerCube->wLeft || (*iterator)->wLeft < playerCube->wRight) {
+					return true;
+				}
+			}
+	}
+
   return false;
 }
 
@@ -89,7 +113,6 @@ void Game::draw() {
   // clean this up - canvas.prepForDrawing() maybe
   // and canvas.finishedDrawing()
   // should be using playerCube.draw() ??
-  // draw fps stuff at the end
 
   // Clear color buffer & depth buffer
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -140,14 +163,17 @@ void Game::update(int nFrames, float timeElapsed) {
   }
   // TODO
   // update player cube position
-  // update camera position
   // check for collision
   bool col = checkForCollisions();
+
+  if (col) {
+	  printf("Collision");
+  }
+
   // calculate score
   updateScore();
 
   shiftZ -= SHIFT_INTERVAL;
-  printf("player cube position: %f\n", shiftZ);
 
   glTranslatef(0, 0, SHIFT_INTERVAL);
 }

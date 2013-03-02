@@ -1,19 +1,7 @@
 #include "LOpenGL.h"
 #include "objects.h"
 #include "constants.h"
-
-float cubeColours[1][8][3] = {
-	{
-		{1.0f, 1.0f, 0.0f},
-		{1.0f, 0.0f, 0.0f},
-		{1.0f, 0.0f, 1.0f},
-		{0.0f, 0.0f, 1.0f},
-		{0.0f, 1.0f, 1.0f},
-		{0.0f, 1.0f, 0.0f},
-		{1.0f, 1.0f, 0.0f},
-		{1.0f, 0.0f, 0.0f},
-	},
-};
+#include "cubeConstants.h"
 
 int cubeFaces[6][4] = {
 	{0, 1, 2, 3},
@@ -32,6 +20,11 @@ void Object::setCentre(float x, float y, float z) {
 
 Cube::Cube(float centreX, float centreY, float centreZ,
 				float width, float height, float depth, ColourSet color) {
+	zNear = centreZ + depth / 2;
+	zFar = centreZ - depth / 2;
+	wLeft = centreX - width / 2;
+	wRight = centreX + width / 2;
+
 	float vertices[8][3] = {
 		{ centreX - width / 2, centreY + height / 2, centreZ + depth / 2 },
 		{ centreX + width / 2, centreY + height / 2, centreZ + depth / 2 },
