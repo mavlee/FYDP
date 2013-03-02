@@ -30,7 +30,16 @@ class Cube: public Object {
 	public:
 		enum ColourSet {
 			Multi = 0,
+			Red = 1,
+			Green = 2,
+			Blue = 3,
 		};
+
+		// used for collision detection
+		float zNear;
+		float zFar;
+		float wLeft;
+		float wRight;
 
 		Cube(float centreX, float centreY, float centreZ,
 				float width, float height, float depth, ColourSet color);

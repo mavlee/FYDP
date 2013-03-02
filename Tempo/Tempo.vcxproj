@@ -79,6 +79,7 @@
   <ItemGroup>
     <ClInclude Include="canvas.h" />
     <ClInclude Include="constants.h" />
+    <ClInclude Include="cubeConstants.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="LOpenGL.h" />
     <ClInclude Include="LText.h" />
