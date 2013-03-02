@@ -1,58 +1,45 @@
 #include "inc/sound/sound_includes.h"
 #include "music_handler.h"
+#include <string>
 
 using namespace std;
 
 MusicHandler::MusicHandler() {
+  musicFilename = "music/test.mp3";
 }
 
 MusicHandler::~MusicHandler() {
 }
 
-void MusicHandler::to_csv (char* name, vector<float> vec) {
+void MusicHandler::setMusicFile(string filename) {
+  musicFilename = filename;
+}
+
+void MusicHandler::to_csv (string name, vector<float> vec) {
   ofstream file;
-  file.open(name);
-  for(vector<float>::iterator it = vec.begin(); it != vec.end(); ++it) {
+  file.open(name.c_str());
+  for (vector<float>::iterator it = vec.begin(); it != vec.end(); ++it) {
     file << *it << endl;
   }
   file.close();
 }
 
-void MusicHandler::error(char msg[]) {
+void MusicHandler::error(string msg) {
   cout << msg << endl;
-  system("pause");
 }
 
+// returns 0 for successful run, 1 otherwise
 int MusicHandler::analyze() {
-  cout << "start\n";
+  cout << "start" << endl;
+
   // check the correct BASS was loaded
-  if (HIWORD(BASS_GetVersion())!=BASSVERSION) {
+  if (HIWORD(BASS_GetVersion()) != BASSVERSION) {
     error("Wrong BASS version!");
     return 1;
   }
 
-  char *file;
-  char defaultFile [50] = "music/test.mp3";
-  /*
-  switch (argc) {
-    case 2:
-      //read file
-      //sanitise string... w/e
-      file = argv[1];
-      break;
-    default:
-      //complain
-      //error("No file provided!");
-      //return 1;
-      cout << "no file provided. defaulting to 'test.mp3'\n";
-      file = defaultFile;
-  }
-  */
-  file = defaultFile;
-
   DWORD floatable; // floating-point channel support?
   DWORD chan;	// the channel... HMUSIC or HSTREAM
-  //HWND win = 0;
 
   // enable floating-point DSP
   BASS_SetConfig(BASS_CONFIG_FLOATDSP,TRUE);
@@ -63,18 +50,18 @@ int MusicHandler::analyze() {
   }
 
   // check for floating-point capability
-  floatable=BASS_StreamCreate(44100,2,BASS_SAMPLE_FLOAT,NULL,0);
-  if (floatable) { // woohoo!
+  floatable = BASS_StreamCreate(44100, 2, BASS_SAMPLE_FLOAT, NULL, 0);
+  if (floatable) {
     BASS_StreamFree(floatable);
     floatable=BASS_SAMPLE_FLOAT;
   }
 
   // consider decoding stream in mono, since it's faster
-  if (!(chan=BASS_StreamCreateFile(FALSE,file,0,0,BASS_SAMPLE_FLOAT|BASS_STREAM_DECODE|floatable))){
+  if (!(chan=BASS_StreamCreateFile(FALSE, musicFilename.c_str(), 0, 0, BASS_SAMPLE_FLOAT|BASS_STREAM_DECODE|floatable))){
     // not playable
     char msg[256];
     cout << "ERROR" << endl;
-    //sprintf_s(msg, "File %s not playable!", file);
+    sprintf(msg, "File %s not playable!", musicFilename.c_str());
     error(msg);
     return 1;
   }
@@ -96,7 +83,9 @@ int MusicHandler::analyze() {
     float *buf = new float[BUF_SIZE];
     FFT_data.push_back(buf);
     ret = BASS_ChannelGetData(chan, FFT_data.back(), BASS_DATA_FFT1024);
-    if (-1 == ret) break;
+    if (-1 == ret) {
+      break;
+    }
     num_samples += ret;
   }
   // BASS_ChannelGetData actually returns num bytes read from source
@@ -124,13 +113,13 @@ int MusicHandler::analyze() {
 
   // calculate threshold
   vector<float> threshold(FFT_data.size() - 1, 0);
-  for( int i = 0; i < spectral_flux.size(); i++ )
-  {
-    int start = max( 0, i - THRESHOLD_WINDOW_SIZE );
-    int end = min( int(spectral_flux.size() - 1), i + THRESHOLD_WINDOW_SIZE );
+  for (int i = 0; i < spectral_flux.size(); i++) {
+    int start = max(0, i - THRESHOLD_WINDOW_SIZE);
+    int end = min(int(spectral_flux.size() - 1), i + THRESHOLD_WINDOW_SIZE);
     float mean = 0;
-    for( int j = start; j <= end; j++ )
+    for (int j = start; j <= end; j++) {
       mean += spectral_flux[j];
+    }
     mean /= (end - start);
     threshold[i] =  mean * THRESHOLD_MULTIPLIER;
   }
@@ -138,8 +127,7 @@ int MusicHandler::analyze() {
 
   // apply threshold to spectral flux
   vector<float> prunned_spectral_flux (FFT_data.size() - 1, 0);
-  for( int i = 0; i < threshold.size(); i++ )
-  {
+  for (int i = 0; i < threshold.size(); i++) {
     if( threshold[i] <= spectral_flux[i] )
       prunned_spectral_flux[i] = spectral_flux[i] - threshold[i];
     else
@@ -149,17 +137,16 @@ int MusicHandler::analyze() {
 
   // find peaks
   vector<float> peaks(FFT_data.size() - 2, 0);
-  for( int i = 0; i < prunned_spectral_flux.size() - 1; i++ )
-  {
-    if( prunned_spectral_flux[i] > prunned_spectral_flux[i+1] )
+  for (int i = 0; i < prunned_spectral_flux.size() - 1; i++) {
+    if (prunned_spectral_flux[i] > prunned_spectral_flux[i+1]) {
       peaks[i] = prunned_spectral_flux[i];
-    else
+    } else {
       peaks[i] = 0;
+    }
   }
   to_csv("peaks.csv", peaks);
 
   cout << "done\n";
-  system("pause");
 
   BASS_Free();
   return 0;
