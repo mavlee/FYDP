@@ -7,12 +7,15 @@
 #include "LText.h"
 #include <string>
 #include "inc/sound/sound_includes.h"
+#include "music_handler.h"
 
 Game::Game(int width, int height) {
   canvasWidth = width;
   canvasHeight = height;
   canvas = new Canvas(width, height);
   canvas->initCanvas();
+
+  musicHandler = new MusicHandler();
 
   // Instantiate components displayed on the screen
   analyzeMusic();
@@ -38,11 +41,12 @@ Game::~Game() {
   canvas->cleanupCanvas();
   delete canvas;
   delete playerCube;
+  delete musicHandler;
 }
 
 // Wien's stuff goes here
 void Game::analyzeMusic() {
-
+  int ret = musicHandler->analyze();
 }
 
 // based on whatever music analysis gives us, generate game features

@@ -6,6 +6,7 @@
 #include "LText.h"
 #include <list>
 #include "objects.h"
+#include "music_handler.h"
 
 class Game {
   private:
@@ -26,6 +27,9 @@ class Game {
     float avgFps;
     Text *text;
     Text *pointsText;
+
+    // For handling music
+    MusicHandler* musicHandler;
 
     // data about the game
     int points;
