@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include <fstream>
 #include <iostream>
+#include <algorithm>
 #include <vector>
 
 #include "bass.h"
@@ -25,7 +26,7 @@ void error(char msg[]) {
     system("pause");
 }
 
-int _tmain(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
     cout << "start\n";
     // check the correct BASS was loaded
@@ -52,12 +53,12 @@ int _tmain(int argc, char* argv[])
 
     DWORD floatable; // floating-point channel support?
     DWORD chan;	// the channel... HMUSIC or HSTREAM
-    HWND win = 0;
+    //HWND win = 0;
 
     // enable floating-point DSP
     BASS_SetConfig(BASS_CONFIG_FLOATDSP,TRUE);
     // initialize - default device
-    if (!BASS_Init(-1,44100,0,win,NULL)) {
+    if (!BASS_Init(-1,44100,0,NULL,NULL)) {
         error("Error initialising BASS!");
 	    return 1;
     }
@@ -73,7 +74,8 @@ int _tmain(int argc, char* argv[])
     if (!(chan=BASS_StreamCreateFile(FALSE,file,0,0,BASS_SAMPLE_FLOAT|BASS_STREAM_DECODE|floatable))){
         // not playable
         char msg[256];
-        sprintf_s(msg, "File %s not playable!", file);
+        cout << "ERROR" << endl;
+        //sprintf_s(msg, "File %s not playable!", file);
         error(msg);
         return 1;
     }
@@ -84,7 +86,7 @@ int _tmain(int argc, char* argv[])
         error("Error getting channel info.");
         return 1;
     }
-    UINT chans = channel_info.chans;
+    unsigned int chans = channel_info.chans;
 
     // get data
     DWORD ret = 0;
@@ -113,7 +115,10 @@ int _tmain(int argc, char* argv[])
     vector<float> spectral_flux (FFT_data.size() - 1, 0);
     for (int i = 0; i < spectral_flux.size(); i++) {
         for (int j = 0; j < BUF_SIZE; j++) {
-            spectral_flux[i] += abs(FFT_data[i+1][j] - FFT_data[i][j]);
+            if (FFT_data[i+1][j] - FFT_data[i][j] < 0)
+              spectral_flux[i] += -1 * (FFT_data[i+1][j] - FFT_data[i][j]);
+            else
+              spectral_flux[i] += (FFT_data[i+1][j] - FFT_data[i][j]);
         }
     }
     to_csv("spectral_flux.csv", spectral_flux);
@@ -123,7 +128,7 @@ int _tmain(int argc, char* argv[])
     for( int i = 0; i < spectral_flux.size(); i++ )
     {
         int start = max( 0, i - THRESHOLD_WINDOW_SIZE );
-        int end = min( spectral_flux.size() - 1, i + THRESHOLD_WINDOW_SIZE );
+        int end = min( int(spectral_flux.size() - 1), i + THRESHOLD_WINDOW_SIZE );
         float mean = 0;
         for( int j = start; j <= end; j++ )
             mean += spectral_flux[j];

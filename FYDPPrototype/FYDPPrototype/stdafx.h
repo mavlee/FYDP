@@ -8,7 +8,9 @@
 #include "targetver.h"
 
 #include <stdio.h>
+#ifndef USE_MAC_INCLUDES
 #include <tchar.h>
+#endif
 
 
 
