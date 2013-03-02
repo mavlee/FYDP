@@ -6,3 +6,4 @@ const int SCREEN_BPP = 32;
 const int Z_FAR = 100000;
 const int Z_NEAR = 1000;
 const float SHIFT_INTERVAL = 1.f;
+const float FPS_CAP = 1000.f / 60;
