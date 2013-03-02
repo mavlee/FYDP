@@ -37,10 +37,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>..\lib\SDL-1.2.15\include;..\lib\freeglut-2.8.0-1\include;.\inc;$(IncludePath)</IncludePath>
+    <IncludePath>.\inc;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LibraryPath>..\lib\SDL-1.2.15\lib\x86;..\lib\freeglut-2.8.0-1\lib;..\lib;.\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>.\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
