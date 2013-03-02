@@ -1,5 +1,5 @@
 #include "LText.h"
-#include <SDL_ttf.h>
+#include <sdl/SDL_ttf.h>
 #include <math.h>
 #include "constants.h"
 
