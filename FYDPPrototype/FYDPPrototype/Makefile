@@ -1,5 +1,5 @@
 MACHINE= $(shell uname -s)
-OBJFILES := stdafx.o FYDPPrototype
+OBJFILES := stdafx.o FYDPPrototype.o
 
 ifeq ($(MACHINE),Darwin)
 	#INCLUDES = -I/Library/Frameworks/SDL.framework/Headers -I/Library/Frameworks/SDL_image.framework/Headers -I/Library/Frameworks/SDL_mixer.framework/Headers -I/Library/Frameworks/SDL_ttf.framework/Headers -I/System/Library/Frameworks/OpenGL.framework/Headers
