@@ -13,3 +13,4 @@ ipch/
 Tempo/tempo
 Tempo/*.opensdf
 Tempo/*.vcxproj
+libbass.dylib
