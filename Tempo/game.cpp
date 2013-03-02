@@ -87,9 +87,6 @@ bool Game::checkForCollisions() {
 					(*iterator)->collided = true;
 					printf("Collision detected at:\nCurrent Depth: %f\nCurrent Left: %f\nCurrent Right: %f\nDepth: %f\nLeft: %f\nRight: %f\n", shiftZ - playerCube->zFar, playerCube->wLeft + cameraX, playerCube->wRight + cameraX, (*iterator)->zNear, (*iterator)->wLeft, (*iterator)->wRight);
 					return true;
-				} else {
-					(*iterator)->collided = true;
-					printf("NOW\n");
 				}
 			}
 		}
