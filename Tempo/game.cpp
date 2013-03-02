@@ -6,6 +6,7 @@
 #include "objects.h"
 #include "LText.h"
 #include <string>
+#include "inc/sound/sound_includes.h"
 
 Game::Game(int width, int height) {
   canvasWidth = width;
