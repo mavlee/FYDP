@@ -2,6 +2,7 @@
 #define MUSIC_HANDLER_H
 
 #include "inc/sound/sound_includes.h"
+#include <string>
 
 #define BUF_SIZE 512
 #define THRESHOLD_WINDOW_SIZE 15
@@ -14,10 +15,12 @@ class MusicHandler {
     MusicHandler();
     ~MusicHandler();
     int analyze();
+    void setMusicFile(string filename);
 
   private:
-    void to_csv(char* name, vector<float> vec);
-    void error(char msg[]);
+    void to_csv(string name, vector<float> vec);
+    void error(string msg);
+    string musicFilename;
 };
 
 #endif
