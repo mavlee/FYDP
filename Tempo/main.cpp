@@ -16,11 +16,13 @@ int main( int argc, char* args[] ) {
   // FPS counter and regulator code
   Timer timer;
   Timer clock;
+  Timer fpsTimer;
 
   int frame = 0;
 
   timer.start();
   clock.start();
+  fpsTimer.start();
 
   bool eventTriggered = false;
   int *movementKeyDown = new int;
@@ -48,6 +50,12 @@ int main( int argc, char* args[] ) {
 	if (*movementKeyDown == 1) {
 		game->handleKeys(currentKey, movementKeyDown);
 	}
+
+	while (fpsTimer.get_ticks() < FPS_CAP) {
+		// wait until it's appropriate to update the screen.
+	}
+	// reset timer now
+	fpsTimer.start();
 
     frame++;
     if (timer.get_ticks() > 1000) {
