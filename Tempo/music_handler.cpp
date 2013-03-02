@@ -6,7 +6,7 @@
 using namespace std;
 
 MusicHandler::MusicHandler() {
-  musicFilename = "music/test.mp3";
+  musicFilename = "res/music/test.mp3";
 }
 
 MusicHandler::~MusicHandler() {
