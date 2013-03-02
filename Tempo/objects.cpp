@@ -49,6 +49,8 @@ Cube::Cube(float centreX, float centreY, float centreZ,
 			face[i].ver[j] = cubeFaces[i][j];
 		}
 	}
+
+	collided = false;
 }
 
 void Cube::draw() {
