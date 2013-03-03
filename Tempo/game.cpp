@@ -60,7 +60,11 @@ void Game::generateGameFeatures() {
   Cube* obstacle;
   for (vector<float>::size_type i = 0; i < musicData[0].size(); i++) {
     if (musicData[0][i] > 0 && i - last > 100) {
+<<<<<<< HEAD
       float pos = SCREEN_WIDTH/2.f*(-1 + rand()%3);
+=======
+      float pos = -150.f + 150.f*(rand()%3);
+>>>>>>> master
       obstacle = new Cube(pos, 0.f, -(Z_NEAR + i*43.12), 100.f, 100.f, 100.f, Cube::Multi);
       obstacles.push_back(obstacle);
       last = i;
