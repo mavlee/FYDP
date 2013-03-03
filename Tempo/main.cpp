@@ -5,13 +5,12 @@
 #include "util.h"
 
 int main( int argc, char* args[] ) {
-  Game *game;
-  game = new Game(SCREEN_WIDTH, SCREEN_HEIGHT);
-  SDL_Event event;
-
 #ifndef USE_MAC_INCLUDES
   OpenConsole();
 #endif
+  Game *game;
+  game = new Game(SCREEN_WIDTH, SCREEN_HEIGHT);
+  SDL_Event event;
 
   // FPS counter and regulator code
   Timer timer;
