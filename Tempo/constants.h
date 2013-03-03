@@ -10,7 +10,7 @@ const float SCREEN_TILT = -20.f;
 const float Z_FAR = 100000.0f;
 const float Z_NEAR = 1000.f;
 const float FPS_CAP = 1000.f / 60;
-const float PEAK_THRESHOLD = 0.1f;
+const float PEAK_THRESHOLD = 0.f;
 
 const float SHIFT_INTERVAL = 10.f;
 const float SHIFT_INTERVAL_PER_SECOND = 500.f;
