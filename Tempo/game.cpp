@@ -168,8 +168,9 @@ void Game::draw() {
   // should be using playerCube.draw() ??
     canvas->draw(shiftZ, obstacles);
 
-    // Render the cube
-    glPushMatrix();
+
+  // Render the cube
+  glPushMatrix();
   glTranslatef(cameraX, cameraY, 0);
   glTranslatef(0, 0, shiftZ);
 
