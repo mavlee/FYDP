@@ -13,10 +13,9 @@ Game::Game(int width, int height) {
   canvasWidth = width;
   canvasHeight = height;
   canvas = new Canvas(width, height);
-  canvas->initCanvas();
 
   musicHandler = new MusicHandler();
-  musicHandler->setMusicFile("res/music/clocks.mp3");
+  musicHandler->setMusicFile("res/music/freaks.mp3");
 
   musicData = musicHandler->getPeakData();
 
