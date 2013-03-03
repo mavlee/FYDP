@@ -25,10 +25,6 @@ bool loadImage(char* imagePath, int &width, int &height, bool &hasAlpha, GLuint*
 
   //Load image
   ILboolean success = ilLoadImage(imagePath);
-  if (success == IL_FALSE) {
-    printf("Unable to load %s\n", imagePath);
-    success = ilLoadImage("C:/FYDP/Tempo/res/images/skybox.png");
-  }
 
   //Image loaded successfully
   if(success == IL_TRUE)

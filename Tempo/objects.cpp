@@ -68,3 +68,29 @@ void Cube::draw() {
 	}
 	glEnd();
 }
+
+void Cube::draw(GLuint* texture) {
+	int i, j;
+	int currentVer;
+
+    glBindTexture( GL_TEXTURE_2D, *texture );
+
+    float textureOrder[4][2] = {
+      {0.f, 0.f},
+      {1.f, 0.f},
+      {1.f, 1.f},
+      {0.f, 1.f},
+    };
+
+	// Render the cube
+	glBegin( GL_QUADS );
+	for (i = 0; i < nFaces; i++) {
+		for (j = 0; j < 4; j++) {
+			currentVer = face[i].ver[j];
+            glTexCoord2fv(textureOrder[j]);
+			glVertex3fv(ver[currentVer].pos);
+		}
+	}
+	glEnd();
+}
+

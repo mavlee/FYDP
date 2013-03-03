@@ -54,6 +54,8 @@ class Cube: public Object {
 
 		void draw();
 
+        void draw(GLuint* texture);
+
 		bool collided;
 
 	private:
