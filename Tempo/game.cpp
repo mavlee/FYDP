@@ -19,8 +19,6 @@ Game::Game(int width, int height) {
 
   musicData = musicHandler->getPeakData();
 
-  songLocation = 0;
-
   // Instantiate components displayed on the screen
   generateGameFeatures();
   text = new Text(width, height);
@@ -38,6 +36,7 @@ Game::Game(int width, int height) {
   comboLevel = 1;
 
   shiftZ = 0.f;
+  lastPeakTime = 0;
 
   musicHandler->play();
 }
@@ -57,12 +56,14 @@ void Game::generateGameFeatures() {
   // this is filled with some static cubes for now
   playerCube = new Cube(0.f, 0.f, -(Z_NEAR + 200.f), 100.f, 100.f, 100.f, Cube::Multi);
 
+  int last = -50;
   Cube* obstacle;
   for (vector<float>::size_type i = 0; i < musicData[0].size(); i++) {
-    if (musicData[0][i] > 0) {
+    if (musicData[0][i] > 0 && i - last > 100) {
       float pos = SCREEN_WIDTH/2.f*(-1 + rand()%3);
       obstacle = new Cube(pos, 0.f, -(Z_NEAR + i*43.12), 100.f, 100.f, 100.f, Cube::Multi);
       obstacles.push_back(obstacle);
+      last = i;
     }
   }
 }
@@ -172,10 +173,10 @@ void Game::update(int nFrames, float timeElapsed) {
         printf("Collision\n");
     }
 
-  songLocation++;
-  if (musicData[0][songLocation * 43 / 60] > 0) {
-    cout << "peak " << songLocation << endl;
+  //if (musicData[0][songLocation * 43 / 60] > 0) {
+  if (musicData[0][int(musicHandler->getPositionInSec()*43)] > 1 && musicHandler->getPositionInSec() - lastPeakTime > 0.1) {
     cout << "time " << musicHandler->getPositionInSec() << endl;
+    lastPeakTime = musicHandler->getPositionInSec();
   }
 
     // calculate score
