@@ -1,3 +1,5 @@
+#ifndef USE_MAC_INCLUDES
+
 #include "image_loader.h"
 #include "il/il.h"
 #include "il/ilu.h"
@@ -72,3 +74,5 @@ void clearImage() {
 	glDeleteTextures(1, &imgID);
 	ilDeleteImages(1, &imgID);
 }
+
+#endif

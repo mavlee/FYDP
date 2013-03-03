@@ -17,13 +17,9 @@ Game::Game(int width, int height) {
 
   musicHandler = new MusicHandler();
   musicHandler->setMusicFile("res/music/clocks.mp3");
-  musicHandler->play();
 
-  // arbitrary for now
-  // TODO: fix this
-  data = new double[100000];
-  for (int i = 0; i < 100000; i++)
-    data[i] = 0;
+  musicData = musicHandler->getPeakData();
+
   songLocation = 0;
 
   // Instantiate components displayed on the screen
@@ -43,6 +39,8 @@ Game::Game(int width, int height) {
   comboLevel = 1;
 
   shiftZ = 0.f;
+
+  musicHandler->play();
 }
 
 Game::~Game() {
@@ -60,47 +58,15 @@ void Game::generateGameFeatures() {
   // this is filled with some static cubes for now
   playerCube = new Cube(0.f, 0.f, -(Z_NEAR + 200.f), 100.f, 100.f, 100.f, Cube::Multi);
 
-  int i = 0;
-  ifstream file("peaks.csv");
-  string value;
   Cube* obstacle;
-
-  while (file.good()) {
-    getline(file, value);
-    //cout << value << endl;
-    double v = atof(value.c_str());
-    data[i] = v;
-    if (v > 0) {
+  for (vector<float>::size_type i = 0; i < musicData[0].size(); i++) {
+    if (musicData[0][i] > 0) {
       float pos = -150.f + 150.f*(rand()%3);
       obstacle = new Cube(pos, 0.f, -(Z_NEAR + i*43.12), 100.f, 100.f, 100.f, Cube::Multi);
       obstacles.push_back(obstacle);
     }
-    i++;
   }
 
-  /*
-  for (int i = 0; i < musicData.size(); i++) {
-    if (musicData[i] > 0) {
-      obstacle = new Cube(0.f, 0.f, -(Z_NEAR + i*100), 100.f, 100.f, 100.f, Cube::Multi);
-      obstacles.push_back(obstacle);
-    }
-  }
-
-  obstacle = new Cube(-150.f, 0.f, -(Z_NEAR + 5000.f), 100.f, 100.f, 100.f, Cube::Multi);
-  obstacles.push_back(obstacle);
-
-  obstacle = new Cube(350.f, 0.f, -(Z_NEAR + 5000.f), 100.f, 100.f, 100.f, Cube::Red);
-  obstacles.push_back(obstacle);
-
-  obstacle = new Cube(450.f, 0.f, -(Z_NEAR + 6000.f), 100.f, 100.f, 100.f, Cube::Green);
-  obstacles.push_back(obstacle);
-
-  obstacle = new Cube(-150.f, 0.f, -(Z_NEAR + 7500.f), 100.f, 100.f, 100.f, Cube::Blue);
-  obstacles.push_back(obstacle);
-
-  obstacle = new Cube(150.f, 0.f, -Z_FAR, 100.f, 100.f, 100.f, Cube::Multi);
-  obstacles.push_back(obstacle);
-  */
 }
 
 // this probably shouldn't be void in the end, some tamper with points somehow too
@@ -206,7 +172,7 @@ void Game::update(int nFrames, float timeElapsed) {
   }
 
   songLocation++;
-  if (data[songLocation * 43 / 60] > 0) {
+  if (musicData[0][songLocation * 43 / 60] > 0) {
     cout << "peak " << songLocation << endl;
   }
 
