@@ -22,7 +22,7 @@ class MusicHandler {
 
     void play();
     void pause();
-    void setPosition();
+    void setPosition(QWORD pos);
     int getPosition();
 
   private:
