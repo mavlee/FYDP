@@ -14,4 +14,5 @@ const float PEAK_THRESHOLD = 0.1f;
 
 const float SHIFT_INTERVAL = 10.f;
 
-#endif
+const int KINECT_DEPTH_WIDTH = 320;
+const int KINECT_DEPTH_HEIGHT = 240;

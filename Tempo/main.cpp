@@ -3,6 +3,7 @@
 #include "game.h"
 #include "constants.h"
 #include "util.h"
+#include "kinect_controller.h"
 
 int main( int argc, char* args[] ) {
 #ifndef USE_MAC_INCLUDES
@@ -11,6 +12,17 @@ int main( int argc, char* args[] ) {
   Game *game;
   game = new Game(SCREEN_WIDTH, SCREEN_HEIGHT);
   SDL_Event event;
+
+#ifndef USE_MAC_INCLUDES
+  HANDLE hKinectProcess;
+  if (FAILED(kinectinit())) {
+    printf("Failed to initialize Kinect\n");
+  }else {
+    printf("Kinect Sensor started\n");
+    hKinectProcess = CreateThread( NULL, 0, KinectProcessThread, 
+      (void*)game->depthData, 0, NULL );
+  }
+#endif
 
   // FPS counter and regulator code
   Timer timer;
@@ -31,30 +43,30 @@ int main( int argc, char* args[] ) {
   while (!eventTriggered) {
     while (SDL_PollEvent(&event)) {
       switch (event.type) {
-        case SDL_QUIT:
-          eventTriggered = true;
-          break;
-        case SDL_KEYDOWN:
-			currentKey = event.key.keysym.sym;
-          game->handleKeys(currentKey, movementKeyDown);
-          break;
-		case SDL_KEYUP:
-			*movementKeyDown = 0;
-			break;
-        default:
-          break;
+      case SDL_QUIT:
+        eventTriggered = true;
+        break;
+      case SDL_KEYDOWN:
+        currentKey = event.key.keysym.sym;
+        game->handleKeys(currentKey, movementKeyDown);
+        break;
+      case SDL_KEYUP:
+        *movementKeyDown = 0;
+        break;
+      default:
+        break;
       }
     }
 
-	if (*movementKeyDown == 1) {
-		game->handleKeys(currentKey, movementKeyDown);
-	}
+    if (*movementKeyDown == 1) {
+      game->handleKeys(currentKey, movementKeyDown);
+    }
 
-	while (fpsTimer.get_ticks() < FPS_CAP) {
-		// wait until it's appropriate to update the screen.
-	}
-	// reset timer now
-	fpsTimer.start();
+    while (fpsTimer.get_ticks() < FPS_CAP) {
+      // wait until it's appropriate to update the screen.
+    }
+    // reset timer now
+    fpsTimer.start();
 
     frame++;
     if (timer.get_ticks() > 1000) {
@@ -67,7 +79,9 @@ int main( int argc, char* args[] ) {
   }
 
   delete game;
-
+#ifndef USE_MAC_INCLUDES
+  ShutdownKinect(hKinectProcess);
+#endif
   return 0;
 }
 

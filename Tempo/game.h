@@ -7,6 +7,7 @@
 #include <list>
 #include "objects.h"
 #include "music_handler.h"
+#include "constants.h"
 
 class Game {
   private:
@@ -44,10 +45,13 @@ class Game {
     // private functions
     void generateGameFeatures();
     void drawObstacles();
+    void drawPlayer();
     bool checkForCollisions();
     void updateScore();
 
   public:
+    BYTE depthData[KINECT_DEPTH_WIDTH*KINECT_DEPTH_HEIGHT*4];
+
     Game(int width, int height);
     ~Game();
 
