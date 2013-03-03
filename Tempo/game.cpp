@@ -15,7 +15,7 @@ Game::Game(int width, int height) {
   canvas = new Canvas(width, height);
 
   musicHandler = new MusicHandler();
-  musicHandler->setMusicFile("res/music/simpletest.mp3");
+  musicHandler->setMusicFile("res/music/clocks.mp3");
 
   musicData = musicHandler->getPeakData();
 
@@ -174,7 +174,7 @@ void Game::update(int nFrames, float timeElapsed) {
     }
 
   //if (musicData[0][songLocation * 43 / 60] > 0) {
-  if (musicData[0][int(musicHandler->getPositionInSec()*43)] > 1 && musicHandler->getPositionInSec() - lastPeakTime > 0.1) {
+  if (musicData[0][int(musicHandler->getPositionInSec()*43)] > 0 && musicHandler->getPositionInSec() - lastPeakTime > 0.1) {
     cout << "time " << musicHandler->getPositionInSec() << endl;
     lastPeakTime = musicHandler->getPositionInSec();
   }
