@@ -74,10 +74,10 @@ bool Game::checkForCollisions() {
     if (!(*iterator)->collided) {
       if ((*iterator)->zNear + Z_NEAR > shiftZ + playerCube->zFar + Z_NEAR && (*iterator)->zFar + Z_NEAR < shiftZ + playerCube->zFar + Z_NEAR) {
         if (((*iterator)->wRight > playerCube->wLeft + cameraX && (*iterator)->wLeft < playerCube->wLeft + cameraX)
-            || ((*iterator)->wLeft < playerCube->wRight + cameraX && (*iterator)->wRight > playerCube->wRight + cameraX)) {
-          (*iterator)->collided = true;
-          printf("Collision detected at:\nCurrent Depth: %f\nCurrent Left: %f\nCurrent Right: %f\nDepth: %f\nLeft: %f\nRight: %f\n", shiftZ - playerCube->zFar, playerCube->wLeft + cameraX, playerCube->wRight + cameraX, (*iterator)->zNear, (*iterator)->wLeft, (*iterator)->wRight);
-          return true;
+          || ((*iterator)->wLeft < playerCube->wRight + cameraX && (*iterator)->wRight > playerCube->wRight + cameraX)) {
+            (*iterator)->collided = true;
+            printf("Collision detected at:\nCurrent Depth: %f\nCurrent Left: %f\nCurrent Right: %f\nDepth: %f\nLeft: %f\nRight: %f\n", shiftZ - playerCube->zFar, playerCube->wLeft + cameraX, playerCube->wRight + cameraX, (*iterator)->zNear, (*iterator)->wLeft, (*iterator)->wRight);
+            return true;
         }
       }
     }
@@ -108,37 +108,36 @@ void Game::drawObstacles() {
 }
 
 void Game::draw() {
-    // TODO
-    //
-    // clean this up - canvas.prepForDrawing() maybe
-    // and canvas.finishedDrawing()
-    // should be using playerCube.draw() ??
+  // TODO
+  //
+  // clean this up - canvas.prepForDrawing() maybe
+  // and canvas.finishedDrawing()
+  // should be using playerCube.draw() ??
 
-    /*
-    * Someone move all the drawing magic into canvas.
-    */
-    canvas->draw(shiftZ);
+  /*
+  * Someone move all the drawing magic into canvas.
+  */
+  canvas->draw(shiftZ);
 
-    // Render the cube
-    glPushMatrix();
-    glTranslatef(cameraX, cameraY, 0);
-    glTranslatef(0, 0, shiftZ);
+  // Render the cube
+  glPushMatrix();
+  glTranslatef(cameraX, cameraY, 0);
+  glTranslatef(0, 0, shiftZ);
 
-    int i, j;
-    int currentVer;
-    glBegin( GL_QUADS );
-    for (i = 0; i < playerCube->nFaces; i++) {
-        for (j = 0; j < 4; j++) {
-            currentVer = playerCube->face[i].ver[j];
+  int i, j;
+  int currentVer;
+  glBegin( GL_QUADS );
+  for (i = 0; i < playerCube->nFaces; i++) {
+    for (j = 0; j < 4; j++) {
+      currentVer = playerCube->face[i].ver[j];
 
-            // back face
-            if (gColorMode == COLOR_MODE_MULTI) {
-                glColor3fv(playerCube->ver[currentVer].col);
-            } else {
-                glColor3f( 0.f, 1.f, 1.f);
-            }
-            glVertex3fv(playerCube->ver[currentVer].pos);
-        }
+      // back face
+      if (gColorMode == COLOR_MODE_MULTI) {
+        glColor3fv(playerCube->ver[currentVer].col);
+      } else {
+        glColor3f( 0.f, 1.f, 1.f);
+      }
+      glVertex3fv(playerCube->ver[currentVer].pos);
     }
   }
   glEnd();
@@ -179,7 +178,7 @@ void Game::update(int nFrames, float timeElapsed) {
     lastPeakTime = pos;
     /*
     for (std::list<Cube*>::const_iterator iterator = obstacles.begin(), end = obstacles.end(); iterator != end; ++iterator) {
-      cout << ((*iterator)->zNear + (*iterator)->zFar) / 2 - shiftZ << endl;
+    cout << ((*iterator)->zNear + (*iterator)->zFar) / 2 - shiftZ << endl;
     }
     */
   }
@@ -196,49 +195,49 @@ void Game::update(int nFrames, float timeElapsed) {
 void Game::handleKeys(int key, int* movementKeyDown) {
   bool translation = false;
   switch (key) {
-    case ' ':
-      musicHandler->pause();
-      break;
-    case SDLK_q:
-      //Toggle color mode
-      if (gColorMode == COLOR_MODE_CYAN) {
-        gColorMode = COLOR_MODE_MULTI;
-      } else {
-        gColorMode = COLOR_MODE_CYAN;
-      }
-      break;
-    case SDLK_a:
-      *movementKeyDown = 1;
-      translation = true;
-      cameraX -= 16.f;
-      break;
-    case SDLK_d:
-      *movementKeyDown = 1;
-      translation = true;
-      cameraX += 16.f;
-      break;
-    case SDLK_e:
-      // Cycle through projection scales
-      if (gProjectionScale == 1.f) {
-        // Zoom out
-        gProjectionScale = 2.f;
-      } else if( gProjectionScale == 2.f ) {
-        // Zoom in
-        gProjectionScale = 0.5f;
-      }
-      else if( gProjectionScale == 0.5f ) {
-        // Regular zoom
-        gProjectionScale = 1.f;
-      }
+  case ' ':
+    musicHandler->pause();
+    break;
+  case SDLK_q:
+    //Toggle color mode
+    if (gColorMode == COLOR_MODE_CYAN) {
+      gColorMode = COLOR_MODE_MULTI;
+    } else {
+      gColorMode = COLOR_MODE_CYAN;
+    }
+    break;
+  case SDLK_a:
+    *movementKeyDown = 1;
+    translation = true;
+    cameraX -= 16.f;
+    break;
+  case SDLK_d:
+    *movementKeyDown = 1;
+    translation = true;
+    cameraX += 16.f;
+    break;
+  case SDLK_e:
+    // Cycle through projection scales
+    if (gProjectionScale == 1.f) {
+      // Zoom out
+      gProjectionScale = 2.f;
+    } else if( gProjectionScale == 2.f ) {
+      // Zoom in
+      gProjectionScale = 0.5f;
+    }
+    else if( gProjectionScale == 0.5f ) {
+      // Regular zoom
+      gProjectionScale = 1.f;
+    }
 
-      // Update projection matrix
-      glMatrixMode( GL_PROJECTION );
-      glLoadIdentity();
-      glFrustum(-canvasWidth / 2 * gProjectionScale, canvasWidth / 2 * gProjectionScale,
-          canvasHeight / 2 * gProjectionScale, -canvasHeight / 2 + gProjectionScale,
-          Z_NEAR / gProjectionScale, Z_FAR / gProjectionScale);
-      break;
-    default:
-      break;
+    // Update projection matrix
+    glMatrixMode( GL_PROJECTION );
+    glLoadIdentity();
+    glFrustum(-canvasWidth / 2 * gProjectionScale, canvasWidth / 2 * gProjectionScale,
+      canvasHeight / 2 * gProjectionScale, -canvasHeight / 2 + gProjectionScale,
+      Z_NEAR / gProjectionScale, Z_FAR / gProjectionScale);
+    break;
+  default:
+    break;
   }
 }
