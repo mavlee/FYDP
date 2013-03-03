@@ -39,6 +39,8 @@ class Game {
     float shiftZ;
     Cube* playerCube;
     std::list<Cube*> obstacles;
+    int songLocation;
+    double *data;
 
     // private functions
     void analyzeMusic();

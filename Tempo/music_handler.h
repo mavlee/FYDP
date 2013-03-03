@@ -6,7 +6,7 @@
 
 #define BUF_SIZE 512
 #define THRESHOLD_WINDOW_SIZE 15
-#define THRESHOLD_MULTIPLIER 1.5
+#define THRESHOLD_MULTIPLIER 2.4
 
 using namespace std;
 
