@@ -20,12 +20,12 @@ and may not be redistributed without written permission.*/
 
 #else
 
-#include <GL/gl.h>
-#include <GL/glu.h>
 #include <sdl/SDL.h>
 #include <sdl/SDL_image.h>
 #include <sdl/SDL_ttf.h>
 #include <sdl/SDL_opengl.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
 
 #endif
 
