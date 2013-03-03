@@ -108,37 +108,37 @@ void Game::drawObstacles() {
 }
 
 void Game::draw() {
-  // TODO
-  //
-  // clean this up - canvas.prepForDrawing() maybe
-  // and canvas.finishedDrawing()
-  // should be using playerCube.draw() ??
+    // TODO
+    //
+    // clean this up - canvas.prepForDrawing() maybe
+    // and canvas.finishedDrawing()
+    // should be using playerCube.draw() ??
 
+    /*
+    * Someone move all the drawing magic into canvas.
+    */
+    canvas->draw();
 
-  /*
-   * Someone move all the drawing magic into canvas.
-   */
-  canvas->draw();
+    // Render the cube
+    glPushMatrix();
+    glTranslatef(cameraX, cameraY, 0);
+    glTranslatef(0, 0, shiftZ);
 
-  // Render the cube
-  glPushMatrix();
-  glTranslatef(cameraX, cameraY, 0);
-  glTranslatef(0, 0, shiftZ);
+    int i, j;
+    int currentVer;
+    glBegin( GL_QUADS );
+    for (i = 0; i < playerCube->nFaces; i++) {
+        for (j = 0; j < 4; j++) {
+            currentVer = playerCube->face[i].ver[j];
 
-  int i, j;
-  int currentVer;
-  glBegin( GL_QUADS );
-  for (i = 0; i < playerCube->nFaces; i++) {
-    for (j = 0; j < 4; j++) {
-      currentVer = playerCube->face[i].ver[j];
-
-      // back face
-      if (gColorMode == COLOR_MODE_MULTI) {
-        glColor3fv(playerCube->ver[currentVer].col);
-      } else {
-        glColor3f(0.f, 1.f, 1.f);
-      }
-      glVertex3fv(playerCube->ver[currentVer].pos);
+            // back face
+            if (gColorMode == COLOR_MODE_MULTI) {
+                glColor3fv(playerCube->ver[currentVer].col);
+            } else {
+                glColor3f( 0.f, 1.f, 1.f);
+            }
+            glVertex3fv(playerCube->ver[currentVer].pos);
+        }
     }
   }
   glEnd();
