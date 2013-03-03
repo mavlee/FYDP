@@ -9,5 +9,5 @@
 
 bool initImageLoader();
 bool loadImage(char* imagePath, int &width, int &height, bool &hasAlpha, GLuint* texture, GLuint* textureId);
-void clearImage();
+void clearImage(GLuint* textureID);
 
