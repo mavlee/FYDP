@@ -50,7 +50,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL.lib;SDLmain.lib;SDL_image.lib;SDL_ttf.lib;opengl32.lib;glu32.lib;bass.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL.lib;SDLmain.lib;SDL_image.lib;SDL_ttf.lib;opengl32.lib;glu32.lib;bass.lib;DevIL.lib;ILU.lib;ILUT.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
     </Link>
   </ItemDefinitionGroup>
@@ -70,6 +70,7 @@
   <ItemGroup>
     <ClCompile Include="canvas.cpp" />
     <ClCompile Include="game.cpp" />
+    <ClCompile Include="image_loader.cpp" />
     <ClCompile Include="LText.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="music_handler.cpp" />
@@ -82,6 +83,7 @@
     <ClInclude Include="constants.h" />
     <ClInclude Include="cubeConstants.h" />
     <ClInclude Include="game.h" />
+    <ClInclude Include="image_loader.h" />
     <ClInclude Include="LOpenGL.h" />
     <ClInclude Include="LText.h" />
     <ClInclude Include="music_handler.h" />
