@@ -6,7 +6,8 @@
 
 #define BUF_SIZE 512
 #define THRESHOLD_WINDOW_SIZE 15
-#define THRESHOLD_MULTIPLIER 1.5
+#define THRESHOLD_MULTIPLIER 1.8
+#define NUM_BANDS 1
 
 using namespace std;
 
@@ -14,13 +15,27 @@ class MusicHandler {
   public:
     MusicHandler();
     ~MusicHandler();
-    int analyze();
-    void setMusicFile(string filename);
+    int setMusicFile(string filename);
+
+    int getNumBands();
+    const vector<vector<float> >& getPeakData();
+
+    void play();
+    void pause();
+    void setPosition();
+    int getPosition();
 
   private:
-    void to_csv(string name, vector<float> vec);
+    void toCsv(string name, vector<float> vec);
     void error(string msg);
+    int analyze();
+    int preparePlayback();
+    void reset();
+
     string musicFilename;
+    DWORD floatable; // floating-point channel support?
+    vector<vector<float> > peakData;
+    DWORD playbackChan;	// the channel... HMUSIC or HSTREAM
 };
 
 #endif
