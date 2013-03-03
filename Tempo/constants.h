@@ -16,3 +16,4 @@ const float SHIFT_INTERVAL = 10.f;
 
 const int KINECT_DEPTH_WIDTH = 320;
 const int KINECT_DEPTH_HEIGHT = 240;
+#endif
