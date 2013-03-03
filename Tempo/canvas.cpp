@@ -39,7 +39,7 @@ void Canvas::initCanvas() {
   glMatrixMode( GL_PROJECTION );
   glLoadIdentity();
 
-  glRotatef(-20.0f, 1, 0, 0);
+  glRotatef(SCREEN_TILT, 1, 0, 0);
 
   float offset = 0.0f;
   glFrustum( -width/2, width/2, height/2 + offset, -height/2 + offset, Z_NEAR, Z_FAR);
@@ -87,23 +87,29 @@ void Canvas::cleanupCanvas() {
   SDL_Quit();
 }
 
-void Canvas::draw() {
+void Canvas::draw(float shiftZ) {
   // Clear color buffer & depth buffer
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   // Draw the skybox before anything else is drawn.
   if (skyboxLoaded) {
-    drawSkybox(skyboxWidth, skyboxHeight);
+    drawSkybox(skyboxWidth, skyboxHeight, shiftZ);
   }
 }
 
-void Canvas::drawSkybox(int width, int height) {
+void Canvas::drawSkybox(int width, int height, float shiftZ) {
   // Save current matrix.
   glPushMatrix();
 
+  //glRotatef(-90.0, 0.0, 1.0, 0.0);
+
   glPushAttrib(GL_ENABLE_BIT);
   glEnable(GL_TEXTURE_2D);
+  glDisable(GL_DEPTH_TEST);
+  glDisable(GL_LIGHTING);
+  glDisable(GL_BLEND);
 
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
   //Set texture parameters
   glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
   glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
@@ -116,21 +122,37 @@ void Canvas::drawSkybox(int width, int height) {
   }
 
   glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-  glRotatef(-90.0, 1.0, 0.0, 0.0);
+  //glRotatef(90.0, 1.0, 1.0, 0.0);
+  glTranslatef(0, 0, shiftZ);
+
+  glRotatef(-SCREEN_TILT, 1, 0, 0);
 
   double e = 0.001;
 
   glBindTexture(GL_TEXTURE_2D, SKYBOX);
   glBegin(GL_QUADS);
-/*    // Four sides
+    // Four sides
     glTexCoord2f(1.0/4.0 - e, 2.0/3.0 - e); glVertex3f(  0.0f,  size,  size/2.0 );
     glTexCoord2f(0.0/4.0 + e, 2.0/3.0 - e); glVertex3f(  0.0f,  0.0f,  size/2.0 );
     glTexCoord2f(0.0/4.0 + e, 1.0/3.0 + e); glVertex3f(  0.0f,  0.0f, -size/2.0 );
-    glTexCoord2f(1.0/4.0 - e, 1.0/3.0 + e); glVertex3f(  0.0f,  size, -size/2.0 );*/
-            glTexCoord2f( 0.f, 0.f ); glVertex2f(         0.f,          0.f );
-            glTexCoord2f( 1.f, 0.f ); glVertex2f( skyboxWidth,          0.f );
-            glTexCoord2f( 1.f, 1.f ); glVertex2f( skyboxWidth, skyboxHeight );
-            glTexCoord2f( 0.f, 1.f ); glVertex2f(         0.f, skyboxHeight );
+    glTexCoord2f(1.0/4.0 - e, 1.0/3.0 + e); glVertex3f(  0.0f,  size, -size/2.0 );
+
+            glTexCoord2f( 0.f, 0.f ); glVertex3f(         0.f,          0.f  , 10000);
+            glTexCoord2f( 1.f, 0.f ); glVertex3f( skyboxWidth,          0.f  , 10000);
+            glTexCoord2f( 1.f, 1.f ); glVertex3f( skyboxWidth, -skyboxHeight , 10000);
+            glTexCoord2f( 0.f, 1.f ); glVertex3f(         0.f, -skyboxHeight , 10000);
+
+            // Bottom
+            glTexCoord2f( 1.0/4.0, 3.0/3.0 ); glVertex3f(  -size/2, -size/2000,    0.0 );
+            glTexCoord2f( 2.0/4.0, 3.0/3.0 ); glVertex3f(   size/2, -size/2000,    0.0 );
+            glTexCoord2f( 2.0/4.0, 2.0/3.0 ); glVertex3f(   size/2, -size/2000,  -size );
+            glTexCoord2f( 1.0/4.0, 2.0/3.0 ); glVertex3f(  -size/2, -size/2000,  -size );
+
+            // Top
+            glTexCoord2f( 1.0/4.0, 1.0/3.0 ); glVertex3f(  -size/2,  -SCREEN_HEIGHT/2 + 00,    0.0 );
+            glTexCoord2f( 2.0/4.0, 1.0/3.0 ); glVertex3f(   size/2,  -SCREEN_HEIGHT/2 + 00,    0.0 );
+            glTexCoord2f( 2.0/4.0, 0.0/3.0 ); glVertex3f(   size/2,  -SCREEN_HEIGHT/2 + 00,  -size );
+            glTexCoord2f( 1.0/4.0, 0.0/3.0 ); glVertex3f(  -size/2,  -SCREEN_HEIGHT/2 + 00,  -size );
   glEnd();
 
   glPopAttrib();

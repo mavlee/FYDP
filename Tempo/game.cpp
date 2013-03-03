@@ -117,7 +117,7 @@ void Game::draw() {
     /*
     * Someone move all the drawing magic into canvas.
     */
-    canvas->draw();
+    canvas->draw(shiftZ);
 
     // Render the cube
     glPushMatrix();
