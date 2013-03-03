@@ -1,8 +1,7 @@
-#ifndef USE_MAC_INCLUDES
-
 #include "image_loader.h"
 #include "constants.h"
 
+#ifndef USE_MAC_INCLUDES
 bool initImageLoader() {
     //Initialize DevIL
     ilInit();
@@ -80,6 +79,16 @@ bool loadImage(char* imagePath, int &width, int &height, bool &hasAlpha, GLuint*
 }
 
 void clearImage() {
+}
+
+#else
+
+void clearImage() {}
+bool loadImage(char* imagePath, int &width, int &height, bool &hasAlpha, GLuint* texture, GLuint* textureId) {
+  return true;
+}
+bool initImageLoader() {
+  return true;
 }
 
 #endif

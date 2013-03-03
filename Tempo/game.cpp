@@ -15,7 +15,7 @@ Game::Game(int width, int height) {
   canvas = new Canvas(width, height);
 
   musicHandler = new MusicHandler();
-  musicHandler->setMusicFile("res/music/freaks.mp3");
+  musicHandler->setMusicFile("res/music/simpletest.mp3");
 
   musicData = musicHandler->getPeakData();
 
@@ -175,6 +175,7 @@ void Game::update(int nFrames, float timeElapsed) {
   songLocation++;
   if (musicData[0][songLocation * 43 / 60] > 0) {
     cout << "peak " << songLocation << endl;
+    cout << "time " << musicHandler->getPositionInSec() << endl;
   }
 
     // calculate score
@@ -187,8 +188,11 @@ void Game::update(int nFrames, float timeElapsed) {
 
 // WASD should move the playerCube, not the camera
 void Game::handleKeys(int key, int* movementKeyDown) {
-    bool translation = false;
-    switch (key) {
+  bool translation = false;
+  switch (key) {
+    case ' ':
+      musicHandler->pause();
+      break;
     case SDLK_q:
         //Toggle color mode
         if (gColorMode == COLOR_MODE_CYAN) {
