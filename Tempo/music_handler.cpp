@@ -12,7 +12,8 @@ MusicHandler::MusicHandler() {
     char msg[256];
     sprintf(msg, "Wrong BASS version: %d, expected %d\n", HIWORD(BASS_GetVersion()), BASSVERSION);
     error(msg);
-    throw exception(msg);
+    //throw exception(msg);
+    throw msg;
   }
 
   // enable floating-point DSP
@@ -21,7 +22,8 @@ MusicHandler::MusicHandler() {
   if (!BASS_Init(-1,44100,0,NULL,NULL)) {
     char msg[100] = "Error initialising BASS!";
     error(msg);
-    throw exception(msg);
+    //throw exception(msg);
+    throw msg;
   }
 
   // check for floating-point capability
@@ -60,7 +62,7 @@ int MusicHandler::setMusicFile(string filename) {
   printf("Set file to %s\n", filename.c_str());
 
   // check if file exists
-  ifstream ifile(filename);
+  ifstream ifile(filename.c_str());
   if (!ifile) {
     error("File does not exist");
     return 1;
@@ -232,6 +234,6 @@ void MusicHandler::toCsv (string name, vector<float> vec) {
 }
 
 void MusicHandler::error(string msg) {
-  printf("Music handler error: %s.\nError code: %d", msg, BASS_ErrorGetCode());
+  printf("Music handler error: %s.\nError code: %d", msg.c_str(), BASS_ErrorGetCode());
   //printf("Music handler error: %s.\n", msg);
 }
