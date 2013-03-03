@@ -214,13 +214,13 @@ void MusicHandler::pause() {
 }
 
 void MusicHandler::setPosition(QWORD pos) {
-    BASS_ChannelSetPosition(playbackChan, pos, BASS_POS_BYTE);
+  BASS_ChannelSetPosition(playbackChan, pos, BASS_POS_BYTE);
 }
 
-int MusicHandler::getPosition() {
-    QWORD pos = BASS_ChannelGetPosition(playbackChan, BASS_POS_BYTE);
-    printf("pos: %ld, pos2sec: %Lf\n", pos, BASS_ChannelBytes2Seconds(playbackChan, pos));
-    return pos;
+double MusicHandler::getPositionInSec() {
+  QWORD pos = BASS_ChannelGetPosition(playbackChan, BASS_POS_BYTE);
+  double pos2sec = BASS_ChannelBytes2Seconds(playbackChan, pos);
+  return pos2sec;
 }
 
 /** Helper fcns**/

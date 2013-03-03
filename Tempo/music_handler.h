@@ -23,7 +23,7 @@ class MusicHandler {
     void play();
     void pause();
     void setPosition(QWORD pos);
-    int getPosition();
+    double getPositionInSec();
 
   private:
     void toCsv(string name, vector<float> vec);
