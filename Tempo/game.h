@@ -35,12 +35,14 @@ class Game {
     int points;
     int comboLevel;
     int combo;
+    vector <float> musicData;
     float shiftZ;
     Cube* playerCube;
     std::list<Cube*> obstacles;
+    int songLocation;
+    double *data;
 
     // private functions
-    void analyzeMusic();
     void generateGameFeatures();
     void drawObstacles();
     bool checkForCollisions();
