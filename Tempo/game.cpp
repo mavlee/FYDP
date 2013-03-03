@@ -17,6 +17,13 @@ Game::Game(int width, int height) {
 
   musicHandler = new MusicHandler();
 
+  // arbitrary for now
+  // TODO: fix this
+  data = new double[100000];
+  for (int i = 0; i < 100000; i++)
+    data[i] = 0;
+  songLocation = 0;
+
   // Instantiate components displayed on the screen
   analyzeMusic();
   generateGameFeatures();
@@ -63,14 +70,16 @@ void Game::generateGameFeatures() {
 	Cube* obstacle;
 
   while (file.good()) {
-    i++;
     getline(file, value);
     //cout << value << endl;
     double v = atof(value.c_str());
+    data[i] = v;
     if (v > 0) {
-      obstacle = new Cube(0.f, 0.f, -(Z_NEAR + i*100), 100.f, 100.f, 100.f, Cube::Multi);
+      float pos = -150.f + 150.f*(rand()%3);
+      obstacle = new Cube(pos, 0.f, -(Z_NEAR + i*43.12), 100.f, 100.f, 100.f, Cube::Multi);
       obstacles.push_back(obstacle);
     }
+    i++;
   }
 
   /*
@@ -125,9 +134,10 @@ void Game::updateScore() {
     combo = 0;
     comboLevel = 1;
   }
-  if (combo % 100000 == 0) {
+  if (combo % 10000 == 0) {
     comboLevel++;
   }
+  combo++;
   points += 1 * comboLevel;
 }
 
@@ -199,6 +209,11 @@ void Game::update(int nFrames, float timeElapsed) {
 
   if (col) {
 	  printf("Collision\n");
+  }
+
+  songLocation++;
+  if (data[songLocation * 43 / 60] > 0) {
+    cout << "peak " << songLocation << endl;
   }
 
   // calculate score
