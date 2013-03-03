@@ -39,7 +39,7 @@ class Game {
     float shiftZ;
     Cube* playerCube;
     std::list<Cube*> obstacles;
-    int songLocation;
+    double lastPeakTime;
 
     // private functions
     void generateGameFeatures();
