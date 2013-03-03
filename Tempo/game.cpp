@@ -10,38 +10,37 @@
 #include "music_handler.h"
 
 Game::Game(int width, int height) {
-    canvasWidth = width;
-    canvasHeight = height;
-    canvas = new Canvas(width, height);
+  canvasWidth = width;
+  canvasHeight = height;
+  canvas = new Canvas(width, height);
+  canvas->initCanvas();
 
-    musicHandler = new MusicHandler();
-    musicHandler->setMusicFile("res/music/clocks.mp3");
-    musicHandler->play();
+  musicHandler = new MusicHandler();
+  musicHandler->setMusicFile("res/music/clocks.mp3");
 
-    // arbitrary for now
-    // TODO: fix this
-    data = new double[100000];
-    for (int i = 0; i < 100000; i++)
-        data[i] = 0;
-    songLocation = 0;
+  musicData = musicHandler->getPeakData();
 
-    // Instantiate components displayed on the screen
-    generateGameFeatures();
-    text = new Text(width, height);
-    pointsText = new Text(width, height);
+  songLocation = 0;
 
-    // color stuff and camera
-    gColorMode = COLOR_MODE_CYAN;
+  // Instantiate components displayed on the screen
+  generateGameFeatures();
+  text = new Text(width, height);
+  pointsText = new Text(width, height);
 
-    gProjectionScale = 1.f;
-    cameraX = 0.f;
-    cameraY = 0.f;
+  // color stuff and camera
+  gColorMode = COLOR_MODE_CYAN;
 
-    points = 0;
-    combo = 0;
-    comboLevel = 1;
+  gProjectionScale = 1.f;
+  cameraX = 0.f;
+  cameraY = 0.f;
 
-    shiftZ = 0.f;
+  points = 0;
+  combo = 0;
+  comboLevel = 1;
+
+  shiftZ = 0.f;
+
+  musicHandler->play();
 }
 
 Game::~Game() {
@@ -55,51 +54,18 @@ Game::~Game() {
 
 // based on whatever music analysis gives us, generate game features
 void Game::generateGameFeatures() {
-    // TODO: do this dynamically
-    // this is filled with some static cubes for now
-    playerCube = new Cube(0.f, 0.f, -(Z_NEAR + 200.f), 100.f, 100.f, 100.f, Cube::Multi);
+  // TODO: do this dynamically
+  // this is filled with some static cubes for now
+  playerCube = new Cube(0.f, 0.f, -(Z_NEAR + 200.f), 100.f, 100.f, 100.f, Cube::Multi);
 
-    int i = 0;
-    ifstream file("peaks.csv");
-    string value;
-    Cube* obstacle;
-
-    while (file.good()) {
-        getline(file, value);
-        //cout << value << endl;
-        double v = atof(value.c_str());
-        data[i] = v;
-        if (v > 0) {
-            float pos = -150.f + 150.f*(rand()%3);
-            obstacle = new Cube(pos, 0.f, -(Z_NEAR + i*43.12), 100.f, 100.f, 100.f, Cube::Multi);
-            obstacles.push_back(obstacle);
-        }
-        i++;
+  Cube* obstacle;
+  for (vector<float>::size_type i = 0; i < musicData[0].size(); i++) {
+    if (musicData[0][i] > 0) {
+      float pos = -150.f + 150.f*(rand()%3);
+      obstacle = new Cube(pos, 0.f, -(Z_NEAR + i*43.12), 100.f, 100.f, 100.f, Cube::Multi);
+      obstacles.push_back(obstacle);
     }
-
-    /*
-    for (int i = 0; i < musicData.size(); i++) {
-    if (musicData[i] > 0) {
-    obstacle = new Cube(0.f, 0.f, -(Z_NEAR + i*100), 100.f, 100.f, 100.f, Cube::Multi);
-    obstacles.push_back(obstacle);
-    }
-    }
-
-    obstacle = new Cube(-150.f, 0.f, -(Z_NEAR + 5000.f), 100.f, 100.f, 100.f, Cube::Multi);
-    obstacles.push_back(obstacle);
-
-    obstacle = new Cube(350.f, 0.f, -(Z_NEAR + 5000.f), 100.f, 100.f, 100.f, Cube::Red);
-    obstacles.push_back(obstacle);
-
-    obstacle = new Cube(450.f, 0.f, -(Z_NEAR + 6000.f), 100.f, 100.f, 100.f, Cube::Green);
-    obstacles.push_back(obstacle);
-
-    obstacle = new Cube(-150.f, 0.f, -(Z_NEAR + 7500.f), 100.f, 100.f, 100.f, Cube::Blue);
-    obstacles.push_back(obstacle);
-
-    obstacle = new Cube(150.f, 0.f, -Z_FAR, 100.f, 100.f, 100.f, Cube::Multi);
-    obstacles.push_back(obstacle);
-    */
+  }
 }
 
 // this probably shouldn't be void in the end, some tamper with points somehow too
@@ -207,10 +173,10 @@ void Game::update(int nFrames, float timeElapsed) {
         printf("Collision\n");
     }
 
-    songLocation++;
-    if (data[songLocation * 43 / 60] > 0) {
-        cout << "peak " << songLocation << endl;
-    }
+  songLocation++;
+  if (musicData[0][songLocation * 43 / 60] > 0) {
+    cout << "peak " << songLocation << endl;
+  }
 
     // calculate score
     updateScore();

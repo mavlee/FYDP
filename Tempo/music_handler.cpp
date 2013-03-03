@@ -12,7 +12,8 @@ MusicHandler::MusicHandler() {
     char msg[256];
     sprintf(msg, "Wrong BASS version: %d, expected %d\n", HIWORD(BASS_GetVersion()), BASSVERSION);
     error(msg);
-    throw exception(msg);
+    //throw exception(msg);
+    throw msg;
   }
 
   // enable floating-point DSP
@@ -21,7 +22,8 @@ MusicHandler::MusicHandler() {
   if (!BASS_Init(-1,44100,0,NULL,NULL)) {
     char msg[100] = "Error initialising BASS!";
     error(msg);
-    throw exception(msg);
+    //throw exception(msg);
+    throw msg;
   }
 
   // check for floating-point capability
@@ -60,7 +62,7 @@ int MusicHandler::setMusicFile(string filename) {
   printf("Set file to %s\n", filename.c_str());
 
   // check if file exists
-  ifstream ifile(filename);
+  ifstream ifile(filename.c_str());
   if (!ifile) {
     error("File does not exist");
     return 1;
@@ -164,15 +166,14 @@ int MusicHandler::analyze() {
 
   // find peaks
   peakData[0].resize(FFT_data.size() - 2, 0);
-  vector<float> peaks(FFT_data.size() - 2, 0);
   for (int i = 0; i < prunned_spectral_flux.size() - 1; i++) {
     if (prunned_spectral_flux[i] > prunned_spectral_flux[i+1]) {
-      peaks[i] = prunned_spectral_flux[i];
+      peakData[0][i] = prunned_spectral_flux[i];
     } else {
-      peaks[i] = 0;
+      peakData[0][i] = 0;
     }
   }
-  toCsv("peaks.csv", peaks);
+  toCsv("peaks.csv", peakData[0]);
 
   // clean up memory
   for (int i = 0; i < FFT_data.size(); i++) {
@@ -212,11 +213,14 @@ void MusicHandler::pause() {
   BASS_ChannelPause(playbackChan);
 }
 
-void MusicHandler::setPosition() {
+void MusicHandler::setPosition(QWORD pos) {
+    BASS_ChannelSetPosition(playbackChan, pos, BASS_POS_BYTE);
 }
 
 int MusicHandler::getPosition() {
-    return 0;
+    QWORD pos = BASS_ChannelGetPosition(playbackChan, BASS_POS_BYTE);
+    printf("pos: %ld, pos2sec: %Lf\n", pos, BASS_ChannelBytes2Seconds(playbackChan, pos));
+    return pos;
 }
 
 /** Helper fcns**/
@@ -230,6 +234,6 @@ void MusicHandler::toCsv (string name, vector<float> vec) {
 }
 
 void MusicHandler::error(string msg) {
-  printf("Music handler error: %s.\nError code: %d", msg, BASS_ErrorGetCode());
+  printf("Music handler error: %s.\nError code: %d", msg.c_str(), BASS_ErrorGetCode());
   //printf("Music handler error: %s.\n", msg);
 }

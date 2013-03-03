@@ -1,3 +1,5 @@
+#ifndef USE_MAC_INCLUDES
+
 #include "image_loader.h"
 #include "constants.h"
 
@@ -79,3 +81,5 @@ bool loadImage(char* imagePath, int &width, int &height, bool &hasAlpha, GLuint*
 
 void clearImage() {
 }
+
+#endif
