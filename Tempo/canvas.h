@@ -10,14 +10,14 @@ private:
 	int height;
 	SDL_Surface *screen;
 
-	void drawSkybox(int width, int height);
+	void drawSkybox(int width, int height, float shiftZ);
 
 public:
 	Canvas(int width, int height);
 
 	void initCanvas(); // inits GL
 	void cleanupCanvas(); // cleans up GL
-	void draw();
+	void draw(float shiftZ);
 };
 
 #endif
