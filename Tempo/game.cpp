@@ -16,6 +16,8 @@ Game::Game(int width, int height) {
   canvas->initCanvas();
 
   musicHandler = new MusicHandler();
+  musicHandler->setMusicFile("res/music/clocks.mp3");
+  musicHandler->play();
 
   // arbitrary for now
   // TODO: fix this
@@ -25,7 +27,6 @@ Game::Game(int width, int height) {
   songLocation = 0;
 
   // Instantiate components displayed on the screen
-  analyzeMusic();
   generateGameFeatures();
   text = new Text(width, height);
   pointsText = new Text(width, height);
@@ -53,21 +54,16 @@ Game::~Game() {
   delete pointsText;
 }
 
-// Wien's stuff goes here
-void Game::analyzeMusic() {
-  int ret = musicHandler->analyze();
-}
-
 // based on whatever music analysis gives us, generate game features
 void Game::generateGameFeatures() {
   // TODO: do this dynamically
   // this is filled with some static cubes for now
-	playerCube = new Cube(0.f, 0.f, -(Z_NEAR + 200.f), 100.f, 100.f, 100.f, Cube::Multi);
+  playerCube = new Cube(0.f, 0.f, -(Z_NEAR + 200.f), 100.f, 100.f, 100.f, Cube::Multi);
 
   int i = 0;
   ifstream file("peaks.csv");
   string value;
-	Cube* obstacle;
+  Cube* obstacle;
 
   while (file.good()) {
     getline(file, value);
@@ -89,23 +85,21 @@ void Game::generateGameFeatures() {
       obstacles.push_back(obstacle);
     }
   }
-  */
 
-  /*
-	obstacle = new Cube(-150.f, 0.f, -(Z_NEAR + 5000.f), 100.f, 100.f, 100.f, Cube::Multi);
-	obstacles.push_back(obstacle);
+  obstacle = new Cube(-150.f, 0.f, -(Z_NEAR + 5000.f), 100.f, 100.f, 100.f, Cube::Multi);
+  obstacles.push_back(obstacle);
 
-	obstacle = new Cube(350.f, 0.f, -(Z_NEAR + 5000.f), 100.f, 100.f, 100.f, Cube::Red);
-	obstacles.push_back(obstacle);
+  obstacle = new Cube(350.f, 0.f, -(Z_NEAR + 5000.f), 100.f, 100.f, 100.f, Cube::Red);
+  obstacles.push_back(obstacle);
 
-	obstacle = new Cube(450.f, 0.f, -(Z_NEAR + 6000.f), 100.f, 100.f, 100.f, Cube::Green);
-	obstacles.push_back(obstacle);
+  obstacle = new Cube(450.f, 0.f, -(Z_NEAR + 6000.f), 100.f, 100.f, 100.f, Cube::Green);
+  obstacles.push_back(obstacle);
 
-	obstacle = new Cube(-150.f, 0.f, -(Z_NEAR + 7500.f), 100.f, 100.f, 100.f, Cube::Blue);
-	obstacles.push_back(obstacle);
+  obstacle = new Cube(-150.f, 0.f, -(Z_NEAR + 7500.f), 100.f, 100.f, 100.f, Cube::Blue);
+  obstacles.push_back(obstacle);
 
-	obstacle = new Cube(150.f, 0.f, -Z_FAR, 100.f, 100.f, 100.f, Cube::Multi);
-	obstacles.push_back(obstacle);
+  obstacle = new Cube(150.f, 0.f, -Z_FAR, 100.f, 100.f, 100.f, Cube::Multi);
+  obstacles.push_back(obstacle);
   */
 }
 
