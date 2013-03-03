@@ -3,17 +3,30 @@
 #include "game.h"
 #include "constants.h"
 #include "util.h"
+#include "kinect_controller.h"
 
 int main( int argc, char* args[] ) {
 #ifndef USE_MAC_INCLUDES
   OpenConsole();
 #endif
+
   //std::string musicFile = selectMusicFileDialog();
   //printf("File in main.cpp: %s\n", musicFile);
   Game *game;
   //game = new Game(SCREEN_WIDTH, SCREEN_HEIGHT, musicFile);
   game = new Game(SCREEN_WIDTH, SCREEN_HEIGHT, "");
   SDL_Event event;
+
+#ifndef USE_MAC_INCLUDES
+  HANDLE hKinectProcess;
+  if (FAILED(kinectinit())) {
+    printf("Failed to initialize Kinect\n");
+  }else {
+    printf("Kinect Sensor started\n");
+    //hKinectProcess = CreateThread( NULL, 0, KinectProcessThread, 
+    //  (void*)game->depthData, 0, NULL );
+  }
+#endif
 
   bool eventTriggered = false;
   int *movementKeyDown = new int;
@@ -46,6 +59,8 @@ int main( int argc, char* args[] ) {
   }
 
   delete game;
-
+#ifndef USE_MAC_INCLUDES
+  ShutdownKinect(hKinectProcess);
+#endif
   return 0;
 }

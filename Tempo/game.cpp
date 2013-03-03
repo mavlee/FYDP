@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include "canvas.h"
 #include "game.h"
-#include "constants.h"
 #include "objects.h"
 #include "LText.h"
 #include <string>
@@ -100,10 +99,10 @@ bool Game::checkForCollisions() {
     if (!(*iterator)->collided) {
       if ((*iterator)->zNear + Z_NEAR > shiftZ + playerCube->zFar + Z_NEAR && (*iterator)->zFar + Z_NEAR < shiftZ + playerCube->zFar + Z_NEAR) {
         if (((*iterator)->wRight > playerCube->wLeft + cameraX && (*iterator)->wLeft < playerCube->wLeft + cameraX)
-          || ((*iterator)->wLeft < playerCube->wRight + cameraX && (*iterator)->wRight > playerCube->wRight + cameraX)) {
-            (*iterator)->collided = true;
-            printf("Collision detected at:\nCurrent Depth: %f\nCurrent Left: %f\nCurrent Right: %f\nDepth: %f\nLeft: %f\nRight: %f\n", shiftZ - playerCube->zFar, playerCube->wLeft + cameraX, playerCube->wRight + cameraX, (*iterator)->zNear, (*iterator)->wLeft, (*iterator)->wRight);
-            return true;
+            || ((*iterator)->wLeft < playerCube->wRight + cameraX && (*iterator)->wRight > playerCube->wRight + cameraX)) {
+          (*iterator)->collided = true;
+          printf("Collision detected at:\nCurrent Depth: %f\nCurrent Left: %f\nCurrent Right: %f\nDepth: %f\nLeft: %f\nRight: %f\n", shiftZ - playerCube->zFar, playerCube->wLeft + cameraX, playerCube->wRight + cameraX, (*iterator)->zNear, (*iterator)->wLeft, (*iterator)->wRight);
+          return true;
         }
       }
     }
@@ -133,18 +132,31 @@ void Game::drawObstacles() {
   }
 }
 
+void Game::drawPlayer() {
+  glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, KINECT_DEPTH_WIDTH, KINECT_DEPTH_HEIGHT, GL_BGRA_EXT, GL_UNSIGNED_BYTE, (GLvoid*)depthData);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glBegin(GL_QUADS);
+  glTexCoord2f(0.0f, 0.0f);
+  glVertex3f(0, 0, 0);
+  glTexCoord2f(1.0f, 0.0f);
+  glVertex3f(KINECT_DEPTH_WIDTH*2, 0, 0);
+  glTexCoord2f(1.0f, 1.0f);
+  glVertex3f(KINECT_DEPTH_WIDTH*2, KINECT_DEPTH_HEIGHT*2, 0.0f);
+  glTexCoord2f(0.0f, 1.0f);
+  glVertex3f(0, KINECT_DEPTH_HEIGHT*2, 0.0f);
+  glEnd();
+}
+
 void Game::draw() {
   // TODO
   //
   // clean this up - canvas.prepForDrawing() maybe
   // and canvas.finishedDrawing()
   // should be using playerCube.draw() ??
-
   /*
   * Someone move all the drawing magic into canvas.
   */
   canvas->draw(shiftZ, obstacles);
-
   // Render the cube
   glPushMatrix();
   glTranslatef(cameraX, cameraY, 0);
@@ -167,6 +179,11 @@ void Game::draw() {
     }
   }
   glEnd();
+  glPopMatrix();
+  // Obstacles
+  glPushMatrix();
+  drawObstacles();
+  //drawPlayer();
   glPopMatrix();
 
   std::stringstream fps_caption;
@@ -259,7 +276,6 @@ void Game::handleKeys(int key, int* movementKeyDown) {
       // Regular zoom
       gProjectionScale = 1.f;
     }
-
     // Update projection matrix
     glMatrixMode( GL_PROJECTION );
     glLoadIdentity();

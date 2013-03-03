@@ -8,6 +8,7 @@
 #include "objects.h"
 #include "music_handler.h"
 #include "timer.h"
+#include "constants.h"
 
 class Game {
   private:
@@ -51,6 +52,7 @@ class Game {
     // private functions
     void generateGameFeatures();
     void drawObstacles();
+    void drawPlayer();
     bool checkForCollisions();
     void updateScore();
     void reset();
