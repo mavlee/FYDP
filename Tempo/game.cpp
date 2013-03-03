@@ -57,12 +57,34 @@ void Game::generateGameFeatures() {
   // this is filled with some static cubes for now
 	playerCube = new Cube(0.f, 0.f, -(Z_NEAR + 200.f), 100.f, 100.f, 100.f, Cube::Multi);
 
+  int i = 0;
+  ifstream file("peaks.csv");
+  string value;
 	Cube* obstacle;
+
+  while (file.good()) {
+    i++;
+    getline(file, value);
+    //cout << value << endl;
+    double v = atof(value.c_str());
+    if (v > 0) {
+      obstacle = new Cube(0.f, 0.f, -(Z_NEAR + i*100), 100.f, 100.f, 100.f, Cube::Multi);
+      obstacles.push_back(obstacle);
+    }
+  }
+
+  /*
+  for (int i = 0; i < musicData.size(); i++) {
+    if (musicData[i] > 0) {
+      obstacle = new Cube(0.f, 0.f, -(Z_NEAR + i*100), 100.f, 100.f, 100.f, Cube::Multi);
+      obstacles.push_back(obstacle);
+    }
+  }
+  */
+
+  /*
 	obstacle = new Cube(-150.f, 0.f, -(Z_NEAR + 5000.f), 100.f, 100.f, 100.f, Cube::Multi);
 	obstacles.push_back(obstacle);
-
-//	obstacle = new Cube(-150.f, 0.f, -(Z_NEAR + 51.f), 100.f, 100.f, 100.f, Cube::Multi);
-//	obstacles.push_back(obstacle);
 
 	obstacle = new Cube(350.f, 0.f, -(Z_NEAR + 5000.f), 100.f, 100.f, 100.f, Cube::Red);
 	obstacles.push_back(obstacle);
@@ -75,6 +97,7 @@ void Game::generateGameFeatures() {
 
 	obstacle = new Cube(150.f, 0.f, -Z_FAR, 100.f, 100.f, 100.f, Cube::Multi);
 	obstacles.push_back(obstacle);
+  */
 }
 
 // this probably shouldn't be void in the end, some tamper with points somehow too
@@ -82,7 +105,7 @@ bool Game::checkForCollisions() {
 	for (std::list<Cube*>::const_iterator iterator = obstacles.begin(), end = obstacles.end(); iterator != end; ++iterator) {
 		if (!(*iterator)->collided) {
 			if ((*iterator)->zNear + Z_NEAR > shiftZ + playerCube->zFar + Z_NEAR && (*iterator)->zFar + Z_NEAR < shiftZ + playerCube->zFar + Z_NEAR) {
-				if (((*iterator)->wRight > playerCube->wLeft + cameraX && (*iterator)->wLeft < playerCube->wLeft + cameraX) 
+				if (((*iterator)->wRight > playerCube->wLeft + cameraX && (*iterator)->wLeft < playerCube->wLeft + cameraX)
 					|| ((*iterator)->wLeft < playerCube->wRight + cameraX && (*iterator)->wRight > playerCube->wRight + cameraX)) {
 					(*iterator)->collided = true;
 					printf("Collision detected at:\nCurrent Depth: %f\nCurrent Left: %f\nCurrent Right: %f\nDepth: %f\nLeft: %f\nRight: %f\n", shiftZ - playerCube->zFar, playerCube->wLeft + cameraX, playerCube->wRight + cameraX, (*iterator)->zNear, (*iterator)->wLeft, (*iterator)->wRight);
