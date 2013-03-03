@@ -3,7 +3,6 @@
 #include "LOpenGL.h"
 #include "canvas.h"
 #include "game.h"
-#include "constants.h"
 #include "objects.h"
 #include "LText.h"
 #include "inc/sound/sound_includes.h"
@@ -145,20 +144,32 @@ void Game::updateScore() {
   points += 1 * comboLevel;
 }
 
+
+void Game::drawPlayer() {
+  glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, KINECT_DEPTH_WIDTH, KINECT_DEPTH_HEIGHT, GL_BGRA_EXT, GL_UNSIGNED_BYTE, (GLvoid*)depthData);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glBegin(GL_QUADS);
+  glTexCoord2f(0.0f, 0.0f);
+  glVertex3f(0, 0, 0);
+  glTexCoord2f(1.0f, 0.0f);
+  glVertex3f(KINECT_DEPTH_WIDTH*2, 0, 0);
+  glTexCoord2f(1.0f, 1.0f);
+  glVertex3f(KINECT_DEPTH_WIDTH*2, KINECT_DEPTH_HEIGHT*2, 0.0f);
+  glTexCoord2f(0.0f, 1.0f);
+  glVertex3f(0, KINECT_DEPTH_HEIGHT*2, 0.0f);
+  glEnd();
+}
+
 void Game::draw() {
   // TODO
   //
   // clean this up - canvas.prepForDrawing() maybe
   // and canvas.finishedDrawing()
   // should be using playerCube.draw() ??
+    canvas->draw(shiftZ, obstacles);
 
-  /*
-  * Someone move all the drawing magic into canvas.
-  */
-  canvas->draw(shiftZ, obstacles);
-
-  // Render the cube
-  glPushMatrix();
+    // Render the cube
+    glPushMatrix();
   glTranslatef(cameraX, cameraY, 0);
   glTranslatef(0, 0, shiftZ);
 
@@ -181,7 +192,11 @@ void Game::draw() {
   glEnd();
   glPopMatrix();
 
-  std::stringstream fps_caption;
+    glPushMatrix();
+  drawPlayer();
+  glPopMatrix();
+
+    std::stringstream fps_caption;
   fps_caption << "Average FPS: " << frames * 1.0 / (timer.get_ticks()/1000);
   fpsText->renderText(canvasWidth, canvasHeight, 0, canvasHeight - 50, fps_caption.str());
   std::stringstream points_caption;
@@ -270,18 +285,16 @@ void Game::handleEvent(SDL_Event& event) {
         canvasHeight / 2 * gProjectionScale, -canvasHeight / 2 + gProjectionScale,
         Z_NEAR / gProjectionScale, Z_FAR / gProjectionScale);
       break;
-    }
-    break;
-
-  case SDL_KEYUP:
-    switch (event.key.keysym.sym) {
-    case LEFT_KEY:
-      dirKeyPressed[LEFT] = false;
+    case SDL_KEYUP:
+      switch (event.key.keysym.sym) {
+      case LEFT_KEY:
+        dirKeyPressed[LEFT] = false;
+        break;
+      case RIGHT_KEY:
+        dirKeyPressed[RIGHT] = false;
+        break;
+      }
       break;
-    case RIGHT_KEY:
-      dirKeyPressed[RIGHT] = false;
-      break;
     }
-    break;
   }
 }

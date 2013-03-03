@@ -77,10 +77,10 @@ void Text::renderText(int width, int height, GLfloat x, GLfloat y, std::string t
 
 	glColor3f( 0.0f, 0.6f, 1.0f);
 	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(x, y, 0);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(x, y + surface->h, 0);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(x + surface->w, y + surface->h, 0);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(x + surface->w, y, 0);
+	  glTexCoord2f(0.0f, 0.0f); glVertex3f(x, y, 0);
+	  glTexCoord2f(0.0f, 1.0f); glVertex3f(x, y + surface->h, 0);
+	  glTexCoord2f(1.0f, 1.0f); glVertex3f(x + surface->w, y + surface->h, 0);
+	  glTexCoord2f(1.0f, 0.0f); glVertex3f(x + surface->w, y, 0);
 	glEnd();
 
 	glDisable(GL_BLEND);
