@@ -7,6 +7,7 @@
 #include <list>
 #include "objects.h"
 #include "music_handler.h"
+#include "timer.h"
 
 class Game {
   private:
@@ -31,6 +32,11 @@ class Game {
     // For handling music
     MusicHandler* musicHandler;
 
+    // Game Timer
+    Timer timer;
+    int lastUpdate;
+    int frames;
+
     // data about the game
     int points;
     int comboLevel;
@@ -52,7 +58,7 @@ class Game {
     ~Game();
 
     void draw();
-    void update(int nFrames = 0, float timeElapsed = 1.0f);
+    void update();
     void handleKeys(int key, int* movementKeyDown);
 };
 
