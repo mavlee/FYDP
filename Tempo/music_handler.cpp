@@ -164,15 +164,14 @@ int MusicHandler::analyze() {
 
   // find peaks
   peakData[0].resize(FFT_data.size() - 2, 0);
-  vector<float> peaks(FFT_data.size() - 2, 0);
   for (int i = 0; i < prunned_spectral_flux.size() - 1; i++) {
     if (prunned_spectral_flux[i] > prunned_spectral_flux[i+1]) {
-      peaks[i] = prunned_spectral_flux[i];
+      peakData[0][i] = prunned_spectral_flux[i];
     } else {
-      peaks[i] = 0;
+      peakData[0][i] = 0;
     }
   }
-  toCsv("peaks.csv", peaks);
+  toCsv("peaks.csv", peakData[0]);
 
   // clean up memory
   for (int i = 0; i < FFT_data.size(); i++) {
@@ -212,11 +211,14 @@ void MusicHandler::pause() {
   BASS_ChannelPause(playbackChan);
 }
 
-void MusicHandler::setPosition() {
+void MusicHandler::setPosition(QWORD pos) {
+    BASS_ChannelSetPosition(playbackChan, pos, BASS_POS_BYTE);
 }
 
 int MusicHandler::getPosition() {
-    return 0;
+    QWORD pos = BASS_ChannelGetPosition(playbackChan, BASS_POS_BYTE);
+    printf("pos: %ld, pos2sec: %Lf\n", pos, BASS_ChannelBytes2Seconds(playbackChan, pos));
+    return pos;
 }
 
 /** Helper fcns**/
