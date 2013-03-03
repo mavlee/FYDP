@@ -43,7 +43,6 @@ class Game {
     double *data;
 
     // private functions
-    void analyzeMusic();
     void generateGameFeatures();
     void drawObstacles();
     bool checkForCollisions();
