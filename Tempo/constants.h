@@ -13,5 +13,6 @@ const float FPS_CAP = 1000.f / 60;
 const float PEAK_THRESHOLD = 0.1f;
 
 const float SHIFT_INTERVAL = 10.f;
+const float SHIFT_INTERVAL_PER_SECOND = 500.f;
 
 #endif

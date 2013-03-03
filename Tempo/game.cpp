@@ -38,6 +38,9 @@ Game::Game(int width, int height) {
   shiftZ = 0.f;
   lastPeakTime = 0;
 
+  lastUpdate = 0;
+  frames = 0;
+  timer.start();
   musicHandler->play();
 }
 
@@ -61,7 +64,7 @@ void Game::generateGameFeatures() {
   for (vector<float>::size_type i = 0; i < musicData[0].size(); i++) {
     if (musicData[0][i] > PEAK_THRESHOLD && i - last > 43) {
       float pos = SCREEN_WIDTH/2.f*(-1 + rand()%3);
-      obstacle = new Cube(pos, 0.f, -(Z_NEAR + 200.f + i*589/43), 100.f, 100.f, 100.f, Cube::Multi);
+      obstacle = new Cube(pos, 0.f, -(Z_NEAR + 200.f + i*SHIFT_INTERVAL_PER_SECOND/43), 100.f, 100.f, 100.f, Cube::Multi);
       obstacles.push_back(obstacle);
       last = i;
     }
@@ -149,7 +152,7 @@ void Game::draw() {
   glPopMatrix();
 
   std::stringstream fps_caption;
-  fps_caption << "Average FPS: " << avgFps;
+  fps_caption << "Average FPS: " << frames * 1.0 / (timer.get_ticks()/1000);
   text->renderText(canvasWidth, canvasHeight, 0, canvasHeight - 50, fps_caption.str());
   std::stringstream points_caption;
   points_caption << "Points: " << points;
@@ -159,10 +162,10 @@ void Game::draw() {
   SDL_GL_SwapBuffers();
 }
 
-void Game::update(int nFrames, float timeElapsed) {
-  if (timeElapsed != 1.0f) {
-    avgFps = nFrames / timeElapsed;
-  }
+void Game::update() {
+  frames++;
+  int diff = timer.get_ticks() - lastUpdate;
+
   // TODO
   // update player cube position
   // check for collision
@@ -178,7 +181,7 @@ void Game::update(int nFrames, float timeElapsed) {
     lastPeakTime = pos;
     /*
     for (std::list<Cube*>::const_iterator iterator = obstacles.begin(), end = obstacles.end(); iterator != end; ++iterator) {
-    cout << ((*iterator)->zNear + (*iterator)->zFar) / 2 - shiftZ << endl;
+      cout << ((*iterator)->zNear + (*iterator)->zFar) / 2 - shiftZ << endl;
     }
     */
   }
@@ -186,9 +189,13 @@ void Game::update(int nFrames, float timeElapsed) {
   // calculate score
   updateScore();
 
-  shiftZ -= SHIFT_INTERVAL;
+  shiftZ -= SHIFT_INTERVAL_PER_SECOND * diff / 1000;
 
-  glTranslatef(0, 0, SHIFT_INTERVAL);
+  glTranslatef(0, 0, SHIFT_INTERVAL_PER_SECOND * diff / 1000);
+
+  lastUpdate += diff;
+
+  draw();
 }
 
 // WASD should move the playerCube, not the camera
