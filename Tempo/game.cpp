@@ -73,10 +73,10 @@ bool Game::checkForCollisions() {
     if (!(*iterator)->collided) {
       if ((*iterator)->zNear + Z_NEAR > shiftZ + playerCube->zFar + Z_NEAR && (*iterator)->zFar + Z_NEAR < shiftZ + playerCube->zFar + Z_NEAR) {
         if (((*iterator)->wRight > playerCube->wLeft + cameraX && (*iterator)->wLeft < playerCube->wLeft + cameraX)
-            || ((*iterator)->wLeft < playerCube->wRight + cameraX && (*iterator)->wRight > playerCube->wRight + cameraX)) {
-          (*iterator)->collided = true;
-          printf("Collision detected at:\nCurrent Depth: %f\nCurrent Left: %f\nCurrent Right: %f\nDepth: %f\nLeft: %f\nRight: %f\n", shiftZ - playerCube->zFar, playerCube->wLeft + cameraX, playerCube->wRight + cameraX, (*iterator)->zNear, (*iterator)->wLeft, (*iterator)->wRight);
-          return true;
+          || ((*iterator)->wLeft < playerCube->wRight + cameraX && (*iterator)->wRight > playerCube->wRight + cameraX)) {
+            (*iterator)->collided = true;
+            printf("Collision detected at:\nCurrent Depth: %f\nCurrent Left: %f\nCurrent Right: %f\nDepth: %f\nLeft: %f\nRight: %f\n", shiftZ - playerCube->zFar, playerCube->wLeft + cameraX, playerCube->wRight + cameraX, (*iterator)->zNear, (*iterator)->wLeft, (*iterator)->wRight);
+            return true;
         }
       }
     }
@@ -128,18 +128,10 @@ void Game::draw() {
   // and canvas.finishedDrawing()
   // should be using playerCube.draw() ??
 
-<<<<<<< HEAD
   /*
   * Someone move all the drawing magic into canvas.
   */
   canvas->draw(shiftZ);
-=======
-
-  /*
-  * Someone move all the drawing magic into canvas.
-  */
-  canvas->draw();
->>>>>>> integration of kinect sensor
 
   // Render the cube
   glPushMatrix();
@@ -218,7 +210,7 @@ void Game::update(int nFrames, float timeElapsed) {
 void Game::handleKeys(int key, int* movementKeyDown) {
   bool translation = false;
   switch (key) {
-<<<<<<< HEAD
+
   case ' ':
     musicHandler->pause();
     break;
@@ -254,89 +246,6 @@ void Game::handleKeys(int key, int* movementKeyDown) {
       gProjectionScale = 1.f;
     }
 
-=======
-<<<<<<< HEAD
-    case ' ':
-      musicHandler->pause();
-      break;
-    case SDLK_q:
-      //Toggle color mode
-      if (gColorMode == COLOR_MODE_CYAN) {
-        gColorMode = COLOR_MODE_MULTI;
-      } else {
-        gColorMode = COLOR_MODE_CYAN;
-      }
-      break;
-    case SDLK_a:
-      *movementKeyDown = 1;
-      translation = true;
-      cameraX -= 16.f;
-      break;
-    case SDLK_d:
-      *movementKeyDown = 1;
-      translation = true;
-      cameraX += 16.f;
-      break;
-    case SDLK_e:
-      // Cycle through projection scales
-      if (gProjectionScale == 1.f) {
-        // Zoom out
-        gProjectionScale = 2.f;
-      } else if( gProjectionScale == 2.f ) {
-        // Zoom in
-        gProjectionScale = 0.5f;
-      }
-      else if( gProjectionScale == 0.5f ) {
-        // Regular zoom
-        gProjectionScale = 1.f;
-      }
-
-      // Update projection matrix
-      glMatrixMode( GL_PROJECTION );
-      glLoadIdentity();
-      glFrustum(-canvasWidth / 2 * gProjectionScale, canvasWidth / 2 * gProjectionScale,
-          canvasHeight / 2 * gProjectionScale, -canvasHeight / 2 + gProjectionScale,
-          Z_NEAR / gProjectionScale, Z_FAR / gProjectionScale);
-      break;
-    default:
-      break;
-=======
-  case ' ':
-    musicHandler->pause();
-    break;
-  case SDLK_q:
-    //Toggle color mode
-    if (gColorMode == COLOR_MODE_CYAN) {
-      gColorMode = COLOR_MODE_MULTI;
-    } else {
-      gColorMode = COLOR_MODE_CYAN;
-    }
-    break;
-  case SDLK_a:
-    *movementKeyDown = 1;
-    translation = true;
-    cameraX -= 16.f;
-    break;
-  case SDLK_d:
-    *movementKeyDown = 1;
-    translation = true;
-    cameraX += 16.f;
-    break;
-  case SDLK_e:
-    // Cycle through projection scales
-    if (gProjectionScale == 1.f) {
-      // Zoom out
-      gProjectionScale = 2.f;
-    } else if( gProjectionScale == 2.f ) {
-      // Zoom in
-      gProjectionScale = 0.5f;
-    }
-    else if( gProjectionScale == 0.5f ) {
-      // Regular zoom
-      gProjectionScale = 1.f;
-    }
-
->>>>>>> integration of kinect sensor
     // Update projection matrix
     glMatrixMode( GL_PROJECTION );
     glLoadIdentity();
@@ -346,9 +255,5 @@ void Game::handleKeys(int key, int* movementKeyDown) {
     break;
   default:
     break;
-<<<<<<< HEAD
-=======
->>>>>>> integration of kinect sensor
->>>>>>> integration of kinect sensor
   }
 }
