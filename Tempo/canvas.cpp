@@ -98,10 +98,16 @@ void Canvas::draw(float shiftZ) {
 }
 
 void Canvas::drawSkybox(int width, int height, float shiftZ) {
+
+  // Initialize Projection Matrix
+  glMatrixMode( GL_PROJECTION );
   // Save current matrix.
   glPushMatrix();
+  glLoadIdentity();
 
-  //glRotatef(-90.0, 0.0, 1.0, 0.0);
+  glFrustum( -1, 1, -1, 1, 1, Z_FAR);
+
+  glMatrixMode(GL_MODELVIEW);
 
   glPushAttrib(GL_ENABLE_BIT);
   glEnable(GL_TEXTURE_2D);
@@ -123,38 +129,53 @@ void Canvas::drawSkybox(int width, int height, float shiftZ) {
 
   glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
   //glRotatef(90.0, 1.0, 1.0, 0.0);
-  glTranslatef(0, 0, shiftZ);
+  //glTranslatef(0, 0, shiftZ);
 
-  glRotatef(-SCREEN_TILT, 1, 0, 0);
+  //glRotatef(-SCREEN_TILT, 1, 0, 0);
 
   double e = 0.001;
 
   glBindTexture(GL_TEXTURE_2D, SKYBOX);
   glBegin(GL_QUADS);
     // Four sides
-    glTexCoord2f(1.0/4.0 - e, 2.0/3.0 - e); glVertex3f(  0.0f,  size,  size/2.0 );
-    glTexCoord2f(0.0/4.0 + e, 2.0/3.0 - e); glVertex3f(  0.0f,  0.0f,  size/2.0 );
-    glTexCoord2f(0.0/4.0 + e, 1.0/3.0 + e); glVertex3f(  0.0f,  0.0f, -size/2.0 );
-    glTexCoord2f(1.0/4.0 - e, 1.0/3.0 + e); glVertex3f(  0.0f,  size, -size/2.0 );
+    // Front
+    glTexCoord2f( 1.0/4.0, 2.0/3.0 ); glVertex3f(   -size/2, -size/2,  -size );
+    glTexCoord2f( 2.0/4.0, 2.0/3.0 ); glVertex3f(    size/2, -size/2,  -size );
+    glTexCoord2f( 2.0/4.0, 1.0/3.0 ); glVertex3f(    size/2,  size/2,  -size );
+    glTexCoord2f( 1.0/4.0, 1.0/3.0 ); glVertex3f(   -size/2,  size/2,  -size );
 
-            glTexCoord2f( 0.f, 0.f ); glVertex3f(         0.f,          0.f  , 10000);
-            glTexCoord2f( 1.f, 0.f ); glVertex3f( skyboxWidth,          0.f  , 10000);
-            glTexCoord2f( 1.f, 1.f ); glVertex3f( skyboxWidth, -skyboxHeight , 10000);
-            glTexCoord2f( 0.f, 1.f ); glVertex3f(         0.f, -skyboxHeight , 10000);
+    // Left
+    glTexCoord2f( 0.0/4.0, 2.0/3.0 ); glVertex3f(  -SCREEN_WIDTH/2, -size/2,    0.0 );
+    glTexCoord2f( 1.0/4.0, 2.0/3.0 ); glVertex3f(  -SCREEN_WIDTH/2, -size/2,  -size );
+    glTexCoord2f( 1.0/4.0, 1.0/3.0 ); glVertex3f(  -SCREEN_WIDTH/2,  size/2,  -size );
+    glTexCoord2f( 0.0/4.0, 1.0/3.0 ); glVertex3f(  -SCREEN_WIDTH/2,  size/2,    0.0 );
 
-            // Bottom
-            glTexCoord2f( 1.0/4.0, 3.0/3.0 ); glVertex3f(  -size/2, -size/2000,    0.0 );
-            glTexCoord2f( 2.0/4.0, 3.0/3.0 ); glVertex3f(   size/2, -size/2000,    0.0 );
-            glTexCoord2f( 2.0/4.0, 2.0/3.0 ); glVertex3f(   size/2, -size/2000,  -size );
-            glTexCoord2f( 1.0/4.0, 2.0/3.0 ); glVertex3f(  -size/2, -size/2000,  -size );
+    // Right
+    glTexCoord2f( 2.0/4.0, 2.0/3.0 ); glVertex3f(   SCREEN_WIDTH/2, -size/2,  -size );
+    glTexCoord2f( 3.0/4.0, 2.0/3.0 ); glVertex3f(   SCREEN_WIDTH/2, -size/2,    0.0 );
+    glTexCoord2f( 3.0/4.0, 1.0/3.0 ); glVertex3f(   SCREEN_WIDTH/2,  size/2,    0.0 );
+    glTexCoord2f( 2.0/4.0, 1.0/3.0 ); glVertex3f(   SCREEN_WIDTH/2,  size/2,  -size );
 
-            // Top
-            glTexCoord2f( 1.0/4.0, 1.0/3.0 ); glVertex3f(  -size/2,  -SCREEN_HEIGHT/2 + 00,    0.0 );
-            glTexCoord2f( 2.0/4.0, 1.0/3.0 ); glVertex3f(   size/2,  -SCREEN_HEIGHT/2 + 00,    0.0 );
-            glTexCoord2f( 2.0/4.0, 0.0/3.0 ); glVertex3f(   size/2,  -SCREEN_HEIGHT/2 + 00,  -size );
-            glTexCoord2f( 1.0/4.0, 0.0/3.0 ); glVertex3f(  -size/2,  -SCREEN_HEIGHT/2 + 00,  -size );
+    // Bottom
+    glTexCoord2f( 1.0/4.0, 3.0/3.0 ); glVertex3f(  -size/2, -SCREEN_HEIGHT/2,    0.0 );
+    glTexCoord2f( 2.0/4.0, 3.0/3.0 ); glVertex3f(   size/2, -SCREEN_HEIGHT/2,    0.0 );
+    glTexCoord2f( 2.0/4.0, 2.0/3.0 ); glVertex3f(   size/2, -SCREEN_HEIGHT/2,  -size );
+    glTexCoord2f( 1.0/4.0, 2.0/3.0 ); glVertex3f(  -size/2, -SCREEN_HEIGHT/2,  -size );
+
+    // Top
+    glTexCoord2f( 1.0/4.0, 1.0/3.0 ); glVertex3f(  -size/2,  SCREEN_HEIGHT/2,  -size );
+    glTexCoord2f( 2.0/4.0, 1.0/3.0 ); glVertex3f(   size/2,  SCREEN_HEIGHT/2,  -size );
+    glTexCoord2f( 2.0/4.0, 0.0/3.0 ); glVertex3f(   size/2,  SCREEN_HEIGHT/2,    0.0 );
+    glTexCoord2f( 1.0/4.0, 0.0/3.0 ); glVertex3f(  -size/2,  SCREEN_HEIGHT/2,    0.0 );
+
+    // We never rotate the screen. No need to draw the back surface.
+
   glEnd();
 
-  glPopAttrib();
+  glMatrixMode(GL_MODELVIEW);
   glPopMatrix();
+
+  glMatrixMode(GL_PROJECTION);
+  glPopMatrix();
+  glPopAttrib();
 }
