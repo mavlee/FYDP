@@ -11,6 +11,13 @@ int skyboxHeight;
 GLuint* skyboxTexture;
 GLuint SKYBOX = 2;
 
+char* rectPath = "res/images/rect.png";
+bool rectLoaded = false;
+int rectWidth;
+int rectHeight;
+GLuint* rectTexture;
+GLuint RECTANGLE = 3;
+
 Canvas::Canvas(int width, int height) {
   this->width = width;
   this->height = height;
@@ -75,6 +82,11 @@ void Canvas::initCanvas() {
       skyboxWidth = width;
       skyboxHeight = height;
     }
+    if (loadImage(rectPath, width, height, hasAlpha, rectTexture, &RECTANGLE)) {
+      rectLoaded = true;
+      rectWidth = width;
+      rectHeight = height;
+    }
   }
 
   // Set the caption on the window.
@@ -83,11 +95,12 @@ void Canvas::initCanvas() {
 
 void Canvas::cleanupCanvas() {
   clearImage(&SKYBOX);
+  clearImage(&RECTANGLE);
   // Quit SDL. Also handles cleanup of the screen object.
   SDL_Quit();
 }
 
-void Canvas::draw(float shiftZ) {
+void Canvas::draw(float shiftZ, std::list<Cube*> obstacles) {
   // Clear color buffer & depth buffer
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -95,6 +108,10 @@ void Canvas::draw(float shiftZ) {
   if (skyboxLoaded) {
     drawSkybox(skyboxWidth, skyboxHeight, shiftZ);
   }
+
+  glPushMatrix();
+  drawObstacles(obstacles);
+  glPopMatrix();
 }
 
 void Canvas::drawSkybox(int width, int height, float shiftZ) {
@@ -128,10 +145,6 @@ void Canvas::drawSkybox(int width, int height, float shiftZ) {
   }
 
   glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-  //glRotatef(90.0, 1.0, 1.0, 0.0);
-  //glTranslatef(0, 0, shiftZ);
-
-  //glRotatef(-SCREEN_TILT, 1, 0, 0);
 
   double e = 0.001;
 
@@ -139,34 +152,34 @@ void Canvas::drawSkybox(int width, int height, float shiftZ) {
   glBegin(GL_QUADS);
     // Four sides
     // Front
-    glTexCoord2f( 1.0/4.0, 2.0/3.0 ); glVertex3f(   -size/2, -size/2,  -size );
-    glTexCoord2f( 2.0/4.0, 2.0/3.0 ); glVertex3f(    size/2, -size/2,  -size );
-    glTexCoord2f( 2.0/4.0, 1.0/3.0 ); glVertex3f(    size/2,  size/2,  -size );
-    glTexCoord2f( 1.0/4.0, 1.0/3.0 ); glVertex3f(   -size/2,  size/2,  -size );
+    glTexCoord2f( 1.0/4.0, 2.0/3.0 ); glVertex3f(          -size/2,          -size/2,  -size );
+    glTexCoord2f( 2.0/4.0, 2.0/3.0 ); glVertex3f(           size/2,          -size/2,  -size );
+    glTexCoord2f( 2.0/4.0, 1.0/3.0 ); glVertex3f(           size/2,           size/2,  -size );
+    glTexCoord2f( 1.0/4.0, 1.0/3.0 ); glVertex3f(          -size/2,           size/2,  -size );
 
     // Left
-    glTexCoord2f( 0.0/4.0, 2.0/3.0 ); glVertex3f(  -SCREEN_WIDTH/2, -size/2,    0.0 );
-    glTexCoord2f( 1.0/4.0, 2.0/3.0 ); glVertex3f(  -SCREEN_WIDTH/2, -size/2,  -size );
-    glTexCoord2f( 1.0/4.0, 1.0/3.0 ); glVertex3f(  -SCREEN_WIDTH/2,  size/2,  -size );
-    glTexCoord2f( 0.0/4.0, 1.0/3.0 ); glVertex3f(  -SCREEN_WIDTH/2,  size/2,    0.0 );
+    glTexCoord2f( 0.0/4.0, 2.0/3.0 ); glVertex3f(  -SCREEN_WIDTH/2,          -size/2,    0.0 );
+    glTexCoord2f( 1.0/4.0, 2.0/3.0 ); glVertex3f(  -SCREEN_WIDTH/2,          -size/2,  -size );
+    glTexCoord2f( 1.0/4.0, 1.0/3.0 ); glVertex3f(  -SCREEN_WIDTH/2,           size/2,  -size );
+    glTexCoord2f( 0.0/4.0, 1.0/3.0 ); glVertex3f(  -SCREEN_WIDTH/2,           size/2,    0.0 );
 
     // Right
-    glTexCoord2f( 2.0/4.0, 2.0/3.0 ); glVertex3f(   SCREEN_WIDTH/2, -size/2,  -size );
-    glTexCoord2f( 3.0/4.0, 2.0/3.0 ); glVertex3f(   SCREEN_WIDTH/2, -size/2,    0.0 );
-    glTexCoord2f( 3.0/4.0, 1.0/3.0 ); glVertex3f(   SCREEN_WIDTH/2,  size/2,    0.0 );
-    glTexCoord2f( 2.0/4.0, 1.0/3.0 ); glVertex3f(   SCREEN_WIDTH/2,  size/2,  -size );
+    glTexCoord2f( 2.0/4.0, 2.0/3.0 ); glVertex3f(   SCREEN_WIDTH/2,          -size/2,  -size );
+    glTexCoord2f( 3.0/4.0, 2.0/3.0 ); glVertex3f(   SCREEN_WIDTH/2,          -size/2,    0.0 );
+    glTexCoord2f( 3.0/4.0, 1.0/3.0 ); glVertex3f(   SCREEN_WIDTH/2,           size/2,    0.0 );
+    glTexCoord2f( 2.0/4.0, 1.0/3.0 ); glVertex3f(   SCREEN_WIDTH/2,           size/2,  -size );
 
     // Bottom
-    glTexCoord2f( 1.0/4.0, 3.0/3.0 ); glVertex3f(  -size/2, -SCREEN_HEIGHT/2,    0.0 );
-    glTexCoord2f( 2.0/4.0, 3.0/3.0 ); glVertex3f(   size/2, -SCREEN_HEIGHT/2,    0.0 );
-    glTexCoord2f( 2.0/4.0, 2.0/3.0 ); glVertex3f(   size/2, -SCREEN_HEIGHT/2,  -size );
-    glTexCoord2f( 1.0/4.0, 2.0/3.0 ); glVertex3f(  -size/2, -SCREEN_HEIGHT/2,  -size );
+    glTexCoord2f( 1.0/4.0, 3.0/3.0 ); glVertex3f(          -size/2, -SCREEN_HEIGHT/2,    0.0 );
+    glTexCoord2f( 2.0/4.0, 3.0/3.0 ); glVertex3f(           size/2, -SCREEN_HEIGHT/2,    0.0 );
+    glTexCoord2f( 2.0/4.0, 2.0/3.0 ); glVertex3f(           size/2, -SCREEN_HEIGHT/2,  -size );
+    glTexCoord2f( 1.0/4.0, 2.0/3.0 ); glVertex3f(          -size/2, -SCREEN_HEIGHT/2,  -size );
 
     // Top
-    glTexCoord2f( 1.0/4.0, 1.0/3.0 ); glVertex3f(  -size/2,  SCREEN_HEIGHT/2,  -size );
-    glTexCoord2f( 2.0/4.0, 1.0/3.0 ); glVertex3f(   size/2,  SCREEN_HEIGHT/2,  -size );
-    glTexCoord2f( 2.0/4.0, 0.0/3.0 ); glVertex3f(   size/2,  SCREEN_HEIGHT/2,    0.0 );
-    glTexCoord2f( 1.0/4.0, 0.0/3.0 ); glVertex3f(  -size/2,  SCREEN_HEIGHT/2,    0.0 );
+    glTexCoord2f( 1.0/4.0, 1.0/3.0 ); glVertex3f(          -size/2,  SCREEN_HEIGHT/2,  -size );
+    glTexCoord2f( 2.0/4.0, 1.0/3.0 ); glVertex3f(           size/2,  SCREEN_HEIGHT/2,  -size );
+    glTexCoord2f( 2.0/4.0, 0.0/3.0 ); glVertex3f(           size/2,  SCREEN_HEIGHT/2,    0.0 );
+    glTexCoord2f( 1.0/4.0, 0.0/3.0 ); glVertex3f(          -size/2,  SCREEN_HEIGHT/2,    0.0 );
 
     // We never rotate the screen. No need to draw the back surface.
 
@@ -178,4 +191,14 @@ void Canvas::drawSkybox(int width, int height, float shiftZ) {
   glMatrixMode(GL_PROJECTION);
   glPopMatrix();
   glPopAttrib();
+}
+
+void Canvas::drawObstacles(std::list<Cube*> obstacles) {
+  for (std::list<Cube*>::iterator i = obstacles.begin(); i != obstacles.end(); i++) {
+    if (rectLoaded) {
+      (*i)->draw(&RECTANGLE);
+    } else {
+      (*i)->draw();
+    }
+  }
 }

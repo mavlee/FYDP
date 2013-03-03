@@ -15,7 +15,7 @@ Game::Game(int width, int height) {
   canvas = new Canvas(width, height);
 
   musicHandler = new MusicHandler();
-  musicHandler->setMusicFile("res/music/simpletest.mp3");
+  musicHandler->setMusicFile("res/music/clocks.mp3");
 
   musicData = musicHandler->getPeakData();
 
@@ -120,7 +120,7 @@ void Game::draw() {
   /*
   * Someone move all the drawing magic into canvas.
   */
-  canvas->draw(shiftZ);
+  canvas->draw(shiftZ, obstacles);
 
   // Render the cube
   glPushMatrix();
@@ -144,11 +144,6 @@ void Game::draw() {
     }
   }
   glEnd();
-  glPopMatrix();
-
-  // Obstacles
-  glPushMatrix();
-  drawObstacles();
   glPopMatrix();
 
   std::stringstream fps_caption;
