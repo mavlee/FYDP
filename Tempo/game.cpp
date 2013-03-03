@@ -187,8 +187,11 @@ void Game::update(int nFrames, float timeElapsed) {
 
 // WASD should move the playerCube, not the camera
 void Game::handleKeys(int key, int* movementKeyDown) {
-    bool translation = false;
-    switch (key) {
+  bool translation = false;
+  switch (key) {
+    case ' ':
+      musicHandler->pause();
+      break;
     case SDLK_q:
         //Toggle color mode
         if (gColorMode == COLOR_MODE_CYAN) {
