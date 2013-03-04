@@ -136,7 +136,8 @@ int MusicHandler::analyze() {
   vector<float> spectral_flux (FFT_data.size() - 1, 0);
   for (int i = 0; i < spectral_flux.size(); i++) {
     for (int j = 0; j < BUF_SIZE; j++) {
-      spectral_flux[i] += abs(FFT_data[i+1][j] - FFT_data[i][j]);
+      //spectral_flux[i] += abs(FFT_data[i+1][j] - FFT_data[i][j]);
+      spectral_flux[i] += max(FFT_data[i+1][j] - FFT_data[i][j], 0.0);
     }
   }
   toCsv("spectral_flux.csv", spectral_flux);
