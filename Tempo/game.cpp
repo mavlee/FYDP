@@ -39,6 +39,9 @@ Game::Game(int width, int height, std::string musicFile) {
   comboLevelText = new Text(width, height);
   pointsText = new Text(width, height);
 
+  // player cube
+  playerCube = new Cube(0.f, 0.f, -(Z_NEAR + 200.f), 100.f, 100.f, 100.f, Cube::Multi);
+
   // color stuff and camera
   gColorMode = COLOR_MODE_CYAN;
 
@@ -71,19 +74,12 @@ Game::~Game() {
 
 // based on whatever music analysis gives us, generate game features
 void Game::generateGameFeatures() {
-  // clear obstacles
-  obstacles.clear();
-
-  // TODO: do this dynamically
-  // this is filled with some static cubes for now
-  playerCube = new Cube(0.f, 0.f, -(Z_NEAR + 200.f), 100.f, 100.f, 100.f, Cube::Multi);
-
   int last = -50;
   Cube* obstacle;
   for (vector<float>::size_type i = 0; i < musicData[0].size(); i++) {
     if (musicData[0][i] > PEAK_THRESHOLD && i - last > 0) {
       float pos = SCREEN_WIDTH/2.f*(-1 + rand()%3);
-      obstacle = new Cube(pos, 0.f, -(Z_NEAR + 200.f + i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec()), 100.f, 100.f, 100.f, Cube::Multi);
+      obstacle = new Cube(0.f, 0.f, -(Z_NEAR + 200.f + i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec()), 100.f, 100.f, 100.f, Cube::Multi);
       obstacles.push_back(obstacle);
       last = i;
     }
@@ -219,19 +215,25 @@ void Game::update() {
 
 // resets the game so a new game can be started
 void Game::reset() {
-  cameraX = 0.f;
-  cameraY = 0.f;
-
+  delete canvas;
+  canvas = new Canvas(canvasWidth, canvasHeight);
   points = 0;
   combo = 0;
   comboLevel = 1;
+
+  cameraX = 0.f;
+  cameraY = 0.f;
+
+  // clear obstacles
+  obstacles.clear();
 
   shiftZ = 0.f;
   lastPeakTime = 0;
 
   lastUpdate = 0;
   frames = 0;
-  //TODO remove me
+  //delete musicHandler;
+  //musicHandler = new MusicHandler();
   musicHandler->setMusicFile("res/music/simpletest.mp3");
   musicData = musicHandler->getPeakData();
   generateGameFeatures();
