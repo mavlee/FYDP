@@ -53,6 +53,7 @@ class Game {
     void drawObstacles();
     bool checkForCollisions();
     void updateScore();
+    void reset();
 
   public:
     Game(int width, int height);

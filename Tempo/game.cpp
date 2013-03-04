@@ -15,7 +15,7 @@ Game::Game(int width, int height) {
   canvas = new Canvas(width, height);
 
   musicHandler = new MusicHandler();
-  musicHandler->setMusicFile("res/music/clocks.mp3");
+  musicHandler->setMusicFile("res/music/simpletest.mp3");
 
   musicData = musicHandler->getPeakData();
 
@@ -57,6 +57,9 @@ Game::~Game() {
 
 // based on whatever music analysis gives us, generate game features
 void Game::generateGameFeatures() {
+  // clear obstacles
+  obstacles.clear();
+
   // TODO: do this dynamically
   // this is filled with some static cubes for now
   playerCube = new Cube(0.f, 0.f, -(Z_NEAR + 200.f), 100.f, 100.f, 100.f, Cube::Multi);
@@ -190,12 +193,38 @@ void Game::update() {
   updateScore();
 
   shiftZ -= SHIFT_INTERVAL_PER_SECOND * diff / 1000;
-
   glTranslatef(0, 0, SHIFT_INTERVAL_PER_SECOND * diff / 1000);
-
   lastUpdate += diff;
 
   draw();
+
+  if (musicHandler->getPositionInSec() == musicHandler->getLengthInSec()) {
+    reset();
+  }
+}
+
+// resets the game so a new game can be started
+void Game::reset() {
+  cameraX = 0.f;
+  cameraY = 0.f;
+
+  points = 0;
+  combo = 0;
+  comboLevel = 1;
+
+  shiftZ = 0.f;
+  lastPeakTime = 0;
+
+  lastUpdate = 0;
+  frames = 0;
+  delete musicHandler;
+  musicHandler = new MusicHandler();
+  musicHandler->setMusicFile("res/music/simpletest.mp3");
+  musicData = musicHandler->getPeakData();
+  generateGameFeatures();
+
+  timer.start();
+  musicHandler->play();
 }
 
 // WASD should move the playerCube, not the camera
