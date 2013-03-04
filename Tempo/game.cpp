@@ -217,8 +217,7 @@ void Game::reset() {
 
   lastUpdate = 0;
   frames = 0;
-  delete musicHandler;
-  musicHandler = new MusicHandler();
+  //TODO remove me
   musicHandler->setMusicFile("res/music/simpletest.mp3");
   musicData = musicHandler->getPeakData();
   generateGameFeatures();
