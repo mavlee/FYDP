@@ -146,13 +146,14 @@ bool ProcessDepthEvent() {
 
       // Only colour in the player, only 1 player
       if (player == playerId) {
-        for (int i = index; i < index + 4; i++)
-          depthData->depthData[i] = intensity;
-      }
-      else {
-        for (int i = index; i < index + 4; i++)
-          depthData->depthData[i] = 0;
-      }
+          for (int i = index; i < index + 4; i++)
+            depthData->depthData[i] = intensity;
+          depthData->depthData[index+3] = (BYTE)50;
+          }
+        else {
+          for (int i = index; i < index + 4; i++)
+            depthData->depthData[i] = (BYTE)50;
+          }
       index += 4;
       curr += 1;                                                         
     }    

@@ -18,10 +18,9 @@ int main( int argc, char* args[] ) {
     hKinectProcess = CreateThread( NULL, 0, KinectProcessThread, 
       (void*)theGame.depthData, 0, NULL );
   }
-#endif
-  return theGame.execute();
-
-#ifndef USE_MAC_INCLUDES
   ShutdownKinect(hKinectProcess);
 #endif
+
+  return theGame.execute();
+
 }
