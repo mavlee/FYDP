@@ -26,14 +26,14 @@ Cube::Cube(float centreX, float centreY, float centreZ,
     wRight = centreX + width / 2;
 
     float vertices[8][3] = {
-      { centreX - width / 2, centreY + height / 2, centreZ + depth / 2 },
-      { centreX + width / 2, centreY + height / 2, centreZ + depth / 2 },
-      { centreX + width / 2, centreY + height / 2, centreZ - depth / 2 },
-      { centreX - width / 2, centreY + height / 2, centreZ - depth / 2 },
       { centreX - width / 2, centreY - height / 2, centreZ + depth / 2 },
       { centreX + width / 2, centreY - height / 2, centreZ + depth / 2 },
       { centreX + width / 2, centreY - height / 2, centreZ - depth / 2 },
       { centreX - width / 2, centreY - height / 2, centreZ - depth / 2 },
+      { centreX - width / 2, centreY + height / 2, centreZ + depth / 2 },
+      { centreX + width / 2, centreY + height / 2, centreZ + depth / 2 },
+      { centreX + width / 2, centreY + height / 2, centreZ - depth / 2 },
+      { centreX - width / 2, centreY + height / 2, centreZ - depth / 2 },
     };
 
     int i, j;
