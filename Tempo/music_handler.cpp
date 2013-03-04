@@ -117,7 +117,7 @@ int MusicHandler::analyze() {
   while (true) {
     float *buf = new float[BUF_SIZE];
     FFT_data.push_back(buf);
-    ret = BASS_ChannelGetData(decodeChan, FFT_data.back(), BASS_DATA_FFT512);
+    ret = BASS_ChannelGetData(decodeChan, FFT_data.back(), BASS_DATA_FFT1024);
     if (-1 == ret) {
       break;
     }
@@ -136,49 +136,60 @@ int MusicHandler::analyze() {
   printf("%d m %d s\n", (num_samples/SAMPLE_RATE)/60, ((int) (num_samples*1.0/SAMPLE_RATE + 0.5)) % 60);
 
   // calculate spectral flux
-  vector<float> spectral_flux (FFT_data.size() - 1, 0);
-  for (int i = 0; i < spectral_flux.size(); i++) {
-    for (int j = 0; j < BUF_SIZE; j++) {
-      //spectral_flux[i] += abs(FFT_data[i+1][j] - FFT_data[i][j]);
-      spectral_flux[i] += max(FFT_data[i+1][j] - FFT_data[i][j], 0.0);
+  vector<vector<float> > spectral_flux (NUM_BANDS);
+  for (int v = 0; v < NUM_BANDS; v++) {
+    spectral_flux[v].resize(FFT_data.size() - 1, 0);
+    for (int i = 0; i < spectral_flux[v].size(); i++) {
+      for (int j = 0 + v*BUF_SIZE/NUM_BANDS; j < (v+1)*BUF_SIZE/NUM_BANDS; j++) {
+        //spectral_flux[v][i] += abs(FFT_data[i+1][j] - FFT_data[i][j]);
+        spectral_flux[v][i] += max(FFT_data[i+1][j] - FFT_data[i][j], 0.0);
+      }
     }
   }
   toCsv("spectral_flux.csv", spectral_flux);
 
   // calculate threshold
-  vector<float> threshold(FFT_data.size() - 1, 0);
-  for (int i = 0; i < threshold.size(); i++) {
-    int start = max(0, i - THRESHOLD_WINDOW_SIZE);
-    int end = min(int(spectral_flux.size() - 1), i + THRESHOLD_WINDOW_SIZE);
-    float mean = 0;
-    for (int j = start; j <= end; j++) {
-      mean += spectral_flux[j];
+  vector<vector<float> > threshold(NUM_BANDS);
+  for (int v = 0; v < NUM_BANDS; v++) {
+    threshold[v].resize(FFT_data.size() - 1, 0);
+    for (int i = 0; i < threshold[v].size(); i++) {
+      int start = max(0, i - THRESHOLD_WINDOW_SIZE);
+      int end = min(int(spectral_flux[0].size() - 1), i + THRESHOLD_WINDOW_SIZE);
+      float mean = 0;
+      for (int j = start; j <= end; j++) {
+        mean += spectral_flux[v][j];
+      }
+      mean /= (end - start);
+      threshold[v][i] =  mean * THRESHOLD_MULTIPLIER;
     }
-    mean /= (end - start);
-    threshold[i] =  mean * THRESHOLD_MULTIPLIER;
   }
   toCsv("threshold.csv", threshold);
 
   // apply threshold to spectral flux
-  vector<float> prunned_spectral_flux (FFT_data.size() - 1, 0);
-  for (int i = 0; i < prunned_spectral_flux.size(); i++) {
-    if( threshold[i] <= spectral_flux[i] )
-      prunned_spectral_flux[i] = spectral_flux[i] - threshold[i];
-    else
-      prunned_spectral_flux[i] = 0;
+  vector<vector<float> > prunned_spectral_flux(NUM_BANDS);
+  for (int v = 0; v < NUM_BANDS; v++) {
+    prunned_spectral_flux[v].resize(FFT_data.size() - 1, 0);
+    for (int i = 0; i < prunned_spectral_flux[v].size(); i++) {
+      if( threshold[v][i] <= spectral_flux[v][i] )
+        prunned_spectral_flux[v][i] = spectral_flux[v][i] - threshold[v][i];
+      else
+        prunned_spectral_flux[v][i] = 0;
+    }
   }
   toCsv("prunned_spectral_flux.csv", prunned_spectral_flux);
 
   // find peaks
-  peakData[0].resize(FFT_data.size() - 2, 0);
-  for (int i = 0; i < prunned_spectral_flux.size() - 1; i++) {
-    if (prunned_spectral_flux[i] > prunned_spectral_flux[i+1]) {
-      peakData[0][i] = prunned_spectral_flux[i];
-    } else {
-      peakData[0][i] = 0;
+  for (int v = 0; v < NUM_BANDS; v++) {
+    peakData[v].resize(FFT_data.size() - 2, 0);
+    for (int i = 0; i < prunned_spectral_flux[v].size() - 1; i++) {
+      if (prunned_spectral_flux[v][i] > prunned_spectral_flux[v][i+1]) {
+        peakData[v][i] = prunned_spectral_flux[v][i];
+      } else {
+        peakData[v][i] = 0;
+      }
     }
   }
-  toCsv("peaks.csv", peakData[0]);
+  toCsv("peaks.csv", peakData);
 
   // clean up memory
   for (int i = 0; i < FFT_data.size(); i++) {
@@ -240,11 +251,17 @@ double MusicHandler::getPeakDataPerSec() {
 }
 
 /** Helper fcns**/
-void MusicHandler::toCsv (string name, vector<float> vec) {
+void MusicHandler::toCsv (string name, vector<vector<float> > vec) {
   ofstream file;
   file.open(name.c_str());
-  for (vector<float>::iterator it = vec.begin(); it != vec.end(); ++it) {
-    file << *it << endl;
+  for (int samples = 0; samples < vec[0].size(); samples++) {
+    for (int bands = 0; bands < vec.size(); bands++) {
+        file << vec[bands][samples];
+        if (bands != vec.size() - 1) {
+            file << ", ";
+        }
+    }
+    file << endl;
   }
   file.close();
 }

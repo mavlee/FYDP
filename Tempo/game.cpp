@@ -80,12 +80,15 @@ void Game::generateGameFeatures() {
 
   int last = -50;
   Cube* obstacle;
-  for (vector<float>::size_type i = 0; i < musicData[0].size(); i++) {
-    if (musicData[0][i] > PEAK_THRESHOLD && i - last > 0) {
-      float pos = SCREEN_WIDTH/2.f*(-1 + rand()%3);
-      obstacle = new Cube(pos, 0.f, -(Z_NEAR + 200.f + i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec()), 100.f, 100.f, 100.f, Cube::Multi);
-      obstacles.push_back(obstacle);
-      last = i;
+  for (int b = 0; b < musicData.size(); b++) {
+    last = -50;
+    for (int i = 0; i < musicData[b].size(); i++) {
+      if (musicData[b][i] > PEAK_THRESHOLD && i - last > 0) {
+        float pos = SCREEN_WIDTH/2.f*(-1 + rand()%3);
+        obstacle = new Cube(pos, 0.f, -(Z_NEAR + 200.f + i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec()), 100.f, 100.f, 100.f, Cube::Multi);
+        obstacles.push_back(obstacle);
+        last = i;
+      }
     }
   }
 }
