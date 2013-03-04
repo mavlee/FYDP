@@ -115,7 +115,7 @@ int MusicHandler::analyze() {
   while (true) {
     float *buf = new float[BUF_SIZE];
     FFT_data.push_back(buf);
-    ret = BASS_ChannelGetData(decodeChan, FFT_data.back(), BASS_DATA_FFT1024);
+    ret = BASS_ChannelGetData(decodeChan, FFT_data.back(), BASS_DATA_FFT512);
     if (-1 == ret) {
       break;
     }
