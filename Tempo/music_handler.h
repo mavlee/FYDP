@@ -24,6 +24,7 @@ class MusicHandler {
     void pause();
     void setPosition(QWORD pos);
     double getPositionInSec();
+    double getLengthInSec();
 
   private:
     void toCsv(string name, vector<float> vec);

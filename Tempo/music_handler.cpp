@@ -48,7 +48,7 @@ void MusicHandler::reset() {
   playbackChan = 0;
 
   for (int i = 0; i < peakData.size(); i++) {
-      peakData[i].clear();
+    peakData[i].clear();
   }
 
   BASS_Free();
@@ -73,15 +73,15 @@ int MusicHandler::setMusicFile(string filename) {
   int ret;
   ret = analyze();
   if (ret != 0) {
-      reset();
-      return ret;
+    reset();
+    return ret;
   }
 
   // prepare playback channel
   ret = preparePlayback();
   if (ret != 0) {
-      reset();
-      return ret;
+    reset();
+    return ret;
   }
 
   return 0;
@@ -177,8 +177,8 @@ int MusicHandler::analyze() {
 
   // clean up memory
   for (int i = 0; i < FFT_data.size(); i++) {
-      delete [] FFT_data[i];
-      FFT_data[i] = NULL;
+    delete [] FFT_data[i];
+    FFT_data[i] = NULL;
   }
 
   return 0;
@@ -194,8 +194,9 @@ int MusicHandler::preparePlayback() {
     return 1;
   }
 
-    return 0;
+  return 0;
 }
+
 const vector<vector<float> >& MusicHandler::getPeakData() {
   return peakData;
 }
@@ -222,6 +223,13 @@ double MusicHandler::getPositionInSec() {
   double pos2sec = BASS_ChannelBytes2Seconds(playbackChan, pos);
   return pos2sec;
 }
+
+double MusicHandler::getLengthInSec() {
+  QWORD pos = BASS_ChannelGetLength(playbackChan, BASS_POS_BYTE);
+  double pos2sec = BASS_ChannelBytes2Seconds(playbackChan, pos);
+  return pos2sec;
+}
+
 
 /** Helper fcns**/
 void MusicHandler::toCsv (string name, vector<float> vec) {
