@@ -36,6 +36,7 @@ MusicHandler::MusicHandler() {
   // init fields
   musicFilename = "";
   playbackChan = 0;
+  numChans = 2;
   peakData.resize(NUM_BANDS);
 }
 
@@ -47,6 +48,7 @@ MusicHandler::~MusicHandler() {
 void MusicHandler::reset() {
   musicFilename = "";
   playbackChan = 0;
+  numChans = 2;
 
   for (int i = 0; i < peakData.size(); i++) {
     peakData[i].clear();
@@ -122,7 +124,8 @@ int MusicHandler::analyze() {
     num_samples += ret;
   }
   // BASS_ChannelGetData actually returns num bytes read from source
-  num_samples /= channel_info.chans;
+  numChans = channel_info.chans;
+  num_samples /= numChans;
   num_samples /= 4; // 32-bit float samples...?
   if (BASS_ERROR_ENDED != BASS_ErrorGetCode()) {
     error("Error getting data from file");
@@ -233,7 +236,7 @@ double MusicHandler::getLengthInSec() {
 }
 
 double MusicHandler::getPeakDataPerSec() {
-  return SAMPLE_RATE / 512.0;
+    return 1.0 * SAMPLE_RATE / BUF_SIZE / numChans;
 }
 
 /** Helper fcns**/
