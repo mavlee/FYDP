@@ -26,7 +26,8 @@ class Game {
     GLfloat gProjectionScale;
     int gColorMode;
     float avgFps;
-    Text *text;
+    Text *fpsText;
+    Text *comboLevelText;
     Text *pointsText;
 
     // For handling music
