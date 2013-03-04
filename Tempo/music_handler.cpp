@@ -19,7 +19,7 @@ MusicHandler::MusicHandler() {
   // enable floating-point DSP
   BASS_SetConfig(BASS_CONFIG_FLOATDSP,TRUE);
   // initialize - default device
-  if (!BASS_Init(-1,44100,0,NULL,NULL)) {
+  if (!BASS_Init(-1,SAMPLE_RATE,0,NULL,NULL)) {
     char msg[100] = "Error initialising BASS!";
     error(msg);
     //throw exception(msg);
@@ -27,7 +27,7 @@ MusicHandler::MusicHandler() {
   }
 
   // check for floating-point capability
-  floatable = BASS_StreamCreate(44100, 2, BASS_SAMPLE_FLOAT, NULL, 0);
+  floatable = BASS_StreamCreate(SAMPLE_RATE, 2, BASS_SAMPLE_FLOAT, NULL, 0);
   if (floatable) {
     BASS_StreamFree(floatable);
     floatable=BASS_SAMPLE_FLOAT;
@@ -130,7 +130,7 @@ int MusicHandler::analyze() {
     return 1;
   }
   printf("%d total samples\n", num_samples);
-  printf("%d m %d s\n", (num_samples/44100)/60, ((int) (num_samples/44100.0 + 0.5)) % 60);
+  printf("%d m %d s\n", (num_samples/SAMPLE_RATE)/60, ((int) (num_samples*1.0/SAMPLE_RATE + 0.5)) % 60);
 
   // calculate spectral flux
   vector<float> spectral_flux (FFT_data.size() - 1, 0);
@@ -231,6 +231,9 @@ double MusicHandler::getLengthInSec() {
   return pos2sec;
 }
 
+double MusicHandler::getPeakDataPerSec() {
+  return SAMPLE_RATE / 512.0;
+}
 
 /** Helper fcns**/
 void MusicHandler::toCsv (string name, vector<float> vec) {
