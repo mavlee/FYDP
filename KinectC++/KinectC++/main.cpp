@@ -13,20 +13,15 @@
 
 #include <math.h>
 
-#include <queue>
-
-using namespace std;
-
-typedef queue<int> INTQUEUE;
-
-
 #define width 640
 #define height 480
 
 // OpenGL
 GLuint textureId;                             // ID of texture that contains kinect RGB data
-GLubyte data[width*height*4];                 // BGRA array containing the texture data
+GLuint dummyTextureId;
+GLubyte data[(width/2)*(height/2)*4];                 // BGRA array containing the texture data
 GLubyte depthData[(width/2)*(height/2)*4];
+GLubyte dummy[200*200*4];
 
 // Kinect
 HANDLE depthStream;                             // Kinect's RGB camera;
@@ -153,7 +148,6 @@ void getKinectDepthData (GLubyte *dest) {
   NUI_IMAGE_FRAME imageFrame;
   NUI_LOCKED_RECT LockedRect;
   int index;
-  bool playerInFrame[6] = {false, false, false, false, false, false};
 
   if (WAIT_OBJECT_0 == WaitForSingleObject(hNextDepthPlayerEvent, 0)) {
     HRESULT hr 
@@ -170,27 +164,6 @@ void getKinectDepthData (GLubyte *dest) {
       const USHORT* dataEnd = curr + ((width/2)*(height/2));
       index = 0;
 
-
-
-      //while (curr < dataEnd) {
-      //  USHORT player = NuiDepthPixelToPlayerIndex(*curr);
-      //  if (player > 0 ) {
-      //    if (playerId == 0 || player > playerId)
-      //      playerId = player;
-      //    
-      //    if (!playerInFrame[player])
-      //      playerInFrame[player] = true;
-      //    break;
-      //    }
-      //  curr++;
-      //  }
-
-      //if (playerId > 0)
-      //  if (!playerInFrame[playerId] )
-      //    playerId = 0;
-
-      //curr = (USHORT*) LockedRect.pBits;
-
       while (curr < dataEnd && playerId != 0) {
         USHORT depth     = *curr;
         USHORT realDepth = NuiDepthPixelToDepth(depth);
@@ -202,15 +175,11 @@ void getKinectDepthData (GLubyte *dest) {
         if (player == playerId) {
           for (int i = index; i < index + 4; i++)
             dest[i] = intensity;
-
-          //dest[index + 4] = intensity >> 2;
-          //dest[index + 5] = intensity >> 2;
-          //dest[index + 6] = intensity;
-
+          dest[index+3] = (BYTE)50;
           }
         else {
           for (int i = index; i < index + 4; i++)
-            dest[i] = 0;
+            dest[i] = (BYTE)50;
           }
         index += 4;
         curr += 1;                                                                
@@ -223,7 +192,7 @@ void getKinectDepthData (GLubyte *dest) {
 
 void getKinectColorData (GLubyte *dest) {
   NUI_IMAGE_FRAME imageFrame;
-  NUI_LOCKED_RECT LockedRect;
+  NUI_LOCKED_RECT LockedRect; 
 
   if (sensor->NuiImageStreamGetNextFrame(rgbStream, 0, &imageFrame) < 0) return;
 
@@ -279,32 +248,29 @@ void printSkeleton(NUI_SKELETON_DATA* skeletonData) {
   }
 
 void drawKinectData() {
-  glBindTexture(GL_TEXTURE_2D, textureId);
-  getKinectColorData(data);
-  getKinectDepthData(depthData);
-
-  glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width/2, height/2, GL_BGRA_EXT, GL_UNSIGNED_BYTE, (GLvoid*)depthData);
+  glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glClearColor(0,0,0,0);
+
+  glBindTexture(GL_TEXTURE_2D, dummyTextureId);
   glBegin(GL_QUADS);
-  glTexCoord2f(0.0f, 0.0f);
-  glVertex3f(0, 0, 0);
-  glTexCoord2f(1.0f, 0.0f);
-  glVertex3f(width*2, 0, 0);
-  glTexCoord2f(1.0f, 1.0f);
-  glVertex3f(width*2, height*2, 0.0f);
-  glTexCoord2f(0.0f, 1.0f);
-  glVertex3f(0, height*2, 0.0f);
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(100, 100, 0.0f);
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(300, 100, 0.0f);
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(300, 300, 0.0f);
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(100, 300, 0.0f);
+  glEnd();
+
+  glBindTexture(GL_TEXTURE_2D, textureId);
+  getKinectDepthData(data);
+  glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width/2, height/2, GL_BGRA_EXT, GL_UNSIGNED_BYTE, (GLvoid*)data);
+  glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(0, 0, -1.0f);
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(width, 0, -1.0f);
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(width, height, -1.0f);
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(0, height, -1.0f);
   glEnd();
 
 
-  //skeletonData = new NUI_SKELETON_DATA;
-  //getKinectSkeleton(skeletonData);
-  //if (skeletonData->eTrackingState == NUI_SKELETON_TRACKED) {
-  //  printData(200.0, 100.0, "tracking skeleton");
-  //  printSkeleton(skeletonData);
-  //  } else if (skeletonData->eTrackingState == NUI_SKELETON_POSITION_ONLY) {
-  //    printData(skeletonData->Position.x * 100, skeletonData->Position.y*100, "X");
-  //  }
 
   getSkeletonData();
   if (skeletonData != NULL)
@@ -335,18 +301,37 @@ int main(int argc, char* argv[]) {
   if (!initKinect()) return 1;
   //NuiCameraElevationSetAngle (20l);
 
+  for (int i = 0; i < 200*200*4; i+=4) {
+    dummy[i] = (BYTE)255;
+    for (int j = 1; j < 3; j++)
+      dummy[i+j] = (BYTE)0;
+    dummy[i+3] = (BYTE)255;
+  }
   // Initialize textures
   glGenTextures(1, &textureId);
   glBindTexture(GL_TEXTURE_2D, textureId);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, (GLvoid*) data);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width/2, height/2, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, (GLvoid*) data);
+  glBindTexture(GL_TEXTURE_2D, 0);
+
+  // Bind a dummy texture
+  glGenTextures(2, &dummyTextureId);
+  glBindTexture(GL_TEXTURE_2D, dummyTextureId);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 200, 200, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, (GLvoid*)dummy);
   glBindTexture(GL_TEXTURE_2D, 0);
 
   // OpenGL setup
   glClearColor(0,0,0,0);
   glClearDepth(1.0f);
+  glEnable(GL_DEPTH_TEST);
+  glDepthMask(GL_TRUE);
   glEnable(GL_TEXTURE_2D);
+  glTexEnvf(GL_TEXTURE_2D,GL_TEXTURE_ENV_MODE,GL_MODULATE);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
   // Camera setup
   glViewport(0, 0, width, height);
