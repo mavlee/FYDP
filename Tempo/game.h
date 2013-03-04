@@ -18,7 +18,7 @@ class Game {
     int gameWidth;
     int gameHeight;
     int gameDepth;
-    Canvas *canvas;
+    
 
     // random stuff for color and camera
     // and drawing in general
@@ -61,6 +61,7 @@ class Game {
     Game(int width, int height, std::string musicFile);
     ~Game();
 
+    Canvas *canvas;
     void draw();
     void update();
     void handleKeys(int key, int* movementKeyDown);
