@@ -1,6 +1,7 @@
 #include "file_dialog.h"
 
 std::string selectMusicFileDialog() {
+#ifndef USE_MAC_INCLUDES
   OPENFILENAME ofn;       // common dialog box structure
   char szFile[260];       // buffer for file name
   HWND hwnd;              // owner window
@@ -13,7 +14,7 @@ std::string selectMusicFileDialog() {
   ofn.lStructSize = sizeof(ofn);
   ofn.hwndOwner = hwnd;
   ofn.lpstrFile = szFile;
-  // Set lpstrFile[0] to '\0' so that GetOpenFileName does not 
+  // Set lpstrFile[0] to '\0' so that GetOpenFileName does not
   // use the contents of szFile to initialize itself.
   ofn.lpstrFile[0] = '\0';
   ofn.nMaxFile = sizeof(szFile);
@@ -24,10 +25,10 @@ std::string selectMusicFileDialog() {
   ofn.lpstrInitialDir = NULL;
   ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 
-  // Display the Open dialog box. 
+  // Display the Open dialog box.
 
   if (GetOpenFileName(&ofn)==TRUE) {
-    hf = CreateFile(ofn.lpstrFile, 
+    hf = CreateFile(ofn.lpstrFile,
     GENERIC_READ,
     0,
     (LPSECURITY_ATTRIBUTES) NULL,
@@ -41,4 +42,5 @@ std::string selectMusicFileDialog() {
   } else {
     return "";
   }
+#endif
 }
