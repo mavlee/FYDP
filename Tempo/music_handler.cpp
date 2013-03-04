@@ -142,7 +142,7 @@ int MusicHandler::analyze() {
     for (int i = 0; i < spectral_flux[v].size(); i++) {
       for (int j = 0 + v*BUF_SIZE/NUM_BANDS; j < (v+1)*BUF_SIZE/NUM_BANDS; j++) {
         //spectral_flux[v][i] += abs(FFT_data[i+1][j] - FFT_data[i][j]);
-        spectral_flux[v][i] += max(FFT_data[i+1][j] - FFT_data[i][j], 0.0);
+        spectral_flux[v][i] += max(FFT_data[i+1][j] - FFT_data[i][j], 0.f);
       }
     }
   }
