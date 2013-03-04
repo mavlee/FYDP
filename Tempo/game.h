@@ -56,7 +56,7 @@ class Game {
     void reset();
 
   public:
-    Game(int width, int height);
+    Game(int width, int height, std::string musicFile);
     ~Game();
 
     void draw();

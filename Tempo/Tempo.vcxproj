@@ -69,6 +69,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="canvas.cpp" />
+    <ClCompile Include="file_dialog.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="image_loader.cpp" />
     <ClCompile Include="LText.cpp" />
@@ -82,6 +83,7 @@
     <ClInclude Include="canvas.h" />
     <ClInclude Include="constants.h" />
     <ClInclude Include="cubeConstants.h" />
+    <ClInclude Include="file_dialog.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="image_loader.h" />
     <ClInclude Include="LOpenGL.h" />

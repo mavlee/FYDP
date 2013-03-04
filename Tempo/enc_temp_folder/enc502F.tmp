@@ -15,7 +15,6 @@ Game::Game(int width, int height, std::string musicFile) {
   canvas = new Canvas(width, height);
 
   musicHandler = new MusicHandler();
-
   if (strcmp(musicFile.c_str(), "") != 0) {
     musicHandler->setMusicFile("C:\\FYDP\\Tempo\\res\\music\\clocks.mp3");
   } else {
@@ -33,8 +32,7 @@ Game::Game(int width, int height, std::string musicFile) {
 
   // Instantiate components displayed on the screen
   generateGameFeatures();
-  fpsText = new Text(width, height);
-  comboLevelText = new Text(width, height);
+  text = new Text(width, height);
   pointsText = new Text(width, height);
 
   // color stuff and camera
@@ -62,16 +60,12 @@ Game::~Game() {
   delete canvas;
   delete playerCube;
   delete musicHandler;
-  delete fpsText;
-  delete comboLevelText;
+  delete text;
   delete pointsText;
 }
 
 // based on whatever music analysis gives us, generate game features
 void Game::generateGameFeatures() {
-  // clear obstacles
-  obstacles.clear();
-
   // TODO: do this dynamically
   // this is filled with some static cubes for now
   playerCube = new Cube(0.f, 0.f, -(Z_NEAR + 200.f), 100.f, 100.f, 100.f, Cube::Multi);
@@ -109,14 +103,14 @@ bool Game::checkForCollisions() {
 void Game::updateScore() {
   bool collision = checkForCollisions();
 
-  combo++;
   if (collision) {
     combo = 0;
     comboLevel = 1;
   }
-  if (combo % 1000 == 0) {
+  if (combo % 10000 == 0) {
     comboLevel++;
   }
+  combo++;
   points += 1 * comboLevel;
 }
 
@@ -165,13 +159,10 @@ void Game::draw() {
 
   std::stringstream fps_caption;
   fps_caption << "Average FPS: " << frames * 1.0 / (timer.get_ticks()/1000);
-  fpsText->renderText(canvasWidth, canvasHeight, 0, canvasHeight - 50, fps_caption.str());
+  text->renderText(canvasWidth, canvasHeight, 0, canvasHeight - 50, fps_caption.str());
   std::stringstream points_caption;
   points_caption << "Points: " << points;
   pointsText->renderText(canvasWidth, canvasHeight, 0, canvasHeight - 100, points_caption.str());
-  std::stringstream combo_caption;
-  combo_caption << "Combo Level: " << comboLevel;
-  pointsText->renderText(canvasWidth, canvasHeight, 0, canvasHeight - 150, combo_caption.str());
 
   // Update screen
   SDL_GL_SwapBuffers();
@@ -205,37 +196,12 @@ void Game::update() {
   updateScore();
 
   shiftZ -= SHIFT_INTERVAL_PER_SECOND * diff / 1000;
+
   glTranslatef(0, 0, SHIFT_INTERVAL_PER_SECOND * diff / 1000);
+
   lastUpdate += diff;
 
   draw();
-
-  if (musicHandler->getPositionInSec() == musicHandler->getLengthInSec()) {
-    reset();
-  }
-}
-
-// resets the game so a new game can be started
-void Game::reset() {
-  cameraX = 0.f;
-  cameraY = 0.f;
-
-  points = 0;
-  combo = 0;
-  comboLevel = 1;
-
-  shiftZ = 0.f;
-  lastPeakTime = 0;
-
-  lastUpdate = 0;
-  frames = 0;
-  //TODO remove me
-  musicHandler->setMusicFile("res/music/simpletest.mp3");
-  musicData = musicHandler->getPeakData();
-  generateGameFeatures();
-
-  timer.start();
-  musicHandler->play();
 }
 
 // WASD should move the playerCube, not the camera
