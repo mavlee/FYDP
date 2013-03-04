@@ -41,6 +41,7 @@ MusicHandler::MusicHandler() {
 
 MusicHandler::~MusicHandler() {
   reset();
+  BASS_Free();
 }
 
 void MusicHandler::reset() {
@@ -51,7 +52,7 @@ void MusicHandler::reset() {
     peakData[i].clear();
   }
 
-  BASS_Free();
+  BASS_StreamFree(playbackChan);
 }
 
 int MusicHandler::setMusicFile(string filename) {
