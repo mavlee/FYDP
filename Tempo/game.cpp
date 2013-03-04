@@ -13,12 +13,16 @@ Game::Game(int width, int height, std::string musicFile) {
   canvasWidth = width;
   canvasHeight = height;
   canvas = new Canvas(width, height);
-
   musicHandler = new MusicHandler();
+  fpsText = new Text(width, height);
+  comboLevelText = new Text(width, height);
+  pointsText = new Text(width, height);
 
-  musicHandler->setMusicFile("res/music/simpletest.mp3");
+  // player cube
+  playerCube = new Cube(0.f, 0.f, -(Z_NEAR + 200.f), 100.f, 100.f, 100.f, Cube::Multi);
 
-/*  if (strcmp(musicFile.c_str(), "") != 0) {
+  /*
+  if (strcmp(musicFile.c_str(), "") != 0) {
     musicHandler->setMusicFile("C:\\FYDP\\Tempo\\res\\music\\clocks.mp3");
   } else {
     //musicHandler->setMusicFile("res/music/clocks.mp3");
@@ -31,35 +35,8 @@ Game::Game(int width, int height, std::string musicFile) {
     }
   }
   */
-  musicData = musicHandler->getPeakData();
 
-  // Instantiate components displayed on the screen
-  generateGameFeatures();
-  fpsText = new Text(width, height);
-  comboLevelText = new Text(width, height);
-  pointsText = new Text(width, height);
-
-  // player cube
-  playerCube = new Cube(0.f, 0.f, -(Z_NEAR + 200.f), 100.f, 100.f, 100.f, Cube::Multi);
-
-  // color stuff and camera
-  gColorMode = COLOR_MODE_CYAN;
-
-  gProjectionScale = 1.f;
-  cameraX = 0.f;
-  cameraY = 0.f;
-
-  points = 0;
-  combo = 0;
-  comboLevel = 1;
-
-  shiftZ = 0.f;
-  lastPeakTime = 0;
-
-  lastUpdate = 0;
-  frames = 0;
-  timer.start();
-  musicHandler->play();
+  reset();
 }
 
 Game::~Game() {
@@ -70,6 +47,36 @@ Game::~Game() {
   delete fpsText;
   delete comboLevelText;
   delete pointsText;
+}
+
+// resets the game so a new game can be started
+void Game::reset() {
+  delete canvas;
+  canvas = new Canvas(canvasWidth, canvasHeight);
+  points = 0;
+  combo = 0;
+  comboLevel = 1;
+
+  cameraX = 0.f;
+  cameraY = 0.f;
+  gColorMode = COLOR_MODE_CYAN;
+  gProjectionScale = 1.f;
+
+  // clear obstacles
+  obstacles.clear();
+
+  shiftZ = 0.f;
+  lastPeakTime = 0;
+
+  lastUpdate = 0;
+  frames = 0;
+
+  musicHandler->setMusicFile("res/music/simpletest.mp3");
+  musicData = musicHandler->getPeakData();
+  generateGameFeatures();
+
+  timer.start();
+  musicHandler->play();
 }
 
 // based on whatever music analysis gives us, generate game features
@@ -211,35 +218,6 @@ void Game::update() {
   if (musicHandler->getPositionInSec() == musicHandler->getLengthInSec()) {
     reset();
   }
-}
-
-// resets the game so a new game can be started
-void Game::reset() {
-  delete canvas;
-  canvas = new Canvas(canvasWidth, canvasHeight);
-  points = 0;
-  combo = 0;
-  comboLevel = 1;
-
-  cameraX = 0.f;
-  cameraY = 0.f;
-
-  // clear obstacles
-  obstacles.clear();
-
-  shiftZ = 0.f;
-  lastPeakTime = 0;
-
-  lastUpdate = 0;
-  frames = 0;
-  //delete musicHandler;
-  //musicHandler = new MusicHandler();
-  musicHandler->setMusicFile("res/music/simpletest.mp3");
-  musicData = musicHandler->getPeakData();
-  generateGameFeatures();
-
-  timer.start();
-  musicHandler->play();
 }
 
 // WASD should move the playerCube, not the camera
