@@ -16,7 +16,9 @@ Game::Game(int width, int height, std::string musicFile) {
 
   musicHandler = new MusicHandler();
 
-  if (strcmp(musicFile.c_str(), "") != 0) {
+  musicHandler->setMusicFile("res/music/simpletest.mp3");
+
+/*  if (strcmp(musicFile.c_str(), "") != 0) {
     musicHandler->setMusicFile("C:\\FYDP\\Tempo\\res\\music\\clocks.mp3");
   } else {
     //musicHandler->setMusicFile("res/music/clocks.mp3");
@@ -28,7 +30,7 @@ Game::Game(int width, int height, std::string musicFile) {
       musicHandler->setMusicFile("C:\\FYDP\\Tempo\\res\\music\\clocks.mp3");
     }
   }
-
+  */
   musicData = musicHandler->getPeakData();
 
   // Instantiate components displayed on the screen

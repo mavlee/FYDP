@@ -8,10 +8,11 @@ int main( int argc, char* args[] ) {
 #ifndef USE_MAC_INCLUDES
   OpenConsole();
 #endif
-  std::string musicFile = selectMusicFileDialog();
-  printf("File in main.cpp: %s\n", musicFile);
+  //std::string musicFile = selectMusicFileDialog();
+  //printf("File in main.cpp: %s\n", musicFile);
   Game *game;
-  game = new Game(SCREEN_WIDTH, SCREEN_HEIGHT, musicFile);
+  //game = new Game(SCREEN_WIDTH, SCREEN_HEIGHT, musicFile);
+  game = new Game(SCREEN_WIDTH, SCREEN_HEIGHT, "");
   SDL_Event event;
 
   bool eventTriggered = false;
