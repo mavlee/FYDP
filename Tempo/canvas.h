@@ -16,6 +16,7 @@ private:
 
 public:
 	Canvas(int width, int height);
+  ~Canvas();
 
 	void initCanvas(); // inits GL
 	void cleanupCanvas(); // cleans up GL

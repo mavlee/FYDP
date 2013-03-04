@@ -25,6 +25,11 @@ Canvas::Canvas(int width, int height) {
   initCanvas();
 }
 
+Canvas::~Canvas() {
+  delete skyboxTexture;
+  delete rectTexture;
+}
+
 void Canvas::initCanvas() {
   // Start SDL
   if (SDL_Init( SDL_INIT_EVERYTHING ) == -1 ) {
