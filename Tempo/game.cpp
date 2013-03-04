@@ -21,7 +21,8 @@ Game::Game(int width, int height) {
 
   // Instantiate components displayed on the screen
   generateGameFeatures();
-  text = new Text(width, height);
+  fpsText = new Text(width, height);
+  comboLevelText = new Text(width, height);
   pointsText = new Text(width, height);
 
   // color stuff and camera
@@ -49,7 +50,8 @@ Game::~Game() {
   delete canvas;
   delete playerCube;
   delete musicHandler;
-  delete text;
+  delete fpsText;
+  delete comboLevelText;
   delete pointsText;
 }
 
@@ -92,14 +94,14 @@ bool Game::checkForCollisions() {
 void Game::updateScore() {
   bool collision = checkForCollisions();
 
+  combo++;
   if (collision) {
     combo = 0;
     comboLevel = 1;
   }
-  if (combo % 10000 == 0) {
+  if (combo % 1000 == 0) {
     comboLevel++;
   }
-  combo++;
   points += 1 * comboLevel;
 }
 
@@ -148,10 +150,13 @@ void Game::draw() {
 
   std::stringstream fps_caption;
   fps_caption << "Average FPS: " << frames * 1.0 / (timer.get_ticks()/1000);
-  text->renderText(canvasWidth, canvasHeight, 0, canvasHeight - 50, fps_caption.str());
+  fpsText->renderText(canvasWidth, canvasHeight, 0, canvasHeight - 50, fps_caption.str());
   std::stringstream points_caption;
   points_caption << "Points: " << points;
   pointsText->renderText(canvasWidth, canvasHeight, 0, canvasHeight - 100, points_caption.str());
+  std::stringstream combo_caption;
+  combo_caption << "Combo Level: " << comboLevel;
+  pointsText->renderText(canvasWidth, canvasHeight, 0, canvasHeight - 150, combo_caption.str());
 
   // Update screen
   SDL_GL_SwapBuffers();
