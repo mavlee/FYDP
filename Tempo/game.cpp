@@ -145,20 +145,6 @@ void Game::updateScore() {
 }
 
 
-void Game::drawPlayer() {
-  glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, KINECT_DEPTH_WIDTH, KINECT_DEPTH_HEIGHT, GL_BGRA_EXT, GL_UNSIGNED_BYTE, (GLvoid*)depthData);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  glBegin(GL_QUADS);
-  glTexCoord2f(0.0f, 0.0f);
-  glVertex3f(0, 0, 0);
-  glTexCoord2f(1.0f, 0.0f);
-  glVertex3f(KINECT_DEPTH_WIDTH*2, 0, 0);
-  glTexCoord2f(1.0f, 1.0f);
-  glVertex3f(KINECT_DEPTH_WIDTH*2, KINECT_DEPTH_HEIGHT*2, 0.0f);
-  glTexCoord2f(0.0f, 1.0f);
-  glVertex3f(0, KINECT_DEPTH_HEIGHT*2, 0.0f);
-  glEnd();
-}
 
 void Game::draw() {
   // TODO
@@ -192,13 +178,6 @@ void Game::draw() {
   glEnd();
   glPopMatrix();
   // Obstacles
-  glPushMatrix();
-  drawPlayer();
-  glPopMatrix();
-
-    glPushMatrix();
-  drawPlayer();
-  glPopMatrix();
 
     std::stringstream fps_caption;
   fps_caption << "Average FPS: " << frames * 1.0 / (timer.get_ticks()/1000);
