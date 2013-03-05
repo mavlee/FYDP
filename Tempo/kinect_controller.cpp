@@ -148,11 +148,11 @@ bool ProcessDepthEvent() {
       if (player == playerId) {
           for (int i = index; i < index + 4; i++)
             depthData->depthData[i] = intensity;
-          depthData->depthData[index+3] = (BYTE)50;
+          //depthData->depthData[index+3] = (BYTE)50;
           }
         else {
           for (int i = index; i < index + 4; i++)
-            depthData->depthData[i] = (BYTE)50;
+            depthData->depthData[i] = 50;
           }
       index += 4;
       curr += 1;                                                         
@@ -200,7 +200,7 @@ DWORD WINAPI KinectProcessThread(LPVOID lpParam) {
   bool run = true;
   printf("Beginning to wait for events\n");
   while (run) {
-    eventId = WaitForMultipleObjects(numEvents, hEvents, FALSE, 100);
+    eventId = WaitForMultipleObjects(numEvents, hEvents, FALSE, 0);
 
     if (eventId == WAIT_TIMEOUT)
       continue;
