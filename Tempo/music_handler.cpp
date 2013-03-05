@@ -19,7 +19,7 @@ MusicHandler::MusicHandler() {
   // enable floating-point DSP
   BASS_SetConfig(BASS_CONFIG_FLOATDSP,TRUE);
   // initialize - default device
-  if (!BASS_Init(-1,44100,0,NULL,NULL)) {
+  if (!BASS_Init(-1,SAMPLE_RATE,0,NULL,NULL)) {
     char msg[100] = "Error initialising BASS!";
     error(msg);
     //throw exception(msg);
@@ -27,7 +27,7 @@ MusicHandler::MusicHandler() {
   }
 
   // check for floating-point capability
-  floatable = BASS_StreamCreate(44100, 2, BASS_SAMPLE_FLOAT, NULL, 0);
+  floatable = BASS_StreamCreate(SAMPLE_RATE, 2, BASS_SAMPLE_FLOAT, NULL, 0);
   if (floatable) {
     BASS_StreamFree(floatable);
     floatable=BASS_SAMPLE_FLOAT;
@@ -36,6 +36,7 @@ MusicHandler::MusicHandler() {
   // init fields
   musicFilename = "";
   playbackChan = 0;
+  numChans = 2;
   peakData.resize(NUM_BANDS);
 }
 
@@ -47,6 +48,7 @@ MusicHandler::~MusicHandler() {
 void MusicHandler::reset() {
   musicFilename = "";
   playbackChan = 0;
+  numChans = 2;
 
   for (int i = 0; i < peakData.size(); i++) {
     peakData[i].clear();
@@ -115,14 +117,15 @@ int MusicHandler::analyze() {
   while (true) {
     float *buf = new float[BUF_SIZE];
     FFT_data.push_back(buf);
-    ret = BASS_ChannelGetData(decodeChan, FFT_data.back(), BASS_DATA_FFT1024);
+    ret = BASS_ChannelGetData(decodeChan, FFT_data.back(), BASS_DATA_FFT512);
     if (-1 == ret) {
       break;
     }
     num_samples += ret;
   }
   // BASS_ChannelGetData actually returns num bytes read from source
-  num_samples /= channel_info.chans;
+  numChans = channel_info.chans;
+  num_samples /= numChans;
   num_samples /= 4; // 32-bit float samples...?
   if (BASS_ERROR_ENDED != BASS_ErrorGetCode()) {
     error("Error getting data from file");
@@ -130,13 +133,14 @@ int MusicHandler::analyze() {
     return 1;
   }
   printf("%d total samples\n", num_samples);
-  printf("%d m %d s\n", (num_samples/44100)/60, ((int) (num_samples/44100.0 + 0.5)) % 60);
+  printf("%d m %d s\n", (num_samples/SAMPLE_RATE)/60, ((int) (num_samples*1.0/SAMPLE_RATE + 0.5)) % 60);
 
   // calculate spectral flux
   vector<float> spectral_flux (FFT_data.size() - 1, 0);
   for (int i = 0; i < spectral_flux.size(); i++) {
     for (int j = 0; j < BUF_SIZE; j++) {
-      spectral_flux[i] += abs(FFT_data[i+1][j] - FFT_data[i][j]);
+      //spectral_flux[i] += abs(FFT_data[i+1][j] - FFT_data[i][j]);
+      spectral_flux[i] += max(FFT_data[i+1][j] - FFT_data[i][j], 0.f);
     }
   }
   toCsv("spectral_flux.csv", spectral_flux);
@@ -231,6 +235,9 @@ double MusicHandler::getLengthInSec() {
   return pos2sec;
 }
 
+double MusicHandler::getPeakDataPerSec() {
+    return 1.0 * SAMPLE_RATE / BUF_SIZE / numChans;
+}
 
 /** Helper fcns**/
 void MusicHandler::toCsv (string name, vector<float> vec) {
