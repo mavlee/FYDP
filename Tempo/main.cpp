@@ -23,7 +23,7 @@ int main( int argc, char* args[] ) {
     printf("Failed to initialize Kinect\n");
   }else {
     printf("Kinect Sensor started\n");
-    hKinectProcess = CreateThread( NULL, 0, KinectProcessThread, 
+    hKinectProcess = CreateThread( NULL, 0, KinectProcessThread,
       (void*)game->canvas->depthData, 0, NULL );
   }
 #endif

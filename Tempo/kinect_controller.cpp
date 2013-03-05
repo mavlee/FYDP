@@ -102,7 +102,7 @@ bool ProcessSkeletalEvent() {
       if (skeletonFrame.SkeletonData[i].eTrackingState != NUI_SKELETON_NOT_TRACKED
         && playerId == 0) {
           playerId = i + 1;
-      } else if (playerId > 0 
+      } else if (playerId > 0
         && skeletonFrame.SkeletonData[playerId - 1].eTrackingState ==
         NUI_SKELETON_NOT_TRACKED) {
           playerId = 0;
@@ -146,17 +146,16 @@ bool ProcessDepthEvent() {
 
       // Only colour in the player, only 1 player
       if (player == playerId) {
-          for (int i = index; i < index + 4; i++)
-            depthData->depthData[i] = intensity;
-          //depthData->depthData[index+3] = (BYTE)50;
-          }
-        else {
-          for (int i = index; i < index + 4; i++)
-            depthData->depthData[i] = 50;
-          }
+        for (int i = index; i < index + 4; i++)
+          depthData->depthData[i] = intensity;
+      }
+      else {
+        for (int i = index; i < index + 4; i++)
+          depthData->depthData[i] = 0;
+      }
       index += 4;
-      curr += 1;                                                         
-    }    
+      curr += 1;
+    }
   }
   frameTexture->UnlockRect(0);
   kinectSensor->NuiImageStreamReleaseFrame(depthStream, &imageFrame);
@@ -200,7 +199,7 @@ DWORD WINAPI KinectProcessThread(LPVOID lpParam) {
   bool run = true;
   printf("Beginning to wait for events\n");
   while (run) {
-    eventId = WaitForMultipleObjects(numEvents, hEvents, FALSE, 0);
+    eventId = WaitForMultipleObjects(numEvents, hEvents, FALSE, 100);
 
     if (eventId == WAIT_TIMEOUT)
       continue;
