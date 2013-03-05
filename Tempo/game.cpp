@@ -71,7 +71,7 @@ void Game::reset() {
   lastUpdate = 0;
   frames = 0;
 
-  musicHandler->setMusicFile("res/music/simpletest.mp3");
+  musicHandler->setMusicFile("res/music/clocks.mp3");
   musicData = musicHandler->getPeakData();
   generateGameFeatures();
 
@@ -87,7 +87,8 @@ void Game::generateGameFeatures() {
     last = -50;
     for (int i = 0; i < musicData[b].size(); i++) {
       if (musicData[b][i] > PEAK_THRESHOLD && i - last > 0) {
-        float pos = SCREEN_WIDTH/2.f*(-1 + rand()%3);
+        //float pos = SCREEN_WIDTH/2.f*(-1 + rand()%3);
+        float pos = -NUM_BANDS/2*125.f + b*125;
         obstacle = new Cube(pos, 0.f, -(Z_NEAR + 200.f + i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec()), 100.f, 100.f, 100.f, Cube::Multi);
         obstacles.push_back(obstacle);
         last = i;
