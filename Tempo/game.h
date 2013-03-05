@@ -18,6 +18,7 @@ class Game {
     int gameWidth;
     int gameHeight;
     int gameDepth;
+    Canvas *canvas;
     
 
     // random stuff for color and camera
