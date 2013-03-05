@@ -7,7 +7,7 @@
 #define BUF_SIZE 512 // dependent on the kind of FFT data used
 #define THRESHOLD_WINDOW_SIZE 10
 #define THRESHOLD_MULTIPLIER 4.0
-#define NUM_BANDS 4
+#define NUM_BANDS 8 
 #define SAMPLE_RATE 44100
 
 using namespace std;
