@@ -8,13 +8,12 @@
 #ifndef USE_MAC_INCLUDES
 
 #include <windows.h>
-#include <shlobj.h>
-#include <shlwapi.h>
-#include <strsafe.h>
-#include <new>
+#include <Commdlg.h>
 
 #endif
 
 #include <string>
+#include "LOpenGL.h"
+#include "constants.h"
 
 std::string selectMusicFileDialog();

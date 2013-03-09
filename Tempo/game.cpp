@@ -8,8 +8,9 @@
 #include <string>
 #include "inc/sound/sound_includes.h"
 #include "music_handler.h"
+#include "util.h"
 
-Game::Game(int width, int height, std::string musicFile) {
+Game::Game(int width, int height) {
   canvasWidth = width;
   canvasHeight = height;
   canvas = new Canvas(width, height);
@@ -18,24 +19,8 @@ Game::Game(int width, int height, std::string musicFile) {
   comboLevelText = new Text(width, height);
   pointsText = new Text(width, height);
 
-  musicHandler->setMusicFile("res/music/clocks.mp3");
   // player cube
   playerCube = new Cube(0.f, 0.f, -(Z_NEAR + 200.f), 100.f, 100.f, 100.f, Cube::Multi);
-
-  /*
-  if (strcmp(musicFile.c_str(), "") != 0) {
-    musicHandler->setMusicFile("C:\\FYDP\\Tempo\\res\\music\\clocks.mp3");
-  } else {
-    //musicHandler->setMusicFile("res/music/clocks.mp3");
-    if (strcmp(musicFile.c_str(), "C:\\FYDP\\Tempo\\res\\music\\clocks.mp3") != 0) {
-      printf("this is the right file");
-      musicHandler->setMusicFile(musicFile);
-    } else {
-      printf("reverting back to clocks\n");
-      musicHandler->setMusicFile("C:\\FYDP\\Tempo\\res\\music\\clocks.mp3");
-    }
-  }
-  */
 
   reset();
 }
@@ -72,7 +57,7 @@ void Game::reset() {
   lastUpdate = 0;
   frames = 0;
 
-  musicHandler->setMusicFile("res/music/simpletest.mp3");
+  musicHandler->setMusicFile(selectMusicFileDialog());
   musicData = musicHandler->getPeakData();
   generateGameFeatures();
 
