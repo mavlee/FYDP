@@ -14,7 +14,7 @@ Utility functions
 #include <io.h>
 #include <iostream>
 #include <fstream>
-//#include "file_dialog.h"
+#include "file_dialog.h"
 
 /* Displays a message box with an error message.  To use, call
   ErrorHandler(TEXT("Your message here"));
