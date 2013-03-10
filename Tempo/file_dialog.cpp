@@ -1,6 +1,8 @@
 #include "file_dialog.h"
 
+#ifndef USE_MAC_INCLUDES
 OPENFILENAME ofn;       // common dialog box structure
+#endif
 char filePath[260];
 
 std::string selectMusicFileDialog() {
@@ -27,6 +29,8 @@ std::string selectMusicFileDialog() {
   GetOpenFileName(&ofn);
 
   return filePath;
+#else
+  return "res/music/clocks.mp3";
 #endif
 }
 

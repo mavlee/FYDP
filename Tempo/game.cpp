@@ -9,6 +9,7 @@
 #include "inc/sound/sound_includes.h"
 #include "music_handler.h"
 #include "util.h"
+#include "file_dialog.h"
 
 Game::Game(int width, int height) {
   canvasWidth = width;
