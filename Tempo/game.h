@@ -42,26 +42,31 @@ class Game {
     int points;
     int comboLevel;
     int combo;
+
+    int isPaused;
+    bool dirKeyPressed[2];
+
     vector<vector<float> > musicData;
     float shiftZ;
     Cube* playerCube;
     std::list<Cube*> obstacles;
-    double lastPeakTime;
 
     // private functions
+    void reset();
+
+    void handleEvent(SDL_Event& event);
+    void draw();
+    void update();
+
     void generateGameFeatures();
-    void drawObstacles();
     bool checkForCollisions();
     void updateScore();
-    void reset();
 
   public:
     Game(int width, int height);
     ~Game();
 
-    void draw();
-    void update();
-    void handleKeys(int key, int* movementKeyDown);
+    int execute();
 };
 
 #endif
