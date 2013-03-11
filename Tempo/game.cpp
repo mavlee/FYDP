@@ -1,26 +1,35 @@
-#include "LOpenGL.h"
 #include <stdio.h>
+#include <string>
+#include "LOpenGL.h"
 #include "canvas.h"
 #include "game.h"
 #include "constants.h"
 #include "objects.h"
 #include "LText.h"
-#include <string>
 #include "inc/sound/sound_includes.h"
 #include "music_handler.h"
 #include "util.h"
 #include "file_dialog.h"
 
+#define LEFT 0
+#define RIGHT 1
+
+#define LEFT_KEY        SDLK_a
+#define RIGHT_KEY       SDLK_d
+#define COLOUR_MODE_KEY SDLK_q
+#define PERSPECTIVE_KEY SDLK_e
+#define PAUSE_KEY       ' '
+
 Game::Game(int width, int height) {
   canvasWidth = width;
   canvasHeight = height;
+
   canvas = new Canvas(width, height);
   musicHandler = new MusicHandler();
   fpsText = new Text(width, height);
   comboLevelText = new Text(width, height);
   pointsText = new Text(width, height);
-
-  // player cube
+  // TODO this has nothing to do with the near plane
   playerCube = new Cube(0.f, 0.f, -(Z_NEAR + 200.f), 100.f, 100.f, 100.f, Cube::Multi);
 
   reset();
@@ -28,12 +37,12 @@ Game::Game(int width, int height) {
 
 Game::~Game() {
   canvas->cleanupCanvas();
-  delete canvas;
-  delete playerCube;
-  delete musicHandler;
-  delete fpsText;
-  delete comboLevelText;
-  delete pointsText;
+  if (canvas) delete canvas;
+  if (playerCube) delete playerCube;
+  if (musicHandler) delete musicHandler;
+  if (fpsText) delete fpsText;
+  if (comboLevelText) delete comboLevelText;
+  if (pointsText) delete pointsText;
 }
 
 // resets the game so a new game can be started
@@ -44,6 +53,9 @@ void Game::reset() {
   combo = 0;
   comboLevel = 1;
 
+  isPaused = false;
+  dirKeyPressed[LEFT] = dirKeyPressed[RIGHT] = false;
+
   cameraX = 0.f;
   cameraY = 0.f;
   gColorMode = COLOR_MODE_CYAN;
@@ -53,7 +65,6 @@ void Game::reset() {
   obstacles.clear();
 
   shiftZ = 0.f;
-  lastPeakTime = 0;
 
   lastUpdate = 0;
   frames = 0;
@@ -66,6 +77,27 @@ void Game::reset() {
   musicHandler->play();
 }
 
+// the game's main loop
+int Game::execute() {
+  SDL_Event event;
+  bool quitGame = false;
+
+  while (!quitGame) {
+    while (SDL_PollEvent(&event)) {
+      if (SDL_QUIT == event.type) {
+        quitGame = true;
+      } else {
+        handleEvent(event);
+      }
+    }
+
+    update();
+    draw();
+  }
+
+  return 0;
+}
+
 // based on whatever music analysis gives us, generate game features
 void Game::generateGameFeatures() {
   int last = -50;
@@ -73,6 +105,7 @@ void Game::generateGameFeatures() {
   for (vector<float>::size_type i = 0; i < musicData[0].size(); i++) {
     if (musicData[0][i] > PEAK_THRESHOLD && i - last > 0) {
       float pos = SCREEN_WIDTH/2.f*(-1 + rand()%3);
+      // TODO: this has nothing to do with the near plane
       obstacle = new Cube(0.f, 0.f, -(Z_NEAR + 200.f + i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec()), 100.f, 100.f, 100.f, Cube::Multi);
       obstacles.push_back(obstacle);
       last = i;
@@ -110,13 +143,6 @@ void Game::updateScore() {
     comboLevel++;
   }
   points += 1 * comboLevel;
-}
-
-// draw the obstacles
-void Game::drawObstacles() {
-  for (std::list<Cube*>::iterator i = obstacles.begin(); i != obstacles.end(); i++) {
-    (*i)->draw();
-  }
 }
 
 void Game::draw() {
@@ -176,84 +202,86 @@ void Game::update() {
   // TODO
   // update player cube position
   // check for collision
-  bool col = checkForCollisions();
-
-  if (col) {
+  if (checkForCollisions()) {
     printf("Collision\n");
   }
 
-  double pos = musicHandler->getPositionInSec();
-  if (musicData[0][int(pos*musicHandler->getPeakDataPerSec())] > PEAK_THRESHOLD && pos - lastPeakTime > 0.1) {
-    lastPeakTime = pos;
-    /*
-    cout << "time " << pos << endl;
-    for (std::list<Cube*>::const_iterator iterator = obstacles.begin(), end = obstacles.end(); iterator != end; ++iterator) {
-      cout << ((*iterator)->zNear + (*iterator)->zFar) / 2 - shiftZ << endl;
-    }
-    */
-  }
-
   // calculate score
+  // TODO: calculate score according to time, and not the frequency that frames are drawn
   updateScore();
+
+  // Update positions
+  int xDir = 0;
+  if (dirKeyPressed[LEFT]) xDir = -1;
+  if (dirKeyPressed[RIGHT]) xDir = 1;
+  cameraX += 1600.f * diff / 1000.f * xDir;
 
   shiftZ -= SHIFT_INTERVAL_PER_SECOND * diff / 1000;
   glTranslatef(0, 0, SHIFT_INTERVAL_PER_SECOND * diff / 1000);
   lastUpdate += diff;
 
-  draw();
-
+  // Check for end of song
   if (musicHandler->getPositionInSec() == musicHandler->getLengthInSec()) {
     reset();
   }
 }
 
-// WASD should move the playerCube, not the camera
-void Game::handleKeys(int key, int* movementKeyDown) {
-  bool translation = false;
-  switch (key) {
-  case ' ':
-    musicHandler->pause();
-    break;
-  case SDLK_q:
-    //Toggle color mode
-    if (gColorMode == COLOR_MODE_CYAN) {
-      gColorMode = COLOR_MODE_MULTI;
-    } else {
-      gColorMode = COLOR_MODE_CYAN;
-    }
-    break;
-  case SDLK_a:
-    *movementKeyDown = 1;
-    translation = true;
-    cameraX -= 16.f;
-    break;
-  case SDLK_d:
-    *movementKeyDown = 1;
-    translation = true;
-    cameraX += 16.f;
-    break;
-  case SDLK_e:
-    // Cycle through projection scales
-    if (gProjectionScale == 1.f) {
-      // Zoom out
-      gProjectionScale = 2.f;
-    } else if( gProjectionScale == 2.f ) {
-      // Zoom in
-      gProjectionScale = 0.5f;
-    }
-    else if( gProjectionScale == 0.5f ) {
-      // Regular zoom
-      gProjectionScale = 1.f;
-    }
+void Game::handleEvent(SDL_Event& event) {
+  switch (event.type) {
 
-    // Update projection matrix
-    glMatrixMode( GL_PROJECTION );
-    glLoadIdentity();
-    glFrustum(-canvasWidth / 2 * gProjectionScale, canvasWidth / 2 * gProjectionScale,
-      canvasHeight / 2 * gProjectionScale, -canvasHeight / 2 + gProjectionScale,
-      Z_NEAR / gProjectionScale, Z_FAR / gProjectionScale);
+  case SDL_KEYDOWN:
+    switch (event.key.keysym.sym) {
+    case LEFT_KEY:
+      dirKeyPressed[LEFT] = true;
+      dirKeyPressed[RIGHT] = false;
+      break;
+    case RIGHT_KEY:
+      dirKeyPressed[LEFT] = false;
+      dirKeyPressed[RIGHT] = true;
+      break;
+    case PAUSE_KEY:
+      isPaused = !isPaused;
+      break;
+    case COLOUR_MODE_KEY:
+      //Toggle color mode
+      if (gColorMode == COLOR_MODE_CYAN) {
+        gColorMode = COLOR_MODE_MULTI;
+      } else {
+        gColorMode = COLOR_MODE_CYAN;
+      }
+      break;
+    case PERSPECTIVE_KEY:
+      // Cycle through projection scales
+      if (gProjectionScale == 1.f) {
+        // Zoom out
+        gProjectionScale = 2.f;
+      } else if( gProjectionScale == 2.f ) {
+        // Zoom in
+        gProjectionScale = 0.5f;
+      } else if( gProjectionScale == 0.5f ) {
+        // Regular zoom
+        gProjectionScale = 1.f;
+      }
+      // Update projection matrix
+      // TODO: move to canvas
+      glMatrixMode( GL_PROJECTION );
+      glLoadIdentity();
+      glFrustum(-canvasWidth / 2 * gProjectionScale, canvasWidth / 2 * gProjectionScale,
+        canvasHeight / 2 * gProjectionScale, -canvasHeight / 2 + gProjectionScale,
+        Z_NEAR / gProjectionScale, Z_FAR / gProjectionScale);
+      break;
+    }
     break;
-  default:
+
+  case SDL_KEYUP:
+    switch (event.key.keysym.sym) {
+    case LEFT_KEY:
+      dirKeyPressed[LEFT] = false;
+      break;
+    case RIGHT_KEY:
+      dirKeyPressed[RIGHT] = false;
+      break;
+    }
     break;
   }
 }
