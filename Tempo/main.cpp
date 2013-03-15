@@ -10,17 +10,23 @@ int main( int argc, char* args[] ) {
   Game theGame(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 #ifndef USE_MAC_INCLUDES
-  HANDLE hKinectProcess;
+  HANDLE hKinectProcess = NULL;
   if (FAILED(kinectinit())) {
     printf("Failed to initialize Kinect\n");
   }else {
     printf("Kinect Sensor started\n");
     hKinectProcess = CreateThread( NULL, 0, KinectProcessThread, 
-      (void*)theGame.depthData, 0, NULL );
+      (void*)theGame.canvas->depthData, 0, NULL );
   }
-  ShutdownKinect(hKinectProcess);
 #endif
 
-  return theGame.execute();
+  theGame.execute();
+
+#ifndef USE_MAC_INCLUDES
+  if (hKinectProcess)
+    ShutdownKinect(hKinectProcess);
+#endif
+
+  return 0;
 
 }

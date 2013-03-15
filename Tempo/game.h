@@ -11,68 +11,68 @@
 #include "constants.h"
 
 class Game {
-  private:
-    // board and camera stuff
-    int canvasWidth;
-    int canvasHeight;
-    int gameWidth;
-    int gameHeight;
-    int gameDepth;
-    Canvas *canvas;
-    
+private:
+  // board and camera stuff
+  int canvasWidth;
+  int canvasHeight;
+  int gameWidth;
+  int gameHeight;
+  int gameDepth;
 
-    // random stuff for color and camera
-    // and drawing in general
-    GLfloat cameraX;
-    GLfloat cameraY;
-    GLfloat gProjectionScale;
-    int gColorMode;
-    float avgFps;
-    Text *fpsText;
-    Text *comboLevelText;
-    Text *pointsText;
 
-    // For handling music
-    MusicHandler* musicHandler;
+  // random stuff for color and camera
+  // and drawing in general
+  GLfloat cameraX;
+  GLfloat cameraY;
+  GLfloat gProjectionScale;
+  int gColorMode;
+  float avgFps;
+  Text *fpsText;
+  Text *comboLevelText;
+  Text *pointsText;
 
-    // Game Timer
-    Timer timer;
-    int lastUpdate;
-    int frames;
+  // For handling music
+  MusicHandler* musicHandler;
 
-    // data about the game
-    int points;
-    int comboLevel;
-    int combo;
+  // Game Timer
+  Timer timer;
+  int lastUpdate;
+  int frames;
 
-    int isPaused;
-    bool dirKeyPressed[2];
+  // data about the game
+  int points;
+  int comboLevel;
+  int combo;
 
-    vector<vector<float> > musicData;
-    float shiftZ;
-    Cube* playerCube;
-    std::list<Cube*> obstacles;
+  int isPaused;
+  bool dirKeyPressed[2];
 
-    // private functions
-    void reset();
+  vector<vector<float> > musicData;
+  float shiftZ;
+  Cube* playerCube;
+  std::list<Cube*> obstacles;
 
-    void handleEvent(SDL_Event& event);
-    void draw();
-    void update();
+  // private functions
+  void reset();
 
-    void generateGameFeatures();
-    void drawObstacles();
-    void drawPlayer();
-    bool checkForCollisions();
-    void updateScore();
+  void handleEvent(SDL_Event& event);
+  void draw();
+  void update();
 
-  public:
-    BYTE depthData[KINECT_DEPTH_WIDTH*KINECT_DEPTH_HEIGHT*4];
+  void generateGameFeatures();
+  void drawObstacles();
+  void drawPlayer();
+  bool checkForCollisions();
+  void updateScore();
 
-    Game(int width, int height);
-    ~Game();
+public:
+  BYTE depthData[KINECT_DEPTH_WIDTH*KINECT_DEPTH_HEIGHT*4];
+  Canvas *canvas;
 
-    int execute();
+  Game(int width, int height);
+  ~Game();
+
+  int execute();
 };
 
 #endif
