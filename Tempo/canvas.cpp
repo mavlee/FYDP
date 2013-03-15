@@ -32,20 +32,11 @@ Canvas::~Canvas() {
 
 void Canvas::initCanvas() {
   // Start SDL
-  if (SDL_Init( SDL_INIT_EVERYTHING ) == -1 ) {
-    //return false;
-  }
-
+  SDL_Init(SDL_INIT_EVERYTHING);
   // SDL_SWSURFACE implies that the surface is set up in software memory.
   screen = SDL_SetVideoMode(width, height, SCREEN_BPP, SDL_OPENGL);
-  if (screen == NULL) {
-    //return false;
-  }
-
   //Initialize SDL ttf. Must be called prior to all SDL_ttf functions.
-  if (TTF_Init() == -1) {
-    //return false;
-  }
+  TTF_Init();
 
   // Initialize Projection Matrix
   glMatrixMode( GL_PROJECTION );

@@ -5,6 +5,10 @@
 #include "objects.h"
 #include "constants.h"
 
+#ifdef USE_MAC_INCLUDES
+typedef unsigned char BYTE;
+#endif
+
 // class used for drawing shit
 class Canvas {
 private:

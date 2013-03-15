@@ -1,5 +1,5 @@
 #ifndef __KINECT_CONTROLLER_H__
-#ifndef USE_MAC_INCLUDES 
+#ifndef USE_MAC_INCLUDES
 #define __KINECT_CONTROLLER_H__
 
 #include <tchar.h>

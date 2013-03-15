@@ -1,4 +1,5 @@
 #include "kinect_controller.h"
+#ifndef USE_MAC_INCLUDES
 
 HANDLE hNextSkeletonEvent;
 HANDLE hNextDepthEvent;
@@ -102,7 +103,7 @@ bool ProcessSkeletalEvent() {
       if (skeletonFrame.SkeletonData[i].eTrackingState != NUI_SKELETON_NOT_TRACKED
         && playerId == 0) {
           playerId = i + 1;
-      } else if (playerId > 0 
+      } else if (playerId > 0
         && skeletonFrame.SkeletonData[playerId - 1].eTrackingState ==
         NUI_SKELETON_NOT_TRACKED) {
           playerId = 0;
@@ -155,8 +156,8 @@ bool ProcessDepthEvent() {
             depthData->depthData[i] = 50;
           }
       index += 4;
-      curr += 1;                                                         
-    }    
+      curr += 1;
+    }
   }
   frameTexture->UnlockRect(0);
   kinectSensor->NuiImageStreamReleaseFrame(depthStream, &imageFrame);
@@ -221,3 +222,4 @@ DWORD WINAPI KinectProcessThread(LPVOID lpParam) {
   return 0;
 }
 
+#endif
