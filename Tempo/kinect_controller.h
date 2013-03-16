@@ -9,19 +9,30 @@
 #include <objbase.h>
 
 #include <strsafe.h>
+#include <list>
 
 #include "NuiApi.h"
 #include "NuiImageCamera.h"
 #include "NuiSensor.h"
 
+using namespace std;
+
 #define HORZ_ANGLE 65
 #define VERT_ANGLE 50
 
-#define width 640
-#define height 480
+const int width = 640;
+const int height = 480;
 
-#define depthWidth 320
-#define depthHeight 240
+const int depthWidth = 320;
+const int depthHeight = 240;
+
+// frequency threshold for inner and outer band around pixel
+const int innerBandThreshhold = 2;
+const int outerBandThreshhold = 4;
+
+// number of previous frames to sample
+const int queueLength = 9;
+
 
 typedef struct {
   float x;
