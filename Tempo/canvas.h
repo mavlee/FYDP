@@ -19,10 +19,12 @@ private:
   GLuint playerDepthId;
 
   Text *scoreText;
+  Text *lifeText;
 
   void drawSkybox(int width, int height, float shiftZ);
   void drawObstacles(std::list<Cube*> obstacles);
   void drawPlayer();
+  void drawLife(int lifeRemaining);
 
 public:
   BYTE depthData[KINECT_DEPTH_WIDTH*KINECT_DEPTH_HEIGHT*4];
@@ -31,9 +33,9 @@ public:
 
   void initCanvas(); // inits GL
   void cleanupCanvas(); // cleans up GL
-  void draw(float shiftZ, std::list<Cube*> obstacles);
+  void draw(float shiftZ, std::list<Cube*> obstacles, int lifeRemaining);
 
-  void drawHighscore(int points, int* highscores, bool highscoreAchieved);
+  void drawHighscore(int points, int* highscores, bool highscoreAchieved, int lifeRemaining);
 };
 
 #endif

@@ -43,6 +43,7 @@ private:
   int points;
   int comboLevel;
   int combo;
+  int lifeRemaining;
 
   int isPaused;
   bool dirKeyPressed[2];
