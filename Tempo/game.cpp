@@ -71,7 +71,7 @@ void Game::reset() {
   lastUpdate = 0;
   frames = 0;
 
-  musicHandler->setMusicFile("res/music/clocks.mp3");
+  musicHandler->setMusicFile("res/music/callmemaybe.mp3");
   musicData = musicHandler->getPeakData();
   generateGameFeatures();
 
