@@ -146,7 +146,7 @@ void Game::updateScore() {
     combo = 0;
     comboLevel = 1;
   }
-  if (combo % 1000 == 0) {
+  if (combo % 1000 == 0 && combo > 0) {
     comboLevel++;
   }
   points += 1 * comboLevel;
