@@ -384,7 +384,7 @@ void Canvas::drawProgress(float progressPct) {
   float y = 500.0f;
 
   std::stringstream progress;
-  progress << "Progress: " << int(progressPct * 100) << "%";
+  progress << "Progress";
   lifeText->renderText(SCREEN_WIDTH, SCREEN_HEIGHT, x, y + padding, progress.str());
 
   // Initialize Projection Matrix
