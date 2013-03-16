@@ -16,7 +16,7 @@
 
 #define LEFT_KEY        SDLK_a
 #define RIGHT_KEY       SDLK_d
-#define COLOUR_MODE_KEY SDLK_q
+#define QUIT_KEY        SDLK_q
 #define PERSPECTIVE_KEY SDLK_e
 #define PAUSE_KEY       ' '
 #define RESTART_KEY     SDLK_r
@@ -87,7 +87,7 @@ void Game::reset() {
 // the game's main loop
 int Game::execute() {
   SDL_Event event;
-  bool quitGame = false;
+  quitGame = false;
 
   while (!quitGame) {
     while (SDL_PollEvent(&event)) {
@@ -263,13 +263,8 @@ void Game::handleEvent(SDL_Event& event) {
         musicHandler->play();
       }
       break;
-    case COLOUR_MODE_KEY:
-      //Toggle color mode
-      if (gColorMode == COLOR_MODE_CYAN) {
-        gColorMode = COLOR_MODE_MULTI;
-      } else {
-        gColorMode = COLOR_MODE_CYAN;
-      }
+    case QUIT_KEY:
+      quitGame = true;
       break;
     case PERSPECTIVE_KEY:
       // Cycle through projection scales
