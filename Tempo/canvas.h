@@ -25,6 +25,7 @@ private:
   void drawObstacles(std::list<Cube*> obstacles);
   void drawPlayer();
   void drawLife(int lifeRemaining);
+  void drawProgress(float progressPct);
 
 public:
   BYTE depthData[KINECT_DEPTH_WIDTH*KINECT_DEPTH_HEIGHT*4];
@@ -33,7 +34,7 @@ public:
 
   void initCanvas(); // inits GL
   void cleanupCanvas(); // cleans up GL
-  void draw(float shiftZ, std::list<Cube*> obstacles, int lifeRemaining);
+  void draw(float shiftZ, std::list<Cube*> obstacles, int lifeRemaining, float progressPct);
 
   void drawHighscore(int points, int* highscores, bool highscoreAchieved, int lifeRemaining);
 };

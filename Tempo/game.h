@@ -44,6 +44,7 @@ private:
   int comboLevel;
   int combo;
   int lifeRemaining;
+  float progressPct;
 
   int isPaused;
   bool dirKeyPressed[2];
