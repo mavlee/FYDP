@@ -12,6 +12,11 @@ const float Z_NEAR = 1000.f;
 const float FPS_CAP = 1000.f / 60;
 const float PEAK_THRESHOLD = 0.f;
 
+const float SHAPE_X = 100.f;
+const float SHAPE_Y = 100.f;
+const float SHAPE_Z = 100.f;
+const float OFFSET_FROM_CAMERA = Z_NEAR + 200.f;
+
 const float SHIFT_INTERVAL = 10.f;
 const float SHIFT_INTERVAL_PER_SECOND = 500.f;
 
