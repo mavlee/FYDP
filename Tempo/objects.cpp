@@ -20,8 +20,8 @@ void Object::setCentre(float x, float y, float z) {
 
 Cube::Cube(float centreX, float centreY, float centreZ,
   float width, float height, float depth, ColourSet color) {
-    zNear = centreZ + depth / 2;
-    zFar = centreZ - depth / 2;
+    zFront = centreZ + depth / 2;
+    zBack = centreZ - depth / 2;
     wLeft = centreX - width / 2;
     wRight = centreX + width / 2;
 

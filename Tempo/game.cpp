@@ -109,10 +109,8 @@ void Game::generateGameFeatures() {
   for (int i = 0; i < musicData[0].size(); i++) {
     for (int b = 0; b < NUM_BANDS; b++) {
       if (musicData[b][i] > PEAK_THRESHOLD/* && (i - last > 10 || i == last)*/) {
-        //float pos = -NUM_BANDS/2*125.f + b*125;
         float y = -b/4 * 125;
         float x = -NUM_BANDS/8*125.f + b%4*125;
-        //obstacle = new Cube(pos, 0, -(Z_NEAR + 200.f + i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec()), 100.f, 100.f, 100.f, Cube::Multi);
         obstacle = new Cube(x, y, -(Z_NEAR + 200.f + i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec()), 100.f, 100.f, 100.f, Cube::Multi);
         obstacles.push_back(obstacle);
         last = i;
@@ -125,11 +123,11 @@ void Game::generateGameFeatures() {
 bool Game::checkForCollisions() {
   for (std::list<Cube*>::const_iterator iterator = obstacles.begin(), end = obstacles.end(); iterator != end; ++iterator) {
     if (!(*iterator)->collided) {
-      if ((*iterator)->zNear + Z_NEAR > shiftZ + playerCube->zFar + Z_NEAR && (*iterator)->zFar + Z_NEAR < shiftZ + playerCube->zFar + Z_NEAR) {
+      if ((*iterator)->zFront + Z_NEAR > shiftZ + playerCube->zBack + Z_NEAR && (*iterator)->zBack + Z_NEAR < shiftZ + playerCube->zBack + Z_NEAR) {
         if (((*iterator)->wRight > playerCube->wLeft + cameraX && (*iterator)->wLeft < playerCube->wLeft + cameraX)
           || ((*iterator)->wLeft < playerCube->wRight + cameraX && (*iterator)->wRight > playerCube->wRight + cameraX)) {
             (*iterator)->collided = true;
-            printf("Collision detected at:\nCurrent Depth: %f\nCurrent Left: %f\nCurrent Right: %f\nDepth: %f\nLeft: %f\nRight: %f\n", shiftZ - playerCube->zFar, playerCube->wLeft + cameraX, playerCube->wRight + cameraX, (*iterator)->zNear, (*iterator)->wLeft, (*iterator)->wRight);
+            printf("Collision detected at:\nCurrent Depth: %f\nCurrent Left: %f\nCurrent Right: %f\nDepth: %f\nLeft: %f\nRight: %f\n", shiftZ - playerCube->zBack, playerCube->wLeft + cameraX, playerCube->wRight + cameraX, (*iterator)->zFront, (*iterator)->wLeft, (*iterator)->wRight);
             return true;
         }
       }
