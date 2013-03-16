@@ -263,26 +263,25 @@ int MusicHandler::analyze2() {
   for (int v = 0; v < NUM_BANDS; v++) {
     average_energies[v].resize(FFT_data.size() - 1, 0);
     for (int i = 0; i < average_energies[v].size(); i++) {
-      for (int j = i-43; j < i; j++) {
-        average_energies[v][i] += 1.0/min(i+1,43)*energies[v][j];
+      for (int j = i - SAMPLE_HISTORY; j < i; j++) {
+        average_energies[v][i] += 1.0 / min(i + 1, SAMPLE_HISTORY) * energies[v][j];
       }
     }
   }
 
   // find peaks
-  /*
   for (int v = 0; v < NUM_BANDS; v++) {
     peakData[v].resize(FFT_data.size() - 1, 0);
     for (int i = 0; i < energies[v].size(); i++) {
-      if (energies[v][i] > 4*average_energies[v][i]) {
+      if (energies[v][i] > 5*average_energies[v][i]) {
         peakData[v][i] = 1;
       } else {
         peakData[v][i] = 0;
       }
     }
   }
-  */
 
+  /*
   for (int v = 0; v < NUM_BANDS; v++) {
     peakData[v].resize(FFT_data.size() - 1, 0);
   }
@@ -291,7 +290,7 @@ int MusicHandler::analyze2() {
     int m = -1;
     for (int v = 0; v < NUM_BANDS; v++) {
       if (energies[v][i] - 3*average_energies[v][i] > value) {
-        value = energies[v][i] - average_energies[v][i];
+        value = energies[v][i] - 3*average_energies[v][i];
         m = v;
       }
       peakData[v][i] = 0;
@@ -300,6 +299,7 @@ int MusicHandler::analyze2() {
       peakData[m][i] = 1;
     }
   }
+  */
 
   // clean up memory
   for (int i = 0; i < FFT_data.size(); i++) {
