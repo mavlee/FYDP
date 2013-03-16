@@ -17,4 +17,8 @@ const float SHIFT_INTERVAL_PER_SECOND = 500.f;
 
 const int KINECT_DEPTH_WIDTH = 320;
 const int KINECT_DEPTH_HEIGHT = 240;
+
+// Parameters used to stretch the open gl texture
+const int PLAYER_DRAW_WIDTH = KINECT_DEPTH_WIDTH*2;
+const int PLAYER_DRAW_HEIGHT = KINECT_DEPTH_HEIGHT*4;
 #endif
