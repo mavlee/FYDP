@@ -54,6 +54,7 @@ private:
   bool finished;
   bool highscoreAchieved;
   int* highscores;
+  bool quitGame;
 
   vector<vector<float> > musicData;
   float shiftZ;
