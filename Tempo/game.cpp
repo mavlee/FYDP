@@ -221,6 +221,9 @@ void Game::update() {
 
   // Check for end of song
   if (musicHandler->getPositionInSec() == musicHandler->getLengthInSec() || lifeRemaining == 0) {
+    if (lifeRemaining == 0) {
+      musicHandler->pause();
+    }
     if (!finished) {
       string fileName = musicHandler->getMusicFile();
       fileName = fileName.substr(fileName.find_last_of('\\') + 1);
