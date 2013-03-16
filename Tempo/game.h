@@ -60,8 +60,6 @@ private:
   void update();
 
   void generateGameFeatures();
-  void drawObstacles();
-  void drawPlayer();
   bool checkForCollisions();
   void updateScore();
 

@@ -268,16 +268,18 @@ void Game::handleEvent(SDL_Event& event) {
         canvasHeight / 2 * gProjectionScale, -canvasHeight / 2 + gProjectionScale,
         Z_NEAR / gProjectionScale, Z_FAR / gProjectionScale);
       break;
-    case SDL_KEYUP:
-      switch (event.key.keysym.sym) {
-      case LEFT_KEY:
-        dirKeyPressed[LEFT] = false;
-        break;
-      case RIGHT_KEY:
-        dirKeyPressed[RIGHT] = false;
-        break;
-      }
+    }
+    break;
+
+  case SDL_KEYUP:
+    switch (event.key.keysym.sym) {
+    case LEFT_KEY:
+      dirKeyPressed[LEFT] = false;
+      break;
+    case RIGHT_KEY:
+      dirKeyPressed[RIGHT] = false;
       break;
     }
+    break;
   }
 }
