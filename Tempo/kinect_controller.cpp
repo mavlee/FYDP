@@ -201,6 +201,9 @@ USHORT* FilterDepthArray (USHORT* depthArray, int iWidth, int iHeight) {
     }
   }
 
+  if (depthArray)
+    delete depthArray;
+
   return smoothedDepthArray;
 }
 
@@ -242,6 +245,9 @@ USHORT* AverageDepthArray (USHORT* depthArray) {
       averageDepthArray[index] = (USHORT)(sumDepthArray[index]/denominator);
     }
   }
+
+  if (depthArray)
+    delete depthArray;
 
   return averageDepthArray;
 }
@@ -311,9 +317,13 @@ bool ProcessDepthEvent() {
       }
       index += 4;
     }
+
+    if (shortDepthArray)
+      delete shortDepthArray;
   }
   frameTexture->UnlockRect(0);
   kinectSensor->NuiImageStreamReleaseFrame(depthStream, &imageFrame);
+
 
   return true;
 }
