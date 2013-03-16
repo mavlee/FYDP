@@ -36,8 +36,8 @@ class Cube: public Object {
 		};
 
 		// used for collision detection
-		float zNear;
-		float zFar;
+		float zFront;
+		float zBack;
 		float wLeft;
 		float wRight;
 
