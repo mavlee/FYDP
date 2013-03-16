@@ -90,6 +90,10 @@ int MusicHandler::setMusicFile(string filename) {
   return 0;
 }
 
+string MusicHandler::getMusicFile() {
+  return musicFilename;
+}
+
 // returns 0 if sucessful
 int MusicHandler::analyze() {
   DWORD decodeChan;	// the channel... HMUSIC or HSTREAM

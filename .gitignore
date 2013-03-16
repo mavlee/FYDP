@@ -15,3 +15,4 @@ Tempo/*.opensdf
 Tempo/*.vcxproj
 libbass.dylib
 *.csv
+*.high

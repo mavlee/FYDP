@@ -23,6 +23,7 @@ Canvas::Canvas(int width, int height) {
   this->height = height;
   screen = NULL;
   initCanvas();
+  scoreText = new Text(width, height);
 }
 
 Canvas::~Canvas() {
@@ -244,4 +245,23 @@ void Canvas::drawObstacles(std::list<Cube*> obstacles) {
       (*i)->draw();
     }
   }
+}
+
+void Canvas::drawHighscore(int points, int* highscores, bool highscoreAchieved) {
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    std::stringstream highscore_caption;
+    if (highscoreAchieved) {
+      highscore_caption << "New Highscore! Score: " << points;
+      scoreText->renderText(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH / 2, 150, highscore_caption.str());
+    } else {
+      highscore_caption << "Score: " << points;
+      scoreText->renderText(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH / 2, 150, highscore_caption.str());
+    }
+    int i = 0;
+    for (i; i < 10; i++) {
+      std::stringstream highscore_line;
+      highscore_line <<  "Record " << i + 1 << ":       " << highscores[i];
+      scoreText->renderText(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH / 2, 150 + (i + 1) * 50, highscore_line.str());
+    }
 }

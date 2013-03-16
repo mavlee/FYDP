@@ -47,6 +47,12 @@ private:
   int isPaused;
   bool dirKeyPressed[2];
 
+  // after game variables
+  bool restart;
+  bool finished;
+  bool highscoreAchieved;
+  int* highscores;
+
   vector<vector<float> > musicData;
   float shiftZ;
   Cube* playerCube;

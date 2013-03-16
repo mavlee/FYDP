@@ -17,6 +17,7 @@ class MusicHandler {
     MusicHandler();
     ~MusicHandler();
     int setMusicFile(string filename);
+    string getMusicFile();
 
     int getNumBands();
     const vector<vector<float> >& getPeakData();
