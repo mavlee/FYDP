@@ -3,11 +3,12 @@
 #define __KINECT_CONTROLLER_H__
 
 #include <tchar.h>
-#include <strsafe.h>
 #include <math.h>
 
 #include <Windows.h>
 #include <objbase.h>
+
+#include <strsafe.h>
 
 #include "NuiApi.h"
 #include "NuiImageCamera.h"
