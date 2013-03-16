@@ -29,6 +29,7 @@ Canvas::Canvas(int width, int height) {
 Canvas::~Canvas() {
   delete skyboxTexture;
   delete rectTexture;
+  if (scoreText) delete scoreText;
 }
 
 void Canvas::initCanvas() {
