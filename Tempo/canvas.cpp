@@ -31,6 +31,10 @@ Canvas::~Canvas() {
 }
 
 void Canvas::initCanvas() {
+  // Initialize player texture
+  for (int i = 0; i < KINECT_DEPTH_HEIGHT*KINECT_DEPTH_WIDTH*4; i++)
+    depthData[i] = 0;
+
   // Start SDL
   SDL_Init(SDL_INIT_EVERYTHING);
   // SDL_SWSURFACE implies that the surface is set up in software memory.
@@ -123,6 +127,16 @@ void Canvas::draw(float shiftZ, std::list<Cube*> obstacles) {
 }
 
 void Canvas::drawPlayer() {
+  // Initialize Projection Matrix
+  glMatrixMode( GL_PROJECTION );
+  // Save current matrix.
+  glLoadIdentity();
+
+  glFrustum( -1, 1, -1, 1, 1, Z_FAR);
+
+  glMatrixMode(GL_MODELVIEW);
+  glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+  glClearColor(0,0,0,0);
   glEnable(GL_DEPTH_TEST);
   glDepthMask(GL_TRUE);
   glEnable(GL_TEXTURE_2D);
@@ -133,11 +147,14 @@ void Canvas::drawPlayer() {
   glBindTexture(GL_TEXTURE_2D, playerDepthId);
   glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, KINECT_DEPTH_WIDTH, KINECT_DEPTH_HEIGHT, GL_BGRA_EXT, GL_UNSIGNED_BYTE, (GLvoid*)depthData);
   glBegin(GL_QUADS);
-    glTexCoord2f(0.0f, 0.0f); glVertex3f(-SCREEN_WIDTH/2, -SCREEN_HEIGHT/2, 1200.0f);
-    glTexCoord2f(1.0f, 0.0f); glVertex3f(-SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 1200.0f);
-    glTexCoord2f(1.0f, 1.0f); glVertex3f(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 1200.0f);
-    glTexCoord2f(0.0f, 1.0f); glVertex3f(SCREEN_WIDTH/2, -SCREEN_HEIGHT/2, 1200.0f);
-  glEnd();
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(PLAYER_DRAW_WIDTH, PLAYER_DRAW_HEIGHT, -1100.0f);
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(-PLAYER_DRAW_WIDTH, PLAYER_DRAW_HEIGHT, -1100.0f);
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(-PLAYER_DRAW_WIDTH, -PLAYER_DRAW_HEIGHT, -1100.0f);
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(PLAYER_DRAW_WIDTH, -PLAYER_DRAW_HEIGHT, -1100.0f);
+  glEnd(); 
+  glMatrixMode(GL_MODELVIEW);
+
+  glMatrixMode(GL_PROJECTION);
 }
 
 void Canvas::drawSkybox(int width, int height, float shiftZ) {
