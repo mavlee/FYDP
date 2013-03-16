@@ -20,6 +20,7 @@
 #define PERSPECTIVE_KEY SDLK_e
 #define PAUSE_KEY       ' '
 #define RESTART_KEY     SDLK_r
+#define STOP_KEY        SDLK_ESCAPE
 
 Game::Game(int width, int height) {
   canvasWidth = width;
@@ -288,6 +289,12 @@ void Game::handleEvent(SDL_Event& event) {
       break;
     case RESTART_KEY:
       restart = true;
+      break;
+    case STOP_KEY:
+      lifeRemaining = 0;
+      finished = true;
+      restart = true;
+      musicHandler->pause();
       break;
     }
     break;
