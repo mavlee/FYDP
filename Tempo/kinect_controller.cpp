@@ -153,7 +153,7 @@ bool ProcessDepthEvent() {
           }
         else {
           for (int i = index; i < index + 4; i++)
-            depthData->depthData[i] = 50;
+            depthData->depthData[i] = 0;
           }
       index += 4;
       curr += 1;
