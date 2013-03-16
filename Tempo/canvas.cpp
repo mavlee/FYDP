@@ -264,4 +264,7 @@ void Canvas::drawHighscore(int points, int* highscores, bool highscoreAchieved) 
       highscore_line <<  "Record " << i + 1 << ":       " << highscores[i];
       scoreText->renderText(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH / 2, 150 + (i + 1) * 50, highscore_line.str());
     }
+    std::stringstream restart_line;
+    restart_line <<  "Press \'r\' to play again.";
+    scoreText->renderText(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH / 2, 150 + (11) * 50, restart_line.str());
 }
