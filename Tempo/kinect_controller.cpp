@@ -7,6 +7,9 @@ HANDLE hEventStopKinect;
 
 INuiSensor *kinectSensor;
 
+list<USHORT*> averageQueue;
+
+
 HANDLE depthStream;
 typedef struct {
   BYTE depthData[(width/2)*(height/2)*4];
@@ -115,6 +118,134 @@ bool ProcessSkeletalEvent() {
   return true;
 }
 
+// Samples around empty pixels, checks the values around it and picks
+// the most frequent value and fills the pixel in with that value
+USHORT* FilterDepthArray (USHORT* depthArray, int iWidth, int iHeight) {
+  USHORT* smoothedDepthArray = new USHORT[width*height/4];
+  for (int i = 0; i < width*height/4; i++)
+    smoothedDepthArray[i] = 0;
+
+  int widthBound = iWidth - 1;
+  int heightBound = iHeight -1;
+
+  for (int rowIndex = 0; rowIndex < 240; rowIndex++) {
+    for (int colIndex = 0; colIndex < 320; colIndex++) {
+      int cellIndex = colIndex + rowIndex * 320;
+
+      if (depthArray[cellIndex] == 0) {
+        int x = cellIndex % 320;
+        int y = (cellIndex - x) / 320;
+
+        USHORT* filterCollection = new USHORT[24,2];
+        for (int i = 0; i < 24; i++)
+          for (int j = 0; j < 2; j++)
+            filterCollection[i, j] = 0;
+
+        int innerBandCount = 0;
+        int outerBandCount = 0;
+
+        // Loop in a 5x5 grid around the empty pixel to sample values
+        for (int yi = -2; yi < 3; yi++) {
+          for (int xi = -2; xi < 3; xi++) {
+            if (xi != 0 || yi != 0) {
+              int xSearch = x + xi;
+              int ySearch = y + yi;
+
+              if (xSearch >= 0 && xSearch <= widthBound && ySearch >= 0 && ySearch <= heightBound) {
+                int index = xSearch + (ySearch * iWidth);
+
+                // Keep a count of values it finds
+                if (depthArray[index] != 0) {
+                  for (int i = 0; i < 24; i++) {
+                    if (filterCollection[i, 0] == depthArray[index]) {
+                      filterCollection[i, 1]++;
+                      break;
+                    } else if (filterCollection[i, 0] == 0) {
+                      filterCollection[i, 0] = depthArray[index];
+                      filterCollection[i, 1]++;
+                      break;
+                    }
+                  }
+
+                  if (yi != 2 && yi != -2 && xi != 2  && xi != -2)
+                    innerBandCount++;
+                  else
+                    outerBandCount++;
+                }
+              }
+            }
+          }
+        }
+
+        if (innerBandCount >= innerBandThreshhold || outerBandCount >= outerBandThreshhold) {
+          short frequency = 0;
+          short depth = 0;
+
+          for (int i = 0; i < 24; i++) {
+            if (filterCollection[i, 0] == 0) {
+              break;
+            }
+            if (filterCollection[i, 1] > frequency) {
+              depth = filterCollection[i, 0];
+              frequency = filterCollection[i, 1];
+            }
+          }
+
+          smoothedDepthArray[cellIndex] = depth;
+        } else {
+          smoothedDepthArray[cellIndex] = depthArray[cellIndex];
+        }
+      } else {
+        smoothedDepthArray[cellIndex] = depthArray[cellIndex];
+      }
+    }
+  }
+
+  return smoothedDepthArray;
+}
+
+// Filters the array with a weighted average of previous frames
+USHORT* AverageDepthArray (USHORT* depthArray) {
+  averageQueue.push_back(depthArray);
+
+  while (averageQueue.size() > queueLength) {
+    averageQueue.pop_front();
+  }
+
+  int sumDepthArray[depthWidth*depthHeight];
+  USHORT* averageDepthArray = new USHORT[depthWidth*depthHeight];
+
+  for (int i = 0; i < depthWidth * depthHeight; i++) {
+    sumDepthArray[i] = 0;
+    averageDepthArray[i] = 0;
+  }
+
+  int denominator = 0;
+  int count = 1;
+
+  list<USHORT*>::const_iterator iterator;
+
+  for (iterator = averageQueue.begin(); iterator != averageQueue.end(); ++iterator) {
+    for (int rowIndex = 0; rowIndex < 240; rowIndex++) {
+      for (int colIndex = 0; colIndex < 320; colIndex++) {
+        int index = colIndex + (rowIndex * 320);
+        sumDepthArray[index] += (*iterator)[index] * count;
+      }
+    }
+    denominator += count;
+    count++;
+  }
+
+  for (int rowIndex = 0; rowIndex < 240; rowIndex++) {
+    for (int colIndex = 0; colIndex < 320; colIndex++) {
+      int index = colIndex + (rowIndex * 320);
+      averageDepthArray[index] = (USHORT)(sumDepthArray[index]/denominator);
+    }
+  }
+
+  return averageDepthArray;
+}
+
 // Process depth frame event
 bool ProcessDepthEvent() {
   NUI_IMAGE_FRAME imageFrame;
@@ -136,27 +267,49 @@ bool ProcessDepthEvent() {
 
   if (LockedRect.Pitch != 0 ) {
     USHORT* curr = (USHORT*) LockedRect.pBits;
+    USHORT* shortDepthArray = new USHORT[width*height/4];
     const USHORT* dataEnd = curr + ((width/2)*(height/2));
 
+
+    for (int i = 0; i < width*height/4; i++)
+      shortDepthArray[i] = 0;
+
+    int i = 0;
+
     while (curr < dataEnd && playerId != 0) {
-      USHORT depth     = *curr;
-      USHORT realDepth = NuiDepthPixelToDepth(depth);
-      BYTE intensity   = 255;
-      USHORT player    = NuiDepthPixelToPlayerIndex(depth);
+      USHORT player    = NuiDepthPixelToPlayerIndex(*curr);
+      shortDepthArray[i] = NuiDepthPixelToDepth(*curr);
+      curr++;
+      i++;
+    }
+
+        shortDepthArray = FilterDepthArray(shortDepthArray, width/2, height/2);
+
+    shortDepthArray = AverageDepthArray(shortDepthArray);
+
+    curr = curr - 76800;
+    i = 0;
+
+    while (curr < dataEnd && playerId != 0) {
+      USHORT player = NuiDepthPixelToPlayerIndex(*curr);
+      shortDepthArray[i] = shortDepthArray[i] << 3 | player;
+      curr++;
+      i++;
+    }
 
 
-      // Only colour in the player, only 1 player
+
+    for (int i = 0; i < width*height/4 && playerId != 0; i++) {
+      USHORT player = NuiDepthPixelToPlayerIndex(shortDepthArray[i]);
       if (player == playerId) {
-          for (int i = index; i < index + 4; i++)
-            depthData->depthData[i] = intensity;
-          //depthData->depthData[index+3] = (BYTE)50;
-          }
-        else {
-          for (int i = index; i < index + 4; i++)
-            depthData->depthData[i] = 0;
-          }
+        for (int j = index; j < index + 4; j++)
+          depthData->depthData[j] = (BYTE)255;
+        //depthData->depthData[i+3] = (BYTE)50;
+      } else {
+        for (int j = index; j < index + 4; j++)
+          depthData->depthData[j] = 0;
+      }
       index += 4;
-      curr += 1;
     }
   }
   frameTexture->UnlockRect(0);
