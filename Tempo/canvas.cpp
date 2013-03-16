@@ -31,6 +31,9 @@ Canvas::~Canvas() {
 }
 
 void Canvas::initCanvas() {
+  // Initialize player texture
+  for (int i = 0; i < KINECT_DEPTH_HEIGHT*KINECT_DEPTH_WIDTH*4; i++)
+    depthData[i] = 0;
 
   // Start SDL
   SDL_Init(SDL_INIT_EVERYTHING);
