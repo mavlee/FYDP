@@ -54,6 +54,7 @@ void Game::reset() {
   combo = 0;
   comboLevel = 1;
   lifeRemaining = TOTAL_LIFE_COUNT;
+  progressPct = 0.0f;
 
   isPaused = false;
   dirKeyPressed[LEFT] = dirKeyPressed[RIGHT] = false;
@@ -156,7 +157,7 @@ void Game::updateScore() {
 
 void Game::draw() {
   if (!finished) {
-    canvas->draw(shiftZ, obstacles, lifeRemaining);
+    canvas->draw(shiftZ, obstacles, lifeRemaining, progressPct);
 
     // Render the cube
     glPushMatrix();
@@ -205,6 +206,8 @@ void Game::update() {
     // calculate score
     // TODO: calculate score according to time, and not the frequency that frames are drawn
     updateScore();
+
+    progressPct = musicHandler->getPositionInSec() / musicHandler->getLengthInSec();
 
     // Update positions
     int xDir = 0;

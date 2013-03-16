@@ -25,6 +25,20 @@ int lifeHeight;
 GLuint* lifeTexture;
 GLuint LIFE = 4;
 
+char* pbPath = "res/images/progress_bar.png";
+bool pbLoaded = false;
+int pbWidth;
+int pbHeight;
+GLuint* pbTexture;
+GLuint PB = 5;
+
+char* proPath = "res/images/progress_indicator.png";
+bool proLoaded = false;
+int proWidth;
+int proHeight;
+GLuint* proTexture;
+GLuint PRO = 6;
+
 Canvas::Canvas(int width, int height) {
   this->width = width;
   this->height = height;
@@ -103,6 +117,16 @@ void Canvas::initCanvas() {
       lifeWidth = width;
       lifeHeight = height;
     }
+    if (loadImage(pbPath, width, height, hasAlpha, rectTexture, &PB)) {
+      pbLoaded = true;
+      pbWidth = width;
+      pbHeight = height;
+    }
+    if (loadImage(proPath, width, height, hasAlpha, rectTexture, &PRO)) {
+      proLoaded = true;
+      proWidth = width;
+      proHeight = height;
+    }
   }
 
   // Load player silhouette
@@ -121,11 +145,13 @@ void Canvas::cleanupCanvas() {
   clearImage(&SKYBOX);
   clearImage(&RECTANGLE);
   clearImage(&LIFE);
+  clearImage(&PB);
+  clearImage(&PRO);
   // Quit SDL. Also handles cleanup of the screen object.
   SDL_Quit();
 }
 
-void Canvas::draw(float shiftZ, std::list<Cube*> obstacles, int lifeRemaining) {
+void Canvas::draw(float shiftZ, std::list<Cube*> obstacles, int lifeRemaining, float progressPct) {
   // Clear color buffer & depth buffer
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -144,6 +170,10 @@ void Canvas::draw(float shiftZ, std::list<Cube*> obstacles, int lifeRemaining) {
 
   glPushMatrix();
   drawLife(lifeRemaining);
+  glPopMatrix();
+
+  glPushMatrix();
+  drawProgress(progressPct);
   glPopMatrix();
 }
 
@@ -346,4 +376,64 @@ void Canvas::drawHighscore(int points, int* highscores, bool highscoreAchieved, 
   std::stringstream restart_line;
   restart_line <<  "Press \'r\' to play again.";
   scoreText->renderText(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH / 2, 150 + (11) * 50, restart_line.str());
+}
+
+void Canvas::drawProgress(float progressPct) {
+  float padding = 20.0f;
+  float x = 500.0f;
+  float y = 500.0f;
+
+  std::stringstream progress;
+  progress << "Progress: " << int(progressPct * 100) << "%";
+  lifeText->renderText(SCREEN_WIDTH, SCREEN_HEIGHT, x, y + padding, progress.str());
+
+  // Initialize Projection Matrix
+  glMatrixMode( GL_PROJECTION );
+  // Save current matrix.
+  glPushMatrix();
+  glLoadIdentity();
+
+  glFrustum( 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, Z_NEAR, Z_FAR);
+
+  glMatrixMode(GL_MODELVIEW);
+
+  glPushAttrib(GL_ENABLE_BIT);
+  glEnable(GL_TEXTURE_2D);
+  glDisable(GL_DEPTH_TEST);
+  glDisable(GL_LIGHTING);
+  glDisable(GL_BLEND);
+
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+  //Set texture parameters
+  glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+  glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+
+  glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+  int i = 0;
+  // this border is predefined by the image files and the offset required to place one on top of the other.
+  float border = 12.0f;
+
+  glBindTexture(GL_TEXTURE_2D, PB);
+  glBegin(GL_QUADS);
+    glTexCoord2f( 1.0f, 0.0f ); glVertex3f( x + pbWidth * 2/3 , y + padding + pbHeight * 2 , -1100.0f );
+    glTexCoord2f( 0.0f, 0.0f ); glVertex3f( x - pbWidth * 1/3 , y + padding + pbHeight * 2 , -1100.0f );
+    glTexCoord2f( 0.0f, 1.0f ); glVertex3f( x - pbWidth * 1/3 , y + padding + pbHeight * 3 , -1100.0f );
+    glTexCoord2f( 1.0f, 1.0f ); glVertex3f( x + pbWidth * 2/3 , y + padding + pbHeight * 3 , -1100.0f );
+  glEnd();
+
+  glBindTexture(GL_TEXTURE_2D, PRO);
+  glBegin(GL_QUADS);
+    glTexCoord2f( 1.0f, 0.0f ); glVertex3f( x - pbWidth * 1/3 + pbWidth * progressPct + border , y + padding + pbHeight * 2 + border , -1100.0f );
+    glTexCoord2f( 0.0f, 0.0f ); glVertex3f( x - pbWidth * 1/3                         + border , y + padding + pbHeight * 2 + border , -1100.0f );
+    glTexCoord2f( 0.0f, 1.0f ); glVertex3f( x - pbWidth * 1/3                         + border , y + padding + pbHeight * 3 - border , -1100.0f );
+    glTexCoord2f( 1.0f, 1.0f ); glVertex3f( x - pbWidth * 1/3 + pbWidth * progressPct + border , y + padding + pbHeight * 3 - border , -1100.0f );
+  glEnd();
+
+  glMatrixMode(GL_MODELVIEW);
+  glPopMatrix();
+
+  glMatrixMode(GL_PROJECTION);
+  glPopMatrix();
+  glPopAttrib();
 }
