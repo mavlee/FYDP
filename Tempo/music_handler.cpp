@@ -74,7 +74,7 @@ int MusicHandler::setMusicFile(string filename) {
 
   // perform analysis on file
   int ret;
-  ret = analyze();
+  ret = analyze2();
   if (ret != 0) {
     reset();
     return ret;
@@ -190,6 +190,112 @@ int MusicHandler::analyze() {
     }
   }
   toCsv("peaks.csv", peakData);
+
+  // clean up memory
+  for (int i = 0; i < FFT_data.size(); i++) {
+    delete [] FFT_data[i];
+    FFT_data[i] = NULL;
+  }
+
+  return 0;
+}
+
+int MusicHandler::analyze2() {
+  DWORD decodeChan;	// the channel... HMUSIC or HSTREAM
+
+  // consider decoding stream in mono, since it's faster
+  if (!(decodeChan=BASS_StreamCreateFile(FALSE, musicFilename.c_str(), 0, 0, BASS_SAMPLE_FLOAT|BASS_STREAM_DECODE|floatable))){
+    // not playable
+    char msg[256];
+    sprintf(msg, "File %s not playable!", musicFilename.c_str());
+    error(msg);
+    return 1;
+  }
+
+  // get number of channels
+  BASS_CHANNELINFO channel_info;
+  if (!BASS_ChannelGetInfo(decodeChan,&channel_info)) {
+    error("Error getting channel info.");
+    return 1;
+  }
+
+  // get data
+  DWORD ret = 0;
+  vector<float *> FFT_data;
+  int num_samples = 0;
+  while (true) {
+    float *buf = new float[BUF_SIZE];
+    FFT_data.push_back(buf);
+    ret = BASS_ChannelGetData(decodeChan, FFT_data.back(), BASS_DATA_FFT1024);
+    if (-1 == ret) {
+      break;
+    }
+    num_samples += ret;
+  }
+  // BASS_ChannelGetData actually returns num bytes read from source
+  numChans = channel_info.chans;
+  num_samples /= numChans;
+  num_samples /= 4; // 32-bit float samples...?
+  if (BASS_ERROR_ENDED != BASS_ErrorGetCode()) {
+    error("Error getting data from file");
+    BASS_Free();
+    return 1;
+  }
+  printf("%d total samples\n", num_samples);
+  printf("%d total channels\n", numChans);
+  printf("%d m %d s\n", (num_samples/SAMPLE_RATE)/60, ((int) (num_samples*1.0/SAMPLE_RATE + 0.5)) % 60);
+
+  vector<vector<float> > energies(NUM_BANDS);
+  for (int v = 0; v < NUM_BANDS; v++) {
+    energies[v].resize(FFT_data.size() - 1, 0);
+    for (int i = 0; i < energies[v].size(); i++) {
+      for (int j = 0 + v*BUF_SIZE/NUM_BANDS; j < (v+1)*BUF_SIZE/NUM_BANDS; j++) {
+        energies[v][i] += 8.0/512*FFT_data[i][j];
+      }
+    }
+  }
+
+  vector<vector<float> > average_energies(NUM_BANDS);
+  for (int v = 0; v < NUM_BANDS; v++) {
+    average_energies[v].resize(FFT_data.size() - 1, 0);
+    for (int i = 0; i < average_energies[v].size(); i++) {
+      for (int j = i-43; j < i; j++) {
+        average_energies[v][i] += 1.0/min(i+1,43)*energies[v][j];
+      }
+    }
+  }
+
+  // find peaks
+  /*
+  for (int v = 0; v < NUM_BANDS; v++) {
+    peakData[v].resize(FFT_data.size() - 1, 0);
+    for (int i = 0; i < energies[v].size(); i++) {
+      if (energies[v][i] > 4*average_energies[v][i]) {
+        peakData[v][i] = 1;
+      } else {
+        peakData[v][i] = 0;
+      }
+    }
+  }
+  */
+
+  for (int v = 0; v < NUM_BANDS; v++) {
+    peakData[v].resize(FFT_data.size() - 1, 0);
+  }
+  for (int i = 0; i < energies[0].size(); i++) {
+    int value = 0;
+    int m = -1;
+    for (int v = 0; v < NUM_BANDS; v++) {
+      if (energies[v][i] - 3*average_energies[v][i] > value) {
+        value = energies[v][i] - average_energies[v][i];
+        m = v;
+      }
+      peakData[v][i] = 0;
+    }
+    if (m > -1) {
+      peakData[m][i] = 1;
+    }
+  }
 
   // clean up memory
   for (int i = 0; i < FFT_data.size(); i++) {
