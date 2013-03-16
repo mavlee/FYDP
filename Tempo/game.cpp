@@ -9,6 +9,7 @@
 #include "music_handler.h"
 #include "util.h"
 #include "file_dialog.h"
+#include "highscore.h"
 
 #define LEFT 0
 #define RIGHT 1
@@ -18,6 +19,7 @@
 #define COLOUR_MODE_KEY SDLK_q
 #define PERSPECTIVE_KEY SDLK_e
 #define PAUSE_KEY       ' '
+#define RESTART_KEY     SDLK_r
 
 Game::Game(int width, int height) {
   canvasWidth = width;
@@ -54,6 +56,8 @@ void Game::reset() {
 
   isPaused = false;
   dirKeyPressed[LEFT] = dirKeyPressed[RIGHT] = false;
+  restart = false;
+  finished = false;
 
   cameraX = 0.f;
   cameraY = 0.f;
@@ -149,6 +153,7 @@ void Game::updateScore() {
 }
 
 void Game::draw() {
+  if (!finished) {
   // TODO
   //
   // clean this up - canvas.prepForDrawing() maybe
@@ -189,39 +194,57 @@ void Game::draw() {
   std::stringstream combo_caption;
   combo_caption << "Combo Level: " << comboLevel;
   pointsText->renderText(canvasWidth, canvasHeight, 0, canvasHeight - 150, combo_caption.str());
+  } else {
+    canvas->drawHighscore(points, highscores, highscoreAchieved);
+  }
 
   // Update screen
   SDL_GL_SwapBuffers();
 }
 
 void Game::update() {
-  frames++;
-  int diff = timer.get_ticks() - lastUpdate;
+  if (!finished) {
+    frames++;
+    int diff = timer.get_ticks() - lastUpdate;
 
-  // TODO
-  // update player cube position
-  // check for collision
-  if (checkForCollisions()) {
-    printf("Collision\n");
+    // TODO
+    // update player cube position
+    // check for collision
+    if (checkForCollisions()) {
+      printf("Collision\n");
+    }
+
+    // calculate score
+    // TODO: calculate score according to time, and not the frequency that frames are drawn
+    updateScore();
+
+    // Update positions
+    int xDir = 0;
+    if (dirKeyPressed[LEFT]) xDir = -1;
+    if (dirKeyPressed[RIGHT]) xDir = 1;
+    cameraX += 1600.f * diff / 1000.f * xDir;
+
+    shiftZ -= SHIFT_INTERVAL_PER_SECOND * diff / 1000;
+    glTranslatef(0, 0, SHIFT_INTERVAL_PER_SECOND * diff / 1000);
+    lastUpdate += diff;
   }
-
-  // calculate score
-  // TODO: calculate score according to time, and not the frequency that frames are drawn
-  updateScore();
-
-  // Update positions
-  int xDir = 0;
-  if (dirKeyPressed[LEFT]) xDir = -1;
-  if (dirKeyPressed[RIGHT]) xDir = 1;
-  cameraX += 1600.f * diff / 1000.f * xDir;
-
-  shiftZ -= SHIFT_INTERVAL_PER_SECOND * diff / 1000;
-  glTranslatef(0, 0, SHIFT_INTERVAL_PER_SECOND * diff / 1000);
-  lastUpdate += diff;
 
   // Check for end of song
   if (musicHandler->getPositionInSec() == musicHandler->getLengthInSec()) {
-    reset();
+    if (!finished) {
+      string fileName = musicHandler->getMusicFile();
+      fileName = fileName.substr(fileName.find_last_of('\\') + 1);
+      fileName = fileName.substr(0, fileName.find(".mp3"));
+      fileName = fileName + ".high";
+      highscores = readHighScores(fileName);
+      highscoreAchieved = insertHighScore(points);
+      int i = 0;
+      writeHighScores(fileName);
+      finished = true;
+    }
+    if (restart) {
+      reset();
+    }
   }
 }
 
@@ -268,6 +291,9 @@ void Game::handleEvent(SDL_Event& event) {
       glFrustum(-canvasWidth / 2 * gProjectionScale, canvasWidth / 2 * gProjectionScale,
         canvasHeight / 2 * gProjectionScale, -canvasHeight / 2 + gProjectionScale,
         Z_NEAR / gProjectionScale, Z_FAR / gProjectionScale);
+      break;
+    case RESTART_KEY:
+      restart = true;
       break;
     }
     break;
