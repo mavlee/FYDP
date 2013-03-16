@@ -53,6 +53,7 @@ void Game::reset() {
   points = 0;
   combo = 0;
   comboLevel = 1;
+  lifeRemaining = TOTAL_LIFE_COUNT;
 
   isPaused = false;
   dirKeyPressed[LEFT] = dirKeyPressed[RIGHT] = false;
@@ -145,6 +146,7 @@ void Game::updateScore() {
   if (collision) {
     combo = 0;
     comboLevel = 1;
+    lifeRemaining--;
   }
   if (combo % 1000 == 0 && combo > 0) {
     comboLevel++;
@@ -160,7 +162,7 @@ void Game::draw() {
   // and canvas.finishedDrawing()
   // should be using playerCube.draw() ??
 
-  canvas->draw(shiftZ, obstacles);
+  canvas->draw(shiftZ, obstacles, lifeRemaining);
   // Render the cube
   glPushMatrix();
   glTranslatef(cameraX, cameraY, 0);
@@ -195,7 +197,7 @@ void Game::draw() {
   combo_caption << "Combo Level: " << comboLevel;
   pointsText->renderText(canvasWidth, canvasHeight, 0, canvasHeight - 150, combo_caption.str());
   } else {
-    canvas->drawHighscore(points, highscores, highscoreAchieved);
+    canvas->drawHighscore(points, highscores, highscoreAchieved, lifeRemaining);
   }
 
   // Update screen
@@ -230,7 +232,7 @@ void Game::update() {
   }
 
   // Check for end of song
-  if (musicHandler->getPositionInSec() == musicHandler->getLengthInSec()) {
+  if (musicHandler->getPositionInSec() == musicHandler->getLengthInSec() || lifeRemaining == 0) {
     if (!finished) {
       string fileName = musicHandler->getMusicFile();
       fileName = fileName.substr(fileName.find_last_of('\\') + 1);

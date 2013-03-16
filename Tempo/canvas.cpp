@@ -18,18 +18,27 @@ int rectHeight;
 GLuint* rectTexture;
 GLuint RECTANGLE = 3;
 
+char* lifePath = "res/images/heart.png";
+bool lifeLoaded = false;
+int lifeWidth;
+int lifeHeight;
+GLuint* lifeTexture;
+GLuint LIFE = 4;
+
 Canvas::Canvas(int width, int height) {
   this->width = width;
   this->height = height;
   screen = NULL;
   initCanvas();
   scoreText = new Text(width, height);
+  lifeText = new Text(width, height);
 }
 
 Canvas::~Canvas() {
   delete skyboxTexture;
   delete rectTexture;
   if (scoreText) delete scoreText;
+  if (lifeText) delete lifeText;
 }
 
 void Canvas::initCanvas() {
@@ -89,6 +98,11 @@ void Canvas::initCanvas() {
       rectWidth = width;
       rectHeight = height;
     }
+    if (loadImage(lifePath, width, height, hasAlpha, rectTexture, &LIFE)) {
+      lifeLoaded = true;
+      lifeWidth = width;
+      lifeHeight = height;
+    }
   }
 
   // Load player silhouette
@@ -106,11 +120,12 @@ void Canvas::initCanvas() {
 void Canvas::cleanupCanvas() {
   clearImage(&SKYBOX);
   clearImage(&RECTANGLE);
+  clearImage(&LIFE);
   // Quit SDL. Also handles cleanup of the screen object.
   SDL_Quit();
 }
 
-void Canvas::draw(float shiftZ, std::list<Cube*> obstacles) {
+void Canvas::draw(float shiftZ, std::list<Cube*> obstacles, int lifeRemaining) {
   // Clear color buffer & depth buffer
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -125,6 +140,10 @@ void Canvas::draw(float shiftZ, std::list<Cube*> obstacles) {
 
   glPushMatrix();
   drawPlayer();
+  glPopMatrix();
+
+  glPushMatrix();
+  drawLife(lifeRemaining);
   glPopMatrix();
 }
 
@@ -248,24 +267,83 @@ void Canvas::drawObstacles(std::list<Cube*> obstacles) {
   }
 }
 
-void Canvas::drawHighscore(int points, int* highscores, bool highscoreAchieved) {
+void Canvas::drawLife(int lifeRemaining) {
+  float padding = 20.0f;
+  float x = 0.0f;
+  float y = 0.0f;
+
+  std::stringstream life;
+  life << "Life Remaining: ";
+  lifeText->renderText(SCREEN_WIDTH, SCREEN_HEIGHT, x, y + padding, life.str());
+
+  // Initialize Projection Matrix
+  glMatrixMode( GL_PROJECTION );
+  // Save current matrix.
+  glPushMatrix();
+  glLoadIdentity();
+
+  glFrustum( 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, Z_NEAR, Z_FAR);
+
+  glMatrixMode(GL_MODELVIEW);
+
+  glPushAttrib(GL_ENABLE_BIT);
+  glEnable(GL_TEXTURE_2D);
+  glDisable(GL_DEPTH_TEST);
+  glDisable(GL_LIGHTING);
+  glDisable(GL_BLEND);
+
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+  //Set texture parameters
+  glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+  glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+
+  double size = 50;
+
+  glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+  int i = 0;
+
+  glBindTexture(GL_TEXTURE_2D, LIFE);
+  glBegin(GL_QUADS);
+  for (i; i < lifeRemaining; i++) {
+    glTexCoord2f( 1.0f, 0.0f ); glVertex3f( x + 235 + size * (i+1) + padding * i , y + padding + 0        , -1100.0f );
+    glTexCoord2f( 0.0f, 0.0f ); glVertex3f( x + 235 + size * (i  ) + padding * i , y + padding + 0        , -1100.0f );
+    glTexCoord2f( 0.0f, 1.0f ); glVertex3f( x + 235 + size * (i  ) + padding * i , y + padding + 0 + size , -1100.0f );
+    glTexCoord2f( 1.0f, 1.0f ); glVertex3f( x + 235 + size * (i+1) + padding * i , y + padding + 0 + size , -1100.0f );
+  }
+  glEnd();
+
+  glMatrixMode(GL_MODELVIEW);
+  glPopMatrix();
+
+  glMatrixMode(GL_PROJECTION);
+  glPopMatrix();
+  glPopAttrib();
+}
+
+void Canvas::drawHighscore(int points, int* highscores, bool highscoreAchieved, int lifeRemaining) {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    std::stringstream highscore_caption;
-    if (highscoreAchieved) {
-      highscore_caption << "New Highscore! Score: " << points;
-      scoreText->renderText(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH / 2, 150, highscore_caption.str());
-    } else {
-      highscore_caption << "Score: " << points;
-      scoreText->renderText(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH / 2, 150, highscore_caption.str());
-    }
-    int i = 0;
-    for (i; i < 10; i++) {
-      std::stringstream highscore_line;
-      highscore_line <<  "Record " << i + 1 << ":       " << highscores[i];
-      scoreText->renderText(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH / 2, 150 + (i + 1) * 50, highscore_line.str());
-    }
-    std::stringstream restart_line;
-    restart_line <<  "Press \'r\' to play again.";
-    scoreText->renderText(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH / 2, 150 + (11) * 50, restart_line.str());
+  std::stringstream highscore_caption;
+  if (lifeRemaining == 0) {
+    std::stringstream game_over;
+    game_over << "Game Over";
+    scoreText->renderText(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH / 2, 100, game_over.str());
+  }
+  if (highscoreAchieved) {
+    highscore_caption << "New Highscore! Score: " << points;
+    scoreText->renderText(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH / 2, 150, highscore_caption.str());
+  } else {
+    highscore_caption << "Score: " << points;
+    scoreText->renderText(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH / 2, 150, highscore_caption.str());
+  }
+  int i = 0;
+  for (i; i < 10; i++) {
+    std::stringstream highscore_line;
+    highscore_line <<  "Record " << i + 1 << ":       " << highscores[i];
+    scoreText->renderText(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH / 2, 150 + (i + 1) * 50, highscore_line.str());
+  }
+  std::stringstream restart_line;
+  restart_line <<  "Press \'r\' to play again.";
+  scoreText->renderText(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH / 2, 150 + (11) * 50, restart_line.str());
 }
