@@ -156,46 +156,27 @@ void Game::updateScore() {
 
 void Game::draw() {
   if (!finished) {
-  // TODO
-  //
-  // clean this up - canvas.prepForDrawing() maybe
-  // and canvas.finishedDrawing()
-  // should be using playerCube.draw() ??
+    canvas->draw(shiftZ, obstacles, lifeRemaining);
 
-  canvas->draw(shiftZ, obstacles, lifeRemaining);
-  // Render the cube
-  glPushMatrix();
-  glTranslatef(cameraX, cameraY, 0);
-  glTranslatef(0, 0, shiftZ);
+    // Render the cube
+    glPushMatrix();
+    glTranslatef(cameraX, cameraY, 0);
+    glTranslatef(0, 0, shiftZ);
+    glColor3f( 0.f, 1.f, 1.f);
+    playerCube->draw();
+    glEnd();
+    glPopMatrix();
 
-  int i, j;
-  int currentVer;
-  glBegin( GL_QUADS );
-  for (i = 0; i < playerCube->nFaces; i++) {
-    for (j = 0; j < 4; j++) {
-      currentVer = playerCube->face[i].ver[j];
-
-      // back face
-      if (gColorMode == COLOR_MODE_MULTI) {
-        glColor3fv(playerCube->ver[currentVer].col);
-      } else {
-        glColor3f( 0.f, 1.f, 1.f);
-      }
-      glVertex3fv(playerCube->ver[currentVer].pos);
-    }
-  }
-  glEnd();
-  glPopMatrix();
-
-  std::stringstream fps_caption;
-  fps_caption << "Average FPS: " << frames * 1.0 / (timer.get_ticks()/1000);
-  fpsText->renderText(canvasWidth, canvasHeight, 0, canvasHeight - 50, fps_caption.str());
-  std::stringstream points_caption;
-  points_caption << "Points: " << points;
-  pointsText->renderText(canvasWidth, canvasHeight, 0, canvasHeight - 100, points_caption.str());
-  std::stringstream combo_caption;
-  combo_caption << "Combo Level: " << comboLevel;
-  pointsText->renderText(canvasWidth, canvasHeight, 0, canvasHeight - 150, combo_caption.str());
+    // Render text
+    std::stringstream fps_caption;
+    fps_caption << "Average FPS: " << frames * 1.0 / (timer.get_ticks()/1000);
+    fpsText->renderText(canvasWidth, canvasHeight, 0, canvasHeight - 50, fps_caption.str());
+    std::stringstream points_caption;
+    points_caption << "Points: " << points;
+    pointsText->renderText(canvasWidth, canvasHeight, 0, canvasHeight - 100, points_caption.str());
+    std::stringstream combo_caption;
+    combo_caption << "Combo Level: " << comboLevel;
+    pointsText->renderText(canvasWidth, canvasHeight, 0, canvasHeight - 150, combo_caption.str());
   } else {
     canvas->drawHighscore(points, highscores, highscoreAchieved, lifeRemaining);
   }
@@ -205,6 +186,11 @@ void Game::draw() {
 }
 
 void Game::update() {
+  if (isPaused) {
+    lastUpdate = timer.get_ticks();
+    return;
+  }
+
   if (!finished) {
     frames++;
     int diff = timer.get_ticks() - lastUpdate;
@@ -265,6 +251,11 @@ void Game::handleEvent(SDL_Event& event) {
       break;
     case PAUSE_KEY:
       isPaused = !isPaused;
+      if (isPaused) {
+        musicHandler->pause();
+      } else {
+        musicHandler->play();
+      }
       break;
     case COLOUR_MODE_KEY:
       //Toggle color mode
