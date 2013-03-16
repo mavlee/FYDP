@@ -31,8 +31,9 @@ Game::Game(int width, int height) {
   fpsText = new Text(width, height);
   comboLevelText = new Text(width, height);
   pointsText = new Text(width, height);
-  // TODO this has nothing to do with the near plane
-  playerCube = new Cube(0.f, 0.f, -(Z_NEAR + 200.f), 100.f, 100.f, 100.f, Cube::Multi);
+  // TODO remove
+  // also, this has nothing to do with the near plane
+  playerCube = new Cube(0.f, 0.f, -OFFSET_FROM_CAMERA, SHAPE_X, SHAPE_Y, SHAPE_Z, Cube::Multi);
 
   reset();
 }
@@ -113,7 +114,7 @@ void Game::generateGameFeatures() {
       if (musicData[b][i] > PEAK_THRESHOLD/* && (i - last > 10 || i == last)*/) {
         float y = -b/4 * 125;
         float x = -NUM_BANDS/8*125.f + b%4*125;
-        obstacle = new Cube(x, y, -(Z_NEAR + 200.f + i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec()), 100.f, 100.f, 100.f, Cube::Multi);
+        obstacle = new Cube(x, y, -(OFFSET_FROM_CAMERA + i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec()), SHAPE_X, SHAPE_Y, SHAPE_Z, Cube::Multi);
         obstacles.push_back(obstacle);
         last = i;
       }
@@ -125,7 +126,7 @@ void Game::generateGameFeatures() {
 bool Game::checkForCollisions() {
   for (std::list<Cube*>::const_iterator iterator = obstacles.begin(), end = obstacles.end(); iterator != end; ++iterator) {
     if (!(*iterator)->collided) {
-      if ((*iterator)->zFront + Z_NEAR > shiftZ + playerCube->zBack + Z_NEAR && (*iterator)->zBack + Z_NEAR < shiftZ + playerCube->zBack + Z_NEAR) {
+      if ((*iterator)->zFront > shiftZ + playerCube->zBack && (*iterator)->zBack < shiftZ + playerCube->zBack ) {
         if (((*iterator)->wRight > playerCube->wLeft + cameraX && (*iterator)->wLeft < playerCube->wLeft + cameraX)
           || ((*iterator)->wLeft < playerCube->wRight + cameraX && (*iterator)->wRight > playerCube->wRight + cameraX)) {
             (*iterator)->collided = true;
