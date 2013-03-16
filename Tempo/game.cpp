@@ -144,8 +144,6 @@ void Game::updateScore() {
   points += 1 * comboLevel;
 }
 
-
-
 void Game::draw() {
   // TODO
   //
@@ -153,7 +151,7 @@ void Game::draw() {
   // and canvas.finishedDrawing()
   // should be using playerCube.draw() ??
 
-    canvas->draw(shiftZ, obstacles);
+  canvas->draw(shiftZ, obstacles);
   // Render the cube
   glPushMatrix();
   glTranslatef(cameraX, cameraY, 0);
@@ -177,9 +175,8 @@ void Game::draw() {
   }
   glEnd();
   glPopMatrix();
-  // Obstacles
 
-    std::stringstream fps_caption;
+  std::stringstream fps_caption;
   fps_caption << "Average FPS: " << frames * 1.0 / (timer.get_ticks()/1000);
   fpsText->renderText(canvasWidth, canvasHeight, 0, canvasHeight - 50, fps_caption.str());
   std::stringstream points_caption;
