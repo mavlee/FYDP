@@ -50,9 +50,10 @@ Canvas::Canvas(int width, int height) {
   fpsText = new Text(width, height);
   comboLevelText = new Text(width, height);
   pointsText = new Text(width, height);
-  fpsString = " ";
-  comboLevelString = " ";
-  pointsString = " ";
+  // Init text
+  setFPSText(0);
+  setPointsText(0);
+  setComboLevelText(0);
 }
 
 Canvas::~Canvas() {
@@ -166,7 +167,7 @@ void Canvas::draw(float shiftZ, std::list<Cube*> obstacles, int lifeRemaining, f
     //drawSkybox(skyboxWidth, skyboxHeight, shiftZ);
   }
   glPushMatrix();
-  //drawPlayer();
+  drawPlayer();
   glPopMatrix();
 #endif
 
@@ -176,7 +177,7 @@ void Canvas::draw(float shiftZ, std::list<Cube*> obstacles, int lifeRemaining, f
   glPopMatrix();
 
   glPushMatrix();
-  drawLife(lifeRemaining);
+  //drawLife(lifeRemaining);
   glPopMatrix();
 
   glPushMatrix();
@@ -195,32 +196,35 @@ void Canvas::draw(float shiftZ, std::list<Cube*> obstacles, int lifeRemaining, f
 void Canvas::drawPlayer() {
   // Initialize Projection Matrix
   glMatrixMode( GL_PROJECTION );
-  // Save current matrix.
   glPushMatrix();
   glLoadIdentity();
+  glOrtho(0, width, height, 0, 0, 1);
 
-  glFrustum( -1, 1, -1, 1, 1, Z_FAR);
-
+  // Set attributes for texture drawing
   glMatrixMode(GL_MODELVIEW);
-  glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-  glClearColor(0,0,0,0);
-  glEnable(GL_DEPTH_TEST);
-  glDepthMask(GL_TRUE);
+  glPushAttrib(GL_ENABLE_BIT);
+  glDisable(GL_DEPTH_TEST);
   glEnable(GL_TEXTURE_2D);
   glTexEnvf(GL_TEXTURE_2D,GL_TEXTURE_ENV_MODE,GL_MODULATE);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
+  float kinectAspect = 1.f*KINECT_DEPTH_HEIGHT/KINECT_DEPTH_HEIGHT;
+  int drawHeight = height;
+  int drawWidth = kinectAspect * drawHeight;
+  int xOffset = (width - drawWidth)/2;
+
   glBindTexture(GL_TEXTURE_2D, playerDepthId);
   glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, KINECT_DEPTH_WIDTH, KINECT_DEPTH_HEIGHT, GL_BGRA_EXT, GL_UNSIGNED_BYTE, (GLvoid*)depthData);
   glBegin(GL_QUADS);
-    glTexCoord2f(1.0f, 0.0f); glVertex3f(PLAYER_DRAW_WIDTH, PLAYER_DRAW_HEIGHT, -1100.0f);
-    glTexCoord2f(0.0f, 0.0f); glVertex3f(-PLAYER_DRAW_WIDTH, PLAYER_DRAW_HEIGHT, -1100.0f);
-    glTexCoord2f(0.0f, 1.0f); glVertex3f(-PLAYER_DRAW_WIDTH, -PLAYER_DRAW_HEIGHT, -1100.0f);
-    glTexCoord2f(1.0f, 1.0f); glVertex3f(PLAYER_DRAW_WIDTH, -PLAYER_DRAW_HEIGHT, -1100.0f);
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(xOffset + drawWidth, height, 0);
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(xOffset, height, 0);
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(xOffset, 0, 0);
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(xOffset + drawWidth, 0, 0);
   glEnd();
 
+  // Reset attributes, projection matrix
   glMatrixMode(GL_MODELVIEW);
   glPopMatrix();
 
@@ -379,11 +383,6 @@ void Canvas::drawProgress(float progressPct) {
   float y = height - 50.0f;
   float border = 4.0f;
 
-  //TODO remove
-  //std::stringstream progress;
-  //progress << "Progress";
-  //lifeText->renderText(width, height, x, y + padding, progress.str());
-
   // Initialize Projection Matrix
   glMatrixMode( GL_PROJECTION );
   glPushMatrix();
@@ -437,23 +436,6 @@ void Canvas::drawProgress(float progressPct) {
     glVertex3d(width/4.f + width/2.f*progressPct, y + padding, 0);
     glVertex3d(width/4.f, y + padding, 0);
   glEnd();
-/*
-  glBindTexture(GL_TEXTURE_2D, PB);
-  glBegin(GL_QUADS);
-    glTexCoord2f( 1.0f, 0.0f ); glVertex3f( x + pbWidth * 2/3 , y + padding + pbHeight * 2 , -1100.0f );
-    glTexCoord2f( 0.0f, 0.0f ); glVertex3f( x - pbWidth * 1/3 , y + padding + pbHeight * 2 , -1100.0f );
-    glTexCoord2f( 0.0f, 1.0f ); glVertex3f( x - pbWidth * 1/3 , y + padding + pbHeight * 3 , -1100.0f );
-    glTexCoord2f( 1.0f, 1.0f ); glVertex3f( x + pbWidth * 2/3 , y + padding + pbHeight * 3 , -1100.0f );
-  glEnd();
-
-  glBindTexture(GL_TEXTURE_2D, PRO);
-  glBegin(GL_QUADS);
-    glTexCoord2f( 1.0f, 0.0f ); glVertex3f( x - pbWidth * 1/3 + pbWidth * progressPct + border , y + padding + pbHeight * 2 + border , -1100.0f );
-    glTexCoord2f( 0.0f, 0.0f ); glVertex3f( x - pbWidth * 1/3                         + border , y + padding + pbHeight * 2 + border , -1100.0f );
-    glTexCoord2f( 0.0f, 1.0f ); glVertex3f( x - pbWidth * 1/3                         + border , y + padding + pbHeight * 3 - border , -1100.0f );
-    glTexCoord2f( 1.0f, 1.0f ); glVertex3f( x - pbWidth * 1/3 + pbWidth * progressPct + border , y + padding + pbHeight * 3 - border , -1100.0f );
-  glEnd();
-  */
 
   // Reset attributes, projection matrix
   glEnable(GL_DEPTH_TEST);
