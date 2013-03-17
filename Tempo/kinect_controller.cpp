@@ -9,6 +9,11 @@ INuiSensor *kinectSensor;
 
 list<USHORT*> averageQueue;
 
+PLAYER_COLOUR playerColour;
+
+const int playerR[] = {1, 0, 0, 1, 0};
+const int playerG[] = {0, 1, 0, 1, 0};
+const int playerB[] = {0, 0, 1, 1, 0};
 
 HANDLE depthStream;
 typedef struct {
@@ -23,6 +28,8 @@ USHORT playerId;
 Initialize kinect sensor, sets it up to receive skeletal data
 */
 HRESULT kinectinit() {
+  playerColour = PLAYER_RED;
+
   HRESULT hr = E_FAIL;
   int numSensors;
   DWORD kinectFlags = NUI_INITIALIZE_FLAG_USES_DEPTH_AND_PLAYER_INDEX | NUI_INITIALIZE_FLAG_USES_SKELETON;
@@ -289,7 +296,7 @@ bool ProcessDepthEvent() {
       i++;
     }
 
-        shortDepthArray = FilterDepthArray(shortDepthArray, width/2, height/2);
+    shortDepthArray = FilterDepthArray(shortDepthArray, width/2, height/2);
 
     shortDepthArray = AverageDepthArray(shortDepthArray);
 
@@ -308,12 +315,14 @@ bool ProcessDepthEvent() {
     for (int i = 0; i < width*height/4 && playerId != 0; i++) {
       USHORT player = NuiDepthPixelToPlayerIndex(shortDepthArray[i]);
       if (player == playerId) {
-        for (int j = index; j < index + 4; j++)
-          depthData->depthData[j] = (BYTE)255;
-        //depthData->depthData[i+3] = (BYTE)50;
+        depthData->depthData[index] = (BYTE)255*playerR[playerColour];
+        depthData->depthData[index + 1] = (BYTE)255*playerG[playerColour];
+        depthData->depthData[index + 2] = (BYTE)255*playerB[playerColour];
+        depthData->depthData[index+3] = (BYTE)255;
       } else {
         for (int j = index; j < index + 4; j++)
-          depthData->depthData[j] = 0;
+          depthData->depthData[j] = (BYTE)0;
+        depthData->depthData[index+3] = (BYTE)255;
       }
       index += 4;
     }
@@ -352,6 +361,10 @@ void ShutdownKinect(HANDLE hKinectProcess) {
     CloseHandle(hNextSkeletonEvent);
     hNextSkeletonEvent = NULL;
   }
+}
+
+void changePlayerColour(PLAYER_COLOUR colour) {
+  playerColour = colour;
 }
 
 
