@@ -144,16 +144,36 @@ void Game::generateGameFeatures() {
   }
 }
 
-// this probably shouldn't be void in the end, some tamper with points somehow too
-bool Game::checkForCollisions() {
+bool Game::checkForNegativeCollisions() {
   for (std::list<Cube*>::const_iterator iterator = obstacles.begin(), end = obstacles.end(); iterator != end; ++iterator) {
-    if (!(*iterator)->collided && (*iterator)->colour == currentColour) {
-      if ((*iterator)->zFront > shiftZ + playerCube->zBack && (*iterator)->zBack < shiftZ + playerCube->zBack ) {
-        if (((*iterator)->wRight > playerCube->wLeft + cameraX && (*iterator)->wLeft < playerCube->wLeft + cameraX)
-          || ((*iterator)->wLeft < playerCube->wRight + cameraX && (*iterator)->wRight > playerCube->wRight + cameraX)) {
-            (*iterator)->collided = true;
-            printf("Collision detected at:\nCurrent Depth: %f\nCurrent Left: %f\nCurrent Right: %f\nDepth: %f\nLeft: %f\nRight: %f\n", shiftZ - playerCube->zBack, playerCube->wLeft + cameraX, playerCube->wRight + cameraX, (*iterator)->zFront, (*iterator)->wLeft, (*iterator)->wRight);
-            return true;
+    if (!(*iterator)->collided) {
+      if ((*iterator)->colour != currentColour) {
+        if ((*iterator)->zFront > shiftZ + playerCube->zBack && (*iterator)->zBack < shiftZ + playerCube->zBack ) {
+          if (((*iterator)->wRight > playerCube->wLeft + cameraX && (*iterator)->wLeft < playerCube->wLeft + cameraX)
+            || ((*iterator)->wLeft < playerCube->wRight + cameraX && (*iterator)->wRight > playerCube->wRight + cameraX)) {
+              (*iterator)->collided = true;
+              printf("Collision detected at:\nCurrent Depth: %f\nCurrent Left: %f\nCurrent Right: %f\nDepth: %f\nLeft: %f\nRight: %f\n", shiftZ - playerCube->zBack, playerCube->wLeft + cameraX, playerCube->wRight + cameraX, (*iterator)->zFront, (*iterator)->wLeft, (*iterator)->wRight);
+              return true;
+          }
+        }
+      }
+    }
+  }
+
+  return false;
+}
+
+bool Game::checkForBonusCollisions() {
+  for (std::list<Cube*>::const_iterator iterator = obstacles.begin(), end = obstacles.end(); iterator != end; ++iterator) {
+    if (!(*iterator)->collided) {
+      if ((*iterator)->colour == currentColour) {
+        if ((*iterator)->zFront > shiftZ + playerCube->zBack && (*iterator)->zBack < shiftZ + playerCube->zBack ) {
+          if (((*iterator)->wRight > playerCube->wLeft + cameraX && (*iterator)->wLeft < playerCube->wLeft + cameraX)
+            || ((*iterator)->wLeft < playerCube->wRight + cameraX && (*iterator)->wRight > playerCube->wRight + cameraX)) {
+              (*iterator)->collided = true;
+              printf("Collision detected at:\nCurrent Depth: %f\nCurrent Left: %f\nCurrent Right: %f\nDepth: %f\nLeft: %f\nRight: %f\n", shiftZ - playerCube->zBack, playerCube->wLeft + cameraX, playerCube->wRight + cameraX, (*iterator)->zFront, (*iterator)->wLeft, (*iterator)->wRight);
+              return true;
+          }
         }
       }
     }
@@ -163,7 +183,7 @@ bool Game::checkForCollisions() {
 }
 
 void Game::updateScore() {
-  bool collision = checkForCollisions();
+  bool collision = checkForNegativeCollisions();
 
   combo++;
   if (collision) {
@@ -174,7 +194,8 @@ void Game::updateScore() {
   if (combo % 1000 == 0 && combo > 0) {
     comboLevel++;
   }
-  points += 1 * comboLevel;
+  collision = checkForBonusCollisions();
+  points += (1 + 100 * collision) * comboLevel;
 }
 
 void Game::draw() {
@@ -223,13 +244,6 @@ void Game::update() {
   if (!finished) {
     frames++;
     int diff = timer.get_ticks() - lastUpdate;
-
-    // TODO
-    // update player cube position
-    // check for collision
-    if (checkForCollisions()) {
-      printf("Collision\n");
-    }
 
     // calculate score
     // TODO: calculate score according to time, and not the frequency that frames are drawn
