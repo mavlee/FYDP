@@ -71,7 +71,7 @@ Game::~Game() {
 
 // resets the game so a new game can be started
 void Game::reset(string song) {
-  delete canvas;
+  if (canvas) delete canvas;
   canvas = new Canvas(canvasWidth, canvasHeight);
   points = 0;
   combo = 0;

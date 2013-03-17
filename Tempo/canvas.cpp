@@ -157,18 +157,20 @@ void Canvas::draw(float shiftZ, std::list<Cube*> obstacles, int lifeRemaining, f
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   // Draw the skybox before anything else is drawn.
+#ifndef USE_MAC_INCLUDES
   if (skyboxLoaded) {
     drawSkybox(skyboxWidth, skyboxHeight, shiftZ);
   }
   glPushMatrix();
   drawPlayer();
   glPopMatrix();
+#endif
+
   glPushMatrix();
   drawObstacles(obstacles);
   glPopMatrix();
 
-
-
+#ifndef USE_MAC_INCLUDES
   glPushMatrix();
   drawLife(lifeRemaining);
   glPopMatrix();
@@ -176,6 +178,7 @@ void Canvas::draw(float shiftZ, std::list<Cube*> obstacles, int lifeRemaining, f
   glPushMatrix();
   drawProgress(progressPct);
   glPopMatrix();
+#endif
 }
 
 void Canvas::drawPlayer() {
