@@ -72,6 +72,9 @@ private:
   bool checkForBonusCollisions();
   void updateScore();
 
+  void pause();
+  void resume();
+
 public:
   BYTE depthData[KINECT_DEPTH_WIDTH*KINECT_DEPTH_HEIGHT*4];
   Canvas *canvas;
