@@ -52,7 +52,11 @@ Game::Game(int width, int height) {
   }
   */
 
-  reset();
+  string song = selectMusicFileDialog();
+  while (!strcmp(song.c_str(), "/0")) {
+    song = selectMusicFileDialog();
+  }
+  reset(song);
 }
 
 Game::~Game() {
@@ -66,7 +70,7 @@ Game::~Game() {
 }
 
 // resets the game so a new game can be started
-void Game::reset() {
+void Game::reset(string song) {
   delete canvas;
   canvas = new Canvas(canvasWidth, canvasHeight);
   points = 0;
@@ -93,7 +97,10 @@ void Game::reset() {
   lastUpdate = 0;
   frames = 0;
 
-  musicHandler->setMusicFile(selectMusicFileDialog());
+  if (strcmp(song.c_str(), "/0")) {
+    printf("New song must be chosen");
+  }
+  musicHandler->setMusicFile(song);
   musicData = musicHandler->getPeakData();
   generateGameFeatures();
 
@@ -298,9 +305,11 @@ void Game::update() {
       writeHighScores(fileName);
       finished = true;
     }
-    if (restart) {
-      reset();
+    string song = selectMusicFileDialog();
+    while (!strcmp(song.c_str(), "/0")) {
+      song = selectMusicFileDialog();
     }
+    reset(song);
   }
 }
 
@@ -352,10 +361,16 @@ void Game::handleEvent(SDL_Event& event) {
       restart = true;
       break;
     case STOP_KEY:
-      lifeRemaining = 0;
-      finished = true;
-      restart = true;
       musicHandler->pause();
+      timer.pause();
+      string song = selectMusicFileDialog();
+      if (!strcmp(song.c_str(), "/0")) {
+        reset(song);
+      } else {
+        // User pressed cancel, move along
+        musicHandler->play();
+        timer.unpause();
+      }
       break;
     }
     break;
