@@ -33,7 +33,6 @@ const int outerBandThreshhold = 4;
 // number of previous frames to sample
 const int queueLength = 9;
 
-
 typedef struct {
   float x;
   float y;
@@ -42,6 +41,15 @@ typedef struct {
 typedef struct {
   PixelCoordinates skPixelLocation[20];
   } PixelSkeletalData;
+
+enum PLAYER_COLOUR {
+  PLAYER_RED,
+  PLAYER_GREEN,
+  PLAYER_BLUE,
+  PLAYER_WHITE,
+  PLAYER_BLACK
+};
+
 /*
   Entry point for the kinect polling thread
   Parameters should include an array of event types that should trigger SDL events
@@ -54,6 +62,8 @@ DWORD WINAPI KinectProcessThread(LPVOID lpParam);
 HRESULT kinectinit();
 
 void ShutdownKinect(HANDLE hKinectProcess);
+
+void changePlayerColour(PLAYER_COLOUR colour);
 
 #endif
 #endif

@@ -3,6 +3,7 @@
 #include "canvas.h"
 #include "constants.h"
 #include "image_loader.h"
+#include "kinect_controller.h"
 
 char* skyboxPath = "res/images/skybox.png";
 bool skyboxLoaded = false;
@@ -46,6 +47,7 @@ Canvas::Canvas(int width, int height) {
   initCanvas();
   scoreText = new Text(width, height);
   lifeText = new Text(width, height);
+  changePlayerColour(PLAYER_BLUE);
 }
 
 Canvas::~Canvas() {
@@ -58,7 +60,7 @@ Canvas::~Canvas() {
 void Canvas::initCanvas() {
   // Initialize player texture
   for (int i = 0; i < KINECT_DEPTH_HEIGHT*KINECT_DEPTH_WIDTH*4; i++)
-    depthData[i] = 0;
+    depthData[i] = i % 4 == 3? (BYTE)100: (BYTE)255;
 
   // Start SDL
   SDL_Init(SDL_INIT_EVERYTHING);
@@ -159,14 +161,14 @@ void Canvas::draw(float shiftZ, std::list<Cube*> obstacles, int lifeRemaining, f
   if (skyboxLoaded) {
     drawSkybox(skyboxWidth, skyboxHeight, shiftZ);
   }
-
+  glPushMatrix();
+  drawPlayer();
+  glPopMatrix();
   glPushMatrix();
   drawObstacles(obstacles);
   glPopMatrix();
 
-  glPushMatrix();
-  //drawPlayer();
-  glPopMatrix();
+
 
   glPushMatrix();
   drawLife(lifeRemaining);
@@ -196,7 +198,7 @@ void Canvas::drawPlayer() {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   
   glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE);
   glBindTexture(GL_TEXTURE_2D, playerDepthId);
   glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, KINECT_DEPTH_WIDTH, KINECT_DEPTH_HEIGHT, GL_BGRA_EXT, GL_UNSIGNED_BYTE, (GLvoid*)depthData);
   glBegin(GL_QUADS);
