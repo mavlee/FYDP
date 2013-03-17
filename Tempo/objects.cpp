@@ -19,8 +19,8 @@ void Object::setCentre(float x, float y, float z) {
 
 Cube::Cube(int x, int y, float centreZ,
   float width, float height, float depth, ColourSet color) {
-    const float spacingX = SHAPE_X + 30;
-    const float spacingY = SHAPE_Y + 25;
+    const float spacingX = 1.3f * SHAPE_X;
+    const float spacingY = 1.25f * SHAPE_Y;
     float centreX = -spacingX*(NUM_COLUMNS - 1)/2 + x*spacingX;
     float centreY = -spacingY*(NUM_ROWS - 1)/2 + y*spacingY;
     //centreX = centreY = 100;

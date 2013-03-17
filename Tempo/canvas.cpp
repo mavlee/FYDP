@@ -70,12 +70,14 @@ Canvas::~Canvas() {
 
 void Canvas::initCanvas() {
   // Initialize player texture
-  for (int i = 0; i < KINECT_DEPTH_HEIGHT*KINECT_DEPTH_WIDTH*4; i++)
-    depthData[i] = i % 4 == 3? (BYTE)100: (BYTE)255;
+  for (int i = 0; i < KINECT_DEPTH_HEIGHT*KINECT_DEPTH_WIDTH*4; i++) {
+    depthData[i] = (BYTE)0;
+  }
 
   // Start SDL
   SDL_Init(SDL_INIT_EVERYTHING);
   // SDL_SWSURFACE implies that the surface is set up in software memory.
+  putenv(strdup("SDL_VIDEO_CENTERED=1"));
   screen = SDL_SetVideoMode(width, height, SCREEN_BPP, SDL_OPENGL);
   //Initialize SDL ttf. Must be called prior to all SDL_ttf functions.
   TTF_Init();
@@ -83,7 +85,7 @@ void Canvas::initCanvas() {
   // Initialize Projection Matrix
   glMatrixMode( GL_PROJECTION );
   glLoadIdentity();
-  glFrustum( -width/2, width/2, height/2, -height/2, Z_NEAR, Z_FAR);
+  glFrustum( -SCALE*width/2, SCALE*width/2, SCALE*height/2, -SCALE*height/2, SCALE*Z_NEAR, SCALE*Z_FAR);
 
   // Initialize Modelview Matrix
   glMatrixMode( GL_MODELVIEW );
