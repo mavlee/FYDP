@@ -12,6 +12,9 @@ const float Z_NEAR = 1000.f;
 const float FPS_CAP = 1000.f / 60;
 const float PEAK_THRESHOLD = 0.f;
 
+const int NUM_ROWS = 4;
+const int NUM_COLUMNS = 6;
+
 const float SHAPE_X = 100.f;
 const float SHAPE_Y = 100.f;
 const float SHAPE_Z = 100.f;
