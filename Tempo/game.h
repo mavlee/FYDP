@@ -48,6 +48,7 @@ private:
   Cube::ColourSet currentColour;
   float lastColourChange;
 
+  bool starting;
   int isPaused;
   bool dirKeyPressed[2];
 
