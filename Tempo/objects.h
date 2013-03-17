@@ -44,7 +44,7 @@ class Cube: public Object {
 		float wLeft;
 		float wRight;
 
-		Cube(float centreX, float centreY, float centreZ,
+		Cube(int x, int y, float centreZ,
 				float width, float height, float depth, ColourSet color);
 
 		static const int nFaces = 6;

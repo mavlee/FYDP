@@ -25,11 +25,7 @@ private:
   GLfloat cameraX;
   GLfloat cameraY;
   GLfloat gProjectionScale;
-  int gColorMode;
   float avgFps;
-  Text *fpsText;
-  Text *comboLevelText;
-  Text *pointsText;
 
   // For handling music
   MusicHandler* musicHandler;
@@ -50,7 +46,6 @@ private:
 
   bool starting;
   int isPaused;
-  bool dirKeyPressed[2];
 
   // after game variables
   bool restart;

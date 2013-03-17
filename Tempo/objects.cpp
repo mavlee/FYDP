@@ -17,8 +17,13 @@ void Object::setCentre(float x, float y, float z) {
   centre.z = z;
 }
 
-Cube::Cube(float centreX, float centreY, float centreZ,
+Cube::Cube(int x, int y, float centreZ,
   float width, float height, float depth, ColourSet color) {
+    //float y = -b%4 * 125;
+    //float x = -NUM_BANDS/8*125.f + b/4*125;
+    // TODO fix magic numbers
+    float centreY = 2.f*125.f - x * 125.f;
+    float centreX = -2.f*125.f + y*125.f;
     zFront = centreZ + depth / 2;
     zBack = centreZ - depth / 2;
     wLeft = centreX - width / 2;
