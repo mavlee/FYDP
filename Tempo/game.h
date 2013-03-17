@@ -55,6 +55,7 @@ private:
   bool quitGame;
 
   vector<vector<float> > musicData;
+  vector<float> musicIntensityData;
   float shiftZ;
   Cube* playerCube;
   std::list<Cube*> obstacles;

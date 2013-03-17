@@ -73,6 +73,7 @@ void Game::reset(string song) {
   }
   musicHandler->setMusicFile(song);
   musicData = musicHandler->getPeakData();
+  musicIntensityData = musicHandler->getIntensityData();
   generateGameFeatures();
 
   timer.start();
@@ -102,21 +103,63 @@ int Game::execute() {
 
 // based on whatever music analysis gives us, generate game features
 void Game::generateGameFeatures() {
-  int last = -50;
+  // temporary vector to keep track of peak locations
+  vector<vector<int> > peakMarker(NUM_BANDS);
+  for (int v = 0; v < NUM_BANDS; v++) {
+    peakMarker[v].resize(musicData[0].size(), 0);
+  }
+
+  int last = 0;
+  int last_superpeak = -1000;
   Cube* obstacle;
   for (int i = 0; i < musicData[0].size(); i++) {
-    for (int b = 0; b < NUM_BANDS; b++) {
-      if (musicData[b][i] > PEAK_THRESHOLD && (i - last > 10 || i == last)) {
-        float pos = -NUM_BANDS/2*125.f + b*125;
-        //float y = (-b%2) * 125;
-        //float x = -NUM_BANDS/4*125.f + b/2*125;
-        //float y = -b%4 * 125;
-        //float x = -NUM_BANDS/8*125.f + b/4*125;
-        int y = b%4;
-        int x = b/4;
-        // TODO: get rid of OFFSET_FROM_CAMERA
-        obstacle = new Cube(x, y, -(OFFSET_FROM_CAMERA + i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec()), SHAPE_X, SHAPE_Y, SHAPE_Z, Cube::ColourSet(rand() % 4 + 1));
+    // used to get the peak value at an instant
+    float value = 0;
+    int m = -1;
+    // used to count number of peaks
+    int count = 0;
+    // used to count number of superpeaks
+    int count2 = 0;
+    for (int v = 0; v < NUM_BANDS; v++) {
+      if (musicData[v][i] > value) {
+        value = musicData[v][i];
+        m = v;
+      }
+      peakMarker[v][i] = 0;
+    }
+    if (m > -1) {
+      for (int v = 0; v < NUM_BANDS; v++) {
+        if (musicData[v][i] > 400 && i > SAMPLE_HISTORY*2) {
+          printf("holyshit of %f on sample %d\n", musicData[v][i] / musicIntensityData[i], i);
+          count2++;
+        }
+        if (musicData[v][i] / value > 0.9 && count < 2) {
+          peakMarker[v][i] = 1;
+          count++;
+        }
+      }
+    }
+    if (count2 > 1 && i - last_superpeak > 1400) {
+      printf("holyshit on sample %d\n", i);
+      for (int c = i-10; c < i; c++) {
+        for (int v = 0; v < NUM_BANDS; v++) {
+          peakMarker[v][c] = 0;
+        }
+      }
+      for (int v = 0; v < NUM_BANDS; v++) {
+        peakMarker[v][i] = 1;
+      }
+      last_superpeak = i;
+    }
+  }
 
+  for (int i = 0; i < musicData[0].size(); i++) {
+    for (int b = 0; b < NUM_BANDS; b++) {
+      //if (musicData[b][i] > PEAK_THRESHOLD && (i - last > 10 || i == last)) {
+      if (peakMarker[b][i] == 1 && (i - last > 10 || i == last)) {
+        int x = b / 4;
+        int y = b % 4;
+        obstacle = new Cube(x, y, -(OFFSET_FROM_CAMERA + i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec()), SHAPE_X, SHAPE_Y, SHAPE_Z, Cube::ColourSet(rand() % 4 + 1));
         obstacles.push_back(obstacle);
         last = i;
       }
@@ -192,7 +235,7 @@ void Game::draw() {
     glEnd();
     glPopMatrix();
 
-    
+
   } else {
     canvas->drawHighscore(points, highscores, highscoreAchieved, lifeRemaining);
   }
