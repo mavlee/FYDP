@@ -219,7 +219,7 @@ void Canvas::drawPlayer(int lifeRemaining) {
   // Set colour according to HP
   const float MIN_COLOUR = 0.4;
   float colour = (1.f - MIN_COLOUR) * 1.f*lifeRemaining/TOTAL_LIFE_COUNT;
-  if (lifeRemaining >= 1) {
+  if (lifeRemaining <= 1) {
     glColor4f(colour, 0, 0, 0.7);
   } else {
     glColor4f(colour, colour, colour, 0.7);
