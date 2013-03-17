@@ -114,7 +114,7 @@ void Game::generateGameFeatures() {
       if (musicData[b][i] > PEAK_THRESHOLD/* && (i - last > 10 || i == last)*/) {
         float y = -b/4 * 125;
         float x = -NUM_BANDS/8*125.f + b%4*125;
-        obstacle = new Cube(x, y, -(OFFSET_FROM_CAMERA + i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec()), SHAPE_X, SHAPE_Y, SHAPE_Z, Cube::Multi);
+        obstacle = new Cube(x, y, -(OFFSET_FROM_CAMERA + i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec()), SHAPE_X, SHAPE_Y, SHAPE_Z, Cube::ColourSet(rand() % 7));
         obstacles.push_back(obstacle);
         last = i;
       }

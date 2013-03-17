@@ -30,9 +30,12 @@ class Cube: public Object {
 	public:
 		enum ColourSet {
 			Multi = 0,
-			Red = 1,
-			Green = 2,
-			Blue = 3,
+			C1 = 1,
+			C2 = 2,
+			C3 = 3,
+            C4 = 4,
+            C5 = 5,
+            C6 = 6,
 		};
 
 		// used for collision detection
@@ -57,6 +60,8 @@ class Cube: public Object {
         void draw(GLuint* texture);
 
 		bool collided;
+
+        ColourSet colour;
 
 	private:
 		float width;

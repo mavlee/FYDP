@@ -165,7 +165,7 @@ void Canvas::draw(float shiftZ, std::list<Cube*> obstacles, int lifeRemaining, f
   glPopMatrix();
 
   glPushMatrix();
-  drawPlayer();
+  //drawPlayer();
   glPopMatrix();
 
   glPushMatrix();
@@ -181,6 +181,7 @@ void Canvas::drawPlayer() {
   // Initialize Projection Matrix
   glMatrixMode( GL_PROJECTION );
   // Save current matrix.
+  glPushMatrix();
   glLoadIdentity();
 
   glFrustum( -1, 1, -1, 1, 1, Z_FAR);
@@ -204,9 +205,13 @@ void Canvas::drawPlayer() {
     glTexCoord2f(0.0f, 1.0f); glVertex3f(-PLAYER_DRAW_WIDTH, -PLAYER_DRAW_HEIGHT, -1100.0f);
     glTexCoord2f(1.0f, 1.0f); glVertex3f(PLAYER_DRAW_WIDTH, -PLAYER_DRAW_HEIGHT, -1100.0f);
   glEnd(); 
+  
   glMatrixMode(GL_MODELVIEW);
+  glPopMatrix();
 
   glMatrixMode(GL_PROJECTION);
+  glPopMatrix();
+  glPopAttrib();
 }
 
 void Canvas::drawSkybox(int width, int height, float shiftZ) {
@@ -291,7 +296,8 @@ void Canvas::drawSkybox(int width, int height, float shiftZ) {
 void Canvas::drawObstacles(std::list<Cube*> obstacles) {
   for (std::list<Cube*>::iterator i = obstacles.begin(); i != obstacles.end(); i++) {
     if (rectLoaded) {
-      (*i)->draw(&RECTANGLE);
+      //(*i)->draw(&RECTANGLE);
+      (*i)->draw();
     } else {
       (*i)->draw();
     }

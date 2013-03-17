@@ -25,6 +25,8 @@ Cube::Cube(float centreX, float centreY, float centreZ,
     wLeft = centreX - width / 2;
     wRight = centreX + width / 2;
 
+    colour = color;
+
     float vertices[8][3] = {
       { centreX - width / 2, centreY - height / 2, centreZ + depth / 2 },
       { centreX + width / 2, centreY - height / 2, centreZ + depth / 2 },
