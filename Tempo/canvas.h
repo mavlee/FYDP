@@ -34,7 +34,7 @@ public:
 
   void initCanvas(); // inits GL
   void cleanupCanvas(); // cleans up GL
-  void draw(float shiftZ, std::list<Cube*> obstacles, int lifeRemaining, float progressPct);
+  void draw(float shiftZ, std::list<Cube*> obstacles, int lifeRemaining, float progressPct, Cube::ColourSet currentColour);
 
   void drawHighscore(int points, int* highscores, bool highscoreAchieved, int lifeRemaining);
 };

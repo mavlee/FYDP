@@ -13,6 +13,7 @@
     <ClCompile Include="timer.cpp" />
     <ClCompile Include="util.cpp" />
     <ClCompile Include="highscore.cpp" />
+    <ClCompile Include="cubeConstants.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="canvas.h" />

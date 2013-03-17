@@ -45,6 +45,8 @@ private:
   int combo;
   int lifeRemaining;
   float progressPct;
+  Cube::ColourSet currentColour;
+  float lastColourChange;
 
   int isPaused;
   bool dirKeyPressed[2];

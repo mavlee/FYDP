@@ -3,6 +3,8 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
+#include "cubeConstants.h"
+
 class Vertex {
 	public:
 		float pos[3];
