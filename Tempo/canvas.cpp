@@ -453,7 +453,7 @@ void Canvas::drawHighscore(int points, int* highscores, bool highscoreAchieved, 
   int i = 0;
   for (i; i < 10; i++) {
     std::stringstream highscore_line;
-    highscore_line <<  "Record " << setfill(' ') << setw(3) << i + 1 << ":       " << highscores[i];
+    highscore_line <<  "Record " << std::setfill(' ') << std::setw(3) << i + 1 << ":       " << highscores[i];
     scoreText->renderText(SCREEN_WIDTH, SCREEN_HEIGHT, x, y + (i + 1) * 50, highscore_line.str());
   }
   std::stringstream restart_line;

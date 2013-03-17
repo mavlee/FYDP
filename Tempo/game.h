@@ -57,6 +57,8 @@ private:
 
   vector<vector<float> > musicData;
   vector<float> musicIntensityData;
+  vector<float> averageIntensity;
+  vector<float> distances;
   float shiftZ;
   Cube* playerCube;
   std::list<Cube*> obstacles;

@@ -156,7 +156,7 @@ int MusicHandler::analyze() {
     for (int v = 0; v < NUM_BANDS; v++) {
       total += energies[v][i];
     }
-    intensityData.push_back(1000 * total / NUM_BANDS);
+    intensityData.push_back(100 * total / NUM_BANDS);
   }
 
   vector<vector<float> > average_energies(NUM_BANDS);
