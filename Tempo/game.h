@@ -61,6 +61,11 @@ private:
   Cube* playerCube;
   std::list<Cube*> obstacles;
 
+  // Used for obstacle generation
+  int generateColour();
+  int prevC1;
+  int prevC2;
+
   // private functions
   void reset(string song);
 
