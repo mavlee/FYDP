@@ -467,7 +467,8 @@ void Canvas::drawProgress(float progressPct) {
 
 
 void Canvas::drawHighscore(int points, int* highscores, bool highscoreAchieved, int lifeRemaining) {
-	glMatrixMode(GL_PROJECTION);
+  glPushMatrix();
+  glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -493,6 +494,8 @@ void Canvas::drawHighscore(int points, int* highscores, bool highscoreAchieved, 
   std::stringstream restart_line;
   restart_line <<  "Press \'r\' to play again.";
   scoreText->renderText(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH / 2, 150 + (11) * 50, restart_line.str());
+
+  glPopMatrix();
 
   // Update screen
   SDL_GL_SwapBuffers();
