@@ -33,7 +33,7 @@ Game::Game(int width, int height) {
   playerCube = new Cube(0.f, 0.f, -OFFSET_FROM_CAMERA, SHAPE_X, SHAPE_Y, SHAPE_Z, Cube::Player);
 
   string song = selectMusicFileDialog();
-  while (!strcmp(song.c_str(), "/0")) {
+  while (!strcmp(song.c_str(), "\0")) {
     song = selectMusicFileDialog();
   }
   reset(song);
@@ -68,7 +68,7 @@ void Game::reset(string song) {
   lastUpdate = 0;
   frames = 0;
 
-  if (strcmp(song.c_str(), "/0")) {
+  if (strcmp(song.c_str(), "\0")) {
     printf("New song must be chosen");
   }
   musicHandler->setMusicFile(song);
@@ -336,7 +336,7 @@ void Game::update() {
       finished = true;
     }
     string song = selectMusicFileDialog();
-    while (!strcmp(song.c_str(), "/0")) {
+    while (!strcmp(song.c_str(), "\0")) {
       song = selectMusicFileDialog();
     }
     reset(song);
@@ -386,7 +386,7 @@ void Game::handleEvent(SDL_Event& event) {
       musicHandler->pause();
       timer.pause();
       string song = selectMusicFileDialog();
-      if (!strcmp(song.c_str(), "/0")) {
+      if (!strcmp(song.c_str(), "\0")) {
         reset(song);
       } else {
         // User pressed cancel, move along
