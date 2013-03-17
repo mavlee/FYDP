@@ -106,8 +106,10 @@ void Game::generateGameFeatures() {
   // temporary vector to keep track of peak locations
   vector<vector<vector<int> > >peakMarker(musicData[0].size(), vector<vector<int> >(NUM_ROWS, vector<int>(NUM_COLUMNS, 0)));
 
+  // TODO: rename variables when i'm more awake
   int last = 0;
   int last_superpeak = -1000;
+  float maxholyshittotal = 0;
   Cube* obstacle;
   for (int i = 0; i < musicData[0].size(); i++) {
     // used to get the peak value at an instant
@@ -117,18 +119,20 @@ void Game::generateGameFeatures() {
     int count = 0;
     // used to count number of superpeaks
     int count2 = 0;
+    float holyshittotal = 0;
+    if (i - last_superpeak > 1400) maxholyshittotal = 0;
     for (int v = 0; v < NUM_BANDS; v++) {
       if (musicData[v][i] > value) {
         value = musicData[v][i];
         m = v;
       }
-      //peakMarker[v][i] = 0;
     }
     if (m > -1) {
       for (int v = 0; v < NUM_BANDS; v++) {
-        if (musicData[v][i] > 400 && i > SAMPLE_HISTORY*2) {
-          printf("holyshit of %f on sample %d\n", musicData[v][i] / musicIntensityData[i], i);
+        if (musicData[v][i] > 200 && i > SAMPLE_HISTORY*2) {
+          printf("holyshit of %f on sample %d with intensity %f\n", musicData[v][i], i, musicIntensityData[i]);
           count2++;
+          holyshittotal += musicData[v][i] * musicIntensityData[i];
         }
         if (musicData[v][i] / value > 0.9 && count < 1) {
           int rand_r = rand() % 4;
@@ -138,21 +142,37 @@ void Game::generateGameFeatures() {
         }
       }
     }
-    if (count2 > 1 && i - last_superpeak > 1400) {
-      printf("holyshit on sample %d\n", i);
-      for (int j = i-10; j < i; j++) {
+    //if (count2 > 1 && i - last_superpeak > 1400) {
+    if (count2 > 1) {
+      //if (holyshittotal < maxholyshittotal) continue;
+      if (i - last_superpeak < 500 && holyshittotal > maxholyshittotal) {
+        printf("erase holyshit sample %d\n", last_superpeak);
         for (int r = 0; r < NUM_ROWS; r++) {
           for (int c = 0; c < NUM_COLUMNS; c++) {
-            peakMarker[j][r][c] = 0;
+            peakMarker[last_superpeak][r][c] = 0;
           }
         }
+        int rand_r = rand() % 4;
+        int rand_c = rand() % 6;
+        peakMarker[last_superpeak][rand_r][rand_c] = 1;
       }
-      for (int r = 0; r < NUM_ROWS; r++) {
-        for (int c = 0; c < NUM_COLUMNS; c++) {
-          peakMarker[i][r][c] = 1;
+      if ((i - last_superpeak < 500 && holyshittotal > maxholyshittotal) || i - last_superpeak > 1400) {
+        printf("holyshit on sample %d\n", i);
+        for (int j = i-10; j < i; j++) {
+          for (int r = 0; r < NUM_ROWS; r++) {
+            for (int c = 0; c < NUM_COLUMNS; c++) {
+              peakMarker[j][r][c] = 0;
+            }
+          }
         }
+        for (int r = 0; r < NUM_ROWS; r++) {
+          for (int c = 0; c < NUM_COLUMNS; c++) {
+            peakMarker[i][r][c] = 1;
+          }
+        }
+        last_superpeak = i;
+        maxholyshittotal = holyshittotal;
       }
-      last_superpeak = i;
     }
   }
 
