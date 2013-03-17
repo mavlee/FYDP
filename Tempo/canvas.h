@@ -29,7 +29,7 @@ private:
 
   void drawSkybox(int width, int height, float shiftZ);
   void drawObstacles(std::list<Cube*> obstacles);
-  void drawPlayer();
+  void drawPlayer(int lifeRemaining);
   void drawLife(int lifeRemaining);
   void drawProgress(float progressPct);
 

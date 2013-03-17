@@ -176,7 +176,7 @@ void Canvas::draw(float shiftZ, std::list<Cube*> obstacles, int lifeRemaining, f
   /** Draw 2D overlays **/
 #ifndef USE_MAC_INCLUDES
   glPushMatrix();
-  drawPlayer();
+  drawPlayer(lifeRemaining);
   glPopMatrix();
 #endif
 
@@ -197,7 +197,7 @@ void Canvas::draw(float shiftZ, std::list<Cube*> obstacles, int lifeRemaining, f
   SDL_GL_SwapBuffers();
 }
 
-void Canvas::drawPlayer() {
+void Canvas::drawPlayer(int lifeRemaining) {
   // Initialize Projection Matrix
   glMatrixMode( GL_PROJECTION );
   glPushMatrix();
@@ -216,8 +216,14 @@ void Canvas::drawPlayer() {
   glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-  // TODO set colour here
-  glColor4f(1, 1, 1, 0.7);
+  // Set colour according to HP
+  const float MIN_COLOUR = 0.4;
+  float colour = (1.f - MIN_COLOUR) * 1.f*lifeRemaining/TOTAL_LIFE_COUNT;
+  if (lifeRemaining >= 1) {
+    glColor4f(colour, 0, 0, 0.7);
+  } else {
+    glColor4f(colour, colour, colour, 0.7);
+  }
 
   float kinectAspect = 1.f*KINECT_DEPTH_HEIGHT/KINECT_DEPTH_HEIGHT;
   int drawHeight = height;
