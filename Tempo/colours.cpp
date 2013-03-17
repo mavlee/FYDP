@@ -13,3 +13,10 @@ const float PROGRESS_BAR[4] = {
   0.89f,
   0.9f,
 };
+
+const float WHITE[4] = {
+  1.0f,
+  1.0f,
+  1.0f,
+  1.0f,
+};
