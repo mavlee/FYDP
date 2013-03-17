@@ -153,10 +153,9 @@ void Canvas::cleanupCanvas() {
 }
 
 void Canvas::draw(float shiftZ, std::list<Cube*> obstacles, int lifeRemaining, float progressPct, Cube::ColourSet currentColour) {
+  // Reset and clear
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-
-  // Clear framebuffer
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   //glEnable(GL_CULL_FACE); // commenting this out makes cubes more identifible due to random bug
   glEnable(GL_DEPTH_TEST);
@@ -166,15 +165,20 @@ void Canvas::draw(float shiftZ, std::list<Cube*> obstacles, int lifeRemaining, f
   if (skyboxLoaded) {
     //drawSkybox(skyboxWidth, skyboxHeight, shiftZ);
   }
-  glPushMatrix();
-  drawPlayer();
-  glPopMatrix();
 #endif
 
+  /** Draw 3D stuff **/
   glPushMatrix();
   glTranslatef(0, 0, shiftZ);
   drawObstacles(obstacles);
   glPopMatrix();
+
+  /** Draw 2D overlays **/
+#ifndef USE_MAC_INCLUDES
+  glPushMatrix();
+  drawPlayer();
+  glPopMatrix();
+#endif
 
   glPushMatrix();
   //drawLife(lifeRemaining);
@@ -203,12 +207,17 @@ void Canvas::drawPlayer() {
   // Set attributes for texture drawing
   glMatrixMode(GL_MODELVIEW);
   glPushAttrib(GL_ENABLE_BIT);
-  glDisable(GL_DEPTH_TEST);
   glEnable(GL_TEXTURE_2D);
-  glTexEnvf(GL_TEXTURE_2D,GL_TEXTURE_ENV_MODE,GL_MODULATE);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glDisable(GL_DEPTH_TEST);
   glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
+  // Set texture settings
+  glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+  glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  // TODO set colour here
+  glColor4f(1, 1, 1, 0.7);
 
   float kinectAspect = 1.f*KINECT_DEPTH_HEIGHT/KINECT_DEPTH_HEIGHT;
   int drawHeight = height;
@@ -218,10 +227,10 @@ void Canvas::drawPlayer() {
   glBindTexture(GL_TEXTURE_2D, playerDepthId);
   glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, KINECT_DEPTH_WIDTH, KINECT_DEPTH_HEIGHT, GL_BGRA_EXT, GL_UNSIGNED_BYTE, (GLvoid*)depthData);
   glBegin(GL_QUADS);
-    glTexCoord2f(1.0f, 0.0f); glVertex3f(xOffset + drawWidth, height, 0);
-    glTexCoord2f(0.0f, 0.0f); glVertex3f(xOffset, height, 0);
-    glTexCoord2f(0.0f, 1.0f); glVertex3f(xOffset, 0, 0);
-    glTexCoord2f(1.0f, 1.0f); glVertex3f(xOffset + drawWidth, 0, 0);
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(xOffset + drawWidth, height, 0);
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(xOffset, height, 0);
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(xOffset, 0, 0);
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(xOffset + drawWidth, 0, 0);
   glEnd();
 
   // Reset attributes, projection matrix
