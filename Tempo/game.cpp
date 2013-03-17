@@ -98,7 +98,7 @@ void Game::reset() {
   generateGameFeatures();
 
   timer.start();
-  musicHandler->play();
+  starting = true;
 }
 
 // the game's main loop
@@ -245,9 +245,29 @@ void Game::update() {
     frames++;
     int diff = timer.get_ticks() - lastUpdate;
 
-    // calculate score
-    // TODO: calculate score according to time, and not the frequency that frames are drawn
-    updateScore();
+    if (timer.get_ticks() < START_DELAY) {
+      //return;
+    } else {
+      if (starting) {
+        musicHandler->play();
+        starting = false;
+        lastUpdate = timer.get_ticks();
+      } else {
+        // calculate score
+        // TODO: calculate score according to time, and not the frequency that frames are drawn
+        updateScore();
+
+        // Update positions
+        int xDir = 0;
+        if (dirKeyPressed[LEFT]) xDir = -1;
+        if (dirKeyPressed[RIGHT]) xDir = 1;
+        cameraX += 1600.f * diff / 1000.f * xDir;
+
+        shiftZ -= SHIFT_INTERVAL_PER_SECOND * diff / 1000;
+        glTranslatef(0, 0, SHIFT_INTERVAL_PER_SECOND * diff / 1000);
+        lastUpdate += diff;
+      }
+    }
 
     progressPct = musicHandler->getPositionInSec() / musicHandler->getLengthInSec();
 
@@ -260,16 +280,6 @@ void Game::update() {
       currentColour = newColour;
       lastColourChange = progressPct;
     }
-
-    // Update positions
-    int xDir = 0;
-    if (dirKeyPressed[LEFT]) xDir = -1;
-    if (dirKeyPressed[RIGHT]) xDir = 1;
-    cameraX += 1600.f * diff / 1000.f * xDir;
-
-    shiftZ -= SHIFT_INTERVAL_PER_SECOND * diff / 1000;
-    glTranslatef(0, 0, SHIFT_INTERVAL_PER_SECOND * diff / 1000);
-    lastUpdate += diff;
   }
 
   // Check for end of song
