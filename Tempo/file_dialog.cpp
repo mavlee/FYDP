@@ -30,7 +30,7 @@ std::string selectMusicFileDialog() {
 
   return filePath;
 #else
-  return "res/music/gangnamstyle.mp3";
+  return "res/music/oliverjames.mp3";
 #endif
 }
 
