@@ -33,7 +33,7 @@ Game::Game(int width, int height) {
   pointsText = new Text(width, height);
   // TODO remove
   // also, this has nothing to do with the near plane
-  playerCube = new Cube(0.f, 0.f, -OFFSET_FROM_CAMERA, SHAPE_X, SHAPE_Y, SHAPE_Z, Cube::Multi);
+  playerCube = new Cube(0.f, 0.f, -OFFSET_FROM_CAMERA, SHAPE_X, SHAPE_Y, SHAPE_Z, Cube::Player);
   //playerCube = new Cube(0.f, 0.f, -(Z_NEAR + 200.f), 100.f, 100.f, 100.f, Cube::Multi);
   //playerCube = new Cube(0.f, 0.f, -(Z_NEAR + 200.f), 1800.f, 300.f, 100.f, Cube::Multi);
 
@@ -135,7 +135,8 @@ void Game::generateGameFeatures() {
         float y = -b%4 * 125;
         float x = -NUM_BANDS/8*125.f + b/4*125;
         //obstacle = new Cube(pos, 0, -(Z_NEAR + 200.f + i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec()), 100.f, 100.f, 100.f, Cube::Multi);
-        obstacle = new Cube(x, y, -(Z_NEAR + 200.f + i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec()), 100.f, 100.f, 100.f, Cube::Multi);
+        obstacle = new Cube(x, y, -(OFFSET_FROM_CAMERA + i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec()), SHAPE_X, SHAPE_Y, SHAPE_Z, Cube::ColourSet(rand() % 4 + 1));
+
         obstacles.push_back(obstacle);
         last = i;
       }
@@ -238,9 +239,9 @@ void Game::update() {
 
     // change colour every 5%
     if (progressPct >= lastColourChange + 0.05f) {
-      Cube::ColourSet newColour = Cube::ColourSet(rand() % 7);
+      Cube::ColourSet newColour = Cube::ColourSet(rand() % 4 + 1);
       while (currentColour == newColour) {
-        newColour = Cube::ColourSet(rand() % 7);
+        newColour = Cube::ColourSet(rand() % 4 + 1);
       }
       currentColour = newColour;
       lastColourChange = progressPct;
