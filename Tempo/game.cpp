@@ -49,9 +49,14 @@ Game::~Game() {
 
 // resets the game so a new game can be started
 void Game::reset(string song) {
+  // Init text
   points = 0;
   combo = 0;
   comboLevel = 1;
+  canvas->setFPSText(0);
+  canvas->setPointsText(0);
+  canvas->setComboLevelText(0);
+
   lifeRemaining = TOTAL_LIFE_COUNT;
   progressPct = 0.0f;
 
@@ -234,7 +239,7 @@ void Game::generateGameFeatures() {
     for (int r = 0; r < NUM_ROWS; r++) {
       for (int c = 0; c < NUM_COLUMNS; c++) {
         if (peakMarker[i][r][c] > 0 && (i - last > 10 || i == last)) {
-          obstacle = new Cube(c, r, -(OFFSET_FROM_CAMERA + i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec()), SHAPE_X, SHAPE_Y, SHAPE_Z, Cube::ColourSet(peakMarker[i][r][c]));
+          obstacle = new Cube(c, r, -(i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec()), SHAPE_X, SHAPE_Y, SHAPE_Z, Cube::ColourSet(peakMarker[i][r][c]));
           obstacles.push_back(obstacle);
           last = i;
         }
@@ -310,18 +315,6 @@ void Game::updateScore() {
 void Game::draw() {
   if (!finished) {
     canvas->draw(shiftZ, obstacles, lifeRemaining, progressPct, currentColour);
-
-    // Current method to indicate colour to hit. Integrate colour into something else later
-    // TODO remove
-    glBegin(GL_QUADS);
-    //glColor3fv(cubeColours[currentColour][0]); glVertex3f(  SCREEN_WIDTH/2       , -SCREEN_HEIGHT/2 , -1100.0f );
-    //glColor3fv(cubeColours[currentColour][0]); glVertex3f(  SCREEN_WIDTH/2 - 100 , -SCREEN_HEIGHT/2 , -1100.0f );
-    //glColor3fv(cubeColours[currentColour][0]); glVertex3f(  SCREEN_WIDTH/2 - 100 ,  SCREEN_HEIGHT/2 , -1100.0f );
-    //glColor3fv(cubeColours[currentColour][0]); glVertex3f(  SCREEN_WIDTH/2       ,  SCREEN_HEIGHT/2 , -1100.0f );
-    glEnd();
-    glPopMatrix();
-
-
   } else {
     canvas->drawHighscore(points, highscores, highscoreAchieved, lifeRemaining);
   }
