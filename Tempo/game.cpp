@@ -119,6 +119,7 @@ void Game::generateGameFeatures() {
     int count = 0;
     // used to count number of superpeaks
     int count2 = 0;
+    int count3 = 0;
     float holyshittotal = 0;
     if (i - last_superpeak > 1400) maxholyshittotal = 0;
     for (int v = 0; v < NUM_BANDS; v++) {
@@ -133,11 +134,14 @@ void Game::generateGameFeatures() {
           printf("holyshit of %f on sample %d with intensity %f\n", musicData[v][i], i, musicIntensityData[i]);
           count2++;
           holyshittotal += musicData[v][i] * musicIntensityData[i];
+        } else if (musicData[v][i] > 50 && i > SAMPLE_HISTORY*2) {
+          printf("minor holyshit of %f on sample %d\n", musicData[v][i], i);
+          count3++;
         }
         if (musicData[v][i] / value > 0.9 && count < 1) {
           int rand_r = rand() % 4;
           int rand_c = rand() % 6;
-          peakMarker[i][rand_r][rand_c] = 1;
+          peakMarker[i][rand_r][rand_c] = rand() % 4 + 1;
           count++;
         }
       }
@@ -154,7 +158,7 @@ void Game::generateGameFeatures() {
         }
         int rand_r = rand() % 4;
         int rand_c = rand() % 6;
-        peakMarker[last_superpeak][rand_r][rand_c] = 1;
+        peakMarker[last_superpeak][rand_r][rand_c] = rand() % 4 + 1;
       }
       if ((i - last_superpeak < 500 && holyshittotal > maxholyshittotal) || i - last_superpeak > 1400) {
         printf("holyshit on sample %d\n", i);
@@ -167,11 +171,17 @@ void Game::generateGameFeatures() {
         }
         for (int r = 0; r < NUM_ROWS; r++) {
           for (int c = 0; c < NUM_COLUMNS; c++) {
-            peakMarker[i][r][c] = 1;
+            peakMarker[i][r][c] = rand() % 4 + 1;
           }
         }
         last_superpeak = i;
         maxholyshittotal = holyshittotal;
+      }
+    } else if (count3 > 0) {
+      int color = rand() % 4 + 1;
+      int rand_c = rand() % 6;
+      for (int r = 0; r < NUM_ROWS; r++) {
+        peakMarker[i][r][rand_c] = color;
       }
     }
   }
@@ -179,11 +189,8 @@ void Game::generateGameFeatures() {
   for (int i = 0; i < musicData[0].size(); i++) {
     for (int r = 0; r < NUM_ROWS; r++) {
       for (int c = 0; c < NUM_COLUMNS; c++) {
-        //if (musicData[b][i] > PEAK_THRESHOLD && (i - last > 10 || i == last)) {
-        if (peakMarker[i][r][c] == 1 && (i - last > 10 || i == last)) {
-          //int x = b % 4;
-          //int y = b % 6;
-          obstacle = new Cube(c, r, -(OFFSET_FROM_CAMERA + i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec()), SHAPE_X, SHAPE_Y, SHAPE_Z, Cube::ColourSet(rand() % 4 + 1));
+        if (peakMarker[i][r][c] > 0 && (i - last > 10 || i == last)) {
+          obstacle = new Cube(c, r, -(OFFSET_FROM_CAMERA + i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec()), SHAPE_X, SHAPE_Y, SHAPE_Z, Cube::ColourSet(peakMarker[i][r][c]));
           obstacles.push_back(obstacle);
           last = i;
         }
