@@ -26,6 +26,7 @@
 Game::Game(int width, int height) {
   canvasWidth = width;
   canvasHeight = height;
+  kinectConnected = false;
 
   canvas = new Canvas(width, height);
   musicHandler = new MusicHandler();
@@ -97,7 +98,7 @@ int Game::execute() {
     }
 
     // Pauses the music when there is no player
-    if (musicStarted) {
+    if (musicStarted && kinectConnected) {
       if (!hasPlayer() && !isPaused) {
         if (lastHasPlayer == 0) {
           lastHasPlayer = timer.get_ticks();
@@ -446,4 +447,8 @@ void Game::pause() {
 void Game::resume() {
   timer.unpause();
   if (musicStarted) musicHandler->play();
+}
+
+void Game::enableKinect() {
+  kinectConnected = true;
 }

@@ -43,6 +43,7 @@ private:
   float progressPct;
   Cube::ColourSet currentColour;
   float lastColourChange;
+  bool kinectConnected;
 
   bool musicStarted;
   int isPaused;
@@ -83,6 +84,7 @@ public:
   ~Game();
 
   int execute();
+  void enableKinect();
 };
 
 #endif

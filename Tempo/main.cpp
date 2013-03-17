@@ -17,6 +17,7 @@ int main( int argc, char* args[] ) {
     printf("Kinect Sensor started\n");
     hKinectProcess = CreateThread( NULL, 0, KinectProcessThread,
       (void*)theGame.canvas->depthData, 0, NULL );
+    theGame.enableKinect();
   }
 #endif
 
