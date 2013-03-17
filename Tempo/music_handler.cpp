@@ -263,7 +263,7 @@ int MusicHandler::analyze2() {
   for (int v = 0; v < NUM_BANDS; v++) {
     average_energies[v].resize(FFT_data.size() - 1, 0);
     for (int i = 0; i < average_energies[v].size(); i++) {
-      for (int j = i - SAMPLE_HISTORY; j < i; j++) {
+      for (int j = max(0, i - SAMPLE_HISTORY); j < i; j++) {
         average_energies[v][i] += 1.0 / min(i + 1, SAMPLE_HISTORY) * energies[v][j];
       }
     }

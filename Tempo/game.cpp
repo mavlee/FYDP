@@ -28,29 +28,9 @@ Game::Game(int width, int height) {
 
   canvas = new Canvas(width, height);
   musicHandler = new MusicHandler();
-  fpsText = new Text(width, height);
-  comboLevelText = new Text(width, height);
-  pointsText = new Text(width, height);
-  // TODO remove
+  // TODO remove after player collision has been done
   // also, this has nothing to do with the near plane
   playerCube = new Cube(0.f, 0.f, -OFFSET_FROM_CAMERA, SHAPE_X, SHAPE_Y, SHAPE_Z, Cube::Player);
-  //playerCube = new Cube(0.f, 0.f, -(Z_NEAR + 200.f), 100.f, 100.f, 100.f, Cube::Multi);
-  //playerCube = new Cube(0.f, 0.f, -(Z_NEAR + 200.f), 1800.f, 300.f, 100.f, Cube::Multi);
-
-  /*
-  if (strcmp(musicFile.c_str(), "") != 0) {
-    musicHandler->setMusicFile("C:\\FYDP\\Tempo\\res\\music\\clocks.mp3");
-  } else {
-    //musicHandler->setMusicFile("res/music/clocks.mp3");
-    if (strcmp(musicFile.c_str(), "C:\\FYDP\\Tempo\\res\\music\\clocks.mp3") != 0) {
-      printf("this is the right file");
-      musicHandler->setMusicFile(musicFile);
-    } else {
-      printf("reverting back to clocks\n");
-      musicHandler->setMusicFile("C:\\FYDP\\Tempo\\res\\music\\clocks.mp3");
-    }
-  }
-  */
 
   string song = selectMusicFileDialog();
   while (!strcmp(song.c_str(), "/0")) {
@@ -60,19 +40,13 @@ Game::Game(int width, int height) {
 }
 
 Game::~Game() {
-  canvas->cleanupCanvas();
   if (canvas) delete canvas;
   if (playerCube) delete playerCube;
   if (musicHandler) delete musicHandler;
-  if (fpsText) delete fpsText;
-  if (comboLevelText) delete comboLevelText;
-  if (pointsText) delete pointsText;
 }
 
 // resets the game so a new game can be started
 void Game::reset(string song) {
-  if (canvas) delete canvas;
-  canvas = new Canvas(canvasWidth, canvasHeight);
   points = 0;
   combo = 0;
   comboLevel = 1;
@@ -80,20 +54,17 @@ void Game::reset(string song) {
   progressPct = 0.0f;
 
   isPaused = false;
-  dirKeyPressed[LEFT] = dirKeyPressed[RIGHT] = false;
   restart = false;
   finished = false;
 
+  //TODO remove after player cube gone
   cameraX = 0.f;
   cameraY = 0.f;
-  gColorMode = COLOR_MODE_CYAN;
   gProjectionScale = 1.f;
 
   // clear obstacles
   obstacles.clear();
-
   shiftZ = 0.f;
-
   lastUpdate = 0;
   frames = 0;
 
@@ -139,9 +110,11 @@ void Game::generateGameFeatures() {
         float pos = -NUM_BANDS/2*125.f + b*125;
         //float y = (-b%2) * 125;
         //float x = -NUM_BANDS/4*125.f + b/2*125;
-        float y = -b%4 * 125;
-        float x = -NUM_BANDS/8*125.f + b/4*125;
-        //obstacle = new Cube(pos, 0, -(Z_NEAR + 200.f + i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec()), 100.f, 100.f, 100.f, Cube::Multi);
+        //float y = -b%4 * 125;
+        //float x = -NUM_BANDS/8*125.f + b/4*125;
+        int y = b%4;
+        int x = b/4;
+        // TODO: get rid of OFFSET_FROM_CAMERA
         obstacle = new Cube(x, y, -(OFFSET_FROM_CAMERA + i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec()), SHAPE_X, SHAPE_Y, SHAPE_Z, Cube::ColourSet(rand() % 4 + 1));
 
         obstacles.push_back(obstacle);
@@ -209,37 +182,20 @@ void Game::draw() {
   if (!finished) {
     canvas->draw(shiftZ, obstacles, lifeRemaining, progressPct, currentColour);
 
-    // Render the cube
-    glPushMatrix();
-    glTranslatef(cameraX, cameraY, 0);
-    glTranslatef(0, 0, shiftZ);
-    playerCube->draw();
-
     // Current method to indicate colour to hit. Integrate colour into something else later
+    // TODO remove
     glBegin(GL_QUADS);
-    glColor3fv(cubeColours[currentColour][0]); glVertex3f(  SCREEN_WIDTH/2       , -SCREEN_HEIGHT/2 , -1100.0f );
-    glColor3fv(cubeColours[currentColour][0]); glVertex3f(  SCREEN_WIDTH/2 - 100 , -SCREEN_HEIGHT/2 , -1100.0f );
-    glColor3fv(cubeColours[currentColour][0]); glVertex3f(  SCREEN_WIDTH/2 - 100 ,  SCREEN_HEIGHT/2 , -1100.0f );
-    glColor3fv(cubeColours[currentColour][0]); glVertex3f(  SCREEN_WIDTH/2       ,  SCREEN_HEIGHT/2 , -1100.0f );
+      glColor3fv(cubeColours[currentColour][0]); glVertex3f(  SCREEN_WIDTH/2       , -SCREEN_HEIGHT/2 , -1100.0f );
+      glColor3fv(cubeColours[currentColour][0]); glVertex3f(  SCREEN_WIDTH/2 - 100 , -SCREEN_HEIGHT/2 , -1100.0f );
+      glColor3fv(cubeColours[currentColour][0]); glVertex3f(  SCREEN_WIDTH/2 - 100 ,  SCREEN_HEIGHT/2 , -1100.0f );
+      glColor3fv(cubeColours[currentColour][0]); glVertex3f(  SCREEN_WIDTH/2       ,  SCREEN_HEIGHT/2 , -1100.0f );
     glEnd();
     glPopMatrix();
 
-    // Render text
-    std::stringstream fps_caption;
-    fps_caption << "Average FPS: " << frames * 1.0 / (timer.get_ticks()/1000);
-    fpsText->renderText(canvasWidth, canvasHeight, 0, canvasHeight - 50, fps_caption.str());
-    std::stringstream points_caption;
-    points_caption << "Points: " << points;
-    pointsText->renderText(canvasWidth, canvasHeight, 0, canvasHeight - 100, points_caption.str());
-    std::stringstream combo_caption;
-    combo_caption << "Combo Level: " << comboLevel;
-    pointsText->renderText(canvasWidth, canvasHeight, 0, canvasHeight - 150, combo_caption.str());
+    
   } else {
     canvas->drawHighscore(points, highscores, highscoreAchieved, lifeRemaining);
   }
-
-  // Update screen
-  SDL_GL_SwapBuffers();
 }
 
 void Game::update() {
@@ -265,14 +221,13 @@ void Game::update() {
         updateScore();
 
         // Update positions
-        int xDir = 0;
-        if (dirKeyPressed[LEFT]) xDir = -1;
-        if (dirKeyPressed[RIGHT]) xDir = 1;
-        cameraX += 1600.f * diff / 1000.f * xDir;
-
-        shiftZ -= SHIFT_INTERVAL_PER_SECOND * diff / 1000;
-        glTranslatef(0, 0, SHIFT_INTERVAL_PER_SECOND * diff / 1000);
+        shiftZ += SHIFT_INTERVAL_PER_SECOND * diff / 1000;
         lastUpdate += diff;
+
+        // Update text
+        canvas->setFPSText(frames * 1.0 / (timer.get_ticks()/1000));
+        canvas->setPointsText(points);
+        canvas->setComboLevelText(comboLevel);
       }
     }
 
@@ -318,14 +273,6 @@ void Game::handleEvent(SDL_Event& event) {
 
   case SDL_KEYDOWN:
     switch (event.key.keysym.sym) {
-    case LEFT_KEY:
-      dirKeyPressed[LEFT] = true;
-      dirKeyPressed[RIGHT] = false;
-      break;
-    case RIGHT_KEY:
-      dirKeyPressed[LEFT] = false;
-      dirKeyPressed[RIGHT] = true;
-      break;
     case PAUSE_KEY:
       isPaused = !isPaused;
       if (isPaused) {
@@ -377,12 +324,6 @@ void Game::handleEvent(SDL_Event& event) {
 
   case SDL_KEYUP:
     switch (event.key.keysym.sym) {
-    case LEFT_KEY:
-      dirKeyPressed[LEFT] = false;
-      break;
-    case RIGHT_KEY:
-      dirKeyPressed[RIGHT] = false;
-      break;
     }
     break;
   }

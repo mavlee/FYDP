@@ -47,13 +47,22 @@ Canvas::Canvas(int width, int height) {
   initCanvas();
   scoreText = new Text(width, height);
   lifeText = new Text(width, height);
+  fpsText = new Text(width, height);
+  comboLevelText = new Text(width, height);
+  pointsText = new Text(width, height);
+  fpsString = " ";
+  comboLevelString = " ";
+  pointsString = " ";
 }
 
 Canvas::~Canvas() {
-  delete skyboxTexture;
-  delete rectTexture;
+  if (skyboxTexture) delete skyboxTexture;
+  if (rectTexture) delete rectTexture;
   if (scoreText) delete scoreText;
   if (lifeText) delete lifeText;
+  if (fpsText) delete fpsText;
+  if (comboLevelText) delete comboLevelText;
+  if (pointsText) delete pointsText;
 }
 
 void Canvas::initCanvas() {
@@ -71,24 +80,16 @@ void Canvas::initCanvas() {
   // Initialize Projection Matrix
   glMatrixMode( GL_PROJECTION );
   glLoadIdentity();
-
-  glRotatef(SCREEN_TILT, 1, 0, 0);
-
-  float offset = 0.0f;
-  glFrustum( -width/2, width/2, height/2 + offset, -height/2 + offset, Z_NEAR, Z_FAR);
-
-  //glRotatef(-40.0f, 1, 0, 0);
+  glFrustum( -width/2, width/2, height/2, -height/2, Z_NEAR, Z_FAR);
 
   // Initialize Modelview Matrix
   glMatrixMode( GL_MODELVIEW );
   glLoadIdentity();
 
-  glPushMatrix();
-
   // Initialize clear color
   glClearColor( 0.f, 0.f, 0.f, 1.f );
 
-  glEnable(GL_CULL_FACE);
+  //glEnable(GL_CULL_FACE); // commenting this out makes cubes more identifible due to random bug
   glEnable(GL_DEPTH_TEST);
 
   //Check for error
@@ -159,7 +160,7 @@ void Canvas::draw(float shiftZ, std::list<Cube*> obstacles, int lifeRemaining, f
   // Draw the skybox before anything else is drawn.
 #ifndef USE_MAC_INCLUDES
   if (skyboxLoaded) {
-    drawSkybox(skyboxWidth, skyboxHeight, shiftZ);
+    //drawSkybox(skyboxWidth, skyboxHeight, shiftZ);
   }
   glPushMatrix();
   drawPlayer();
@@ -167,6 +168,7 @@ void Canvas::draw(float shiftZ, std::list<Cube*> obstacles, int lifeRemaining, f
 #endif
 
   glPushMatrix();
+  glTranslatef(0, 0, shiftZ);
   drawObstacles(obstacles);
   glPopMatrix();
 
@@ -179,6 +181,14 @@ void Canvas::draw(float shiftZ, std::list<Cube*> obstacles, int lifeRemaining, f
   drawProgress(progressPct);
   glPopMatrix();
 #endif
+
+  // Draw ui text
+  fpsText->renderText(width, height, 0, height - 50, fpsString);
+  comboLevelText->renderText(width, height, 0, height - 150, comboLevelString);
+  pointsText->renderText(width, height, 0, height - 100, pointsString);
+
+  // Update screen
+  SDL_GL_SwapBuffers();
 }
 
 void Canvas::drawPlayer() {
@@ -387,6 +397,9 @@ void Canvas::drawHighscore(int points, int* highscores, bool highscoreAchieved, 
   std::stringstream restart_line;
   restart_line <<  "Press \'r\' to play again.";
   scoreText->renderText(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH / 2, 150 + (11) * 50, restart_line.str());
+
+  // Update screen
+  SDL_GL_SwapBuffers();
 }
 
 void Canvas::drawProgress(float progressPct) {
@@ -447,4 +460,22 @@ void Canvas::drawProgress(float progressPct) {
   glMatrixMode(GL_PROJECTION);
   glPopMatrix();
   glPopAttrib();
+}
+
+void Canvas::setFPSText(float fps) {
+  std::stringstream fpsCaption;
+  fpsCaption << "Average FPS: " << fps;
+  fpsString = fpsCaption.str();
+}
+
+void Canvas::setPointsText(int points) {
+  std::stringstream pointsCaption;
+  pointsCaption << "Points: " << points;
+  pointsString = pointsCaption.str();
+}
+
+void Canvas::setComboLevelText(int comboLevel) {
+  std::stringstream comboCaption;
+  comboCaption << "Combo Level: " << comboLevel;
+  comboLevelString = comboCaption.str();
 }
