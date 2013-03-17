@@ -268,34 +268,45 @@ int MusicHandler::analyze2() {
   // find peaks
   for (int v = 0; v < NUM_BANDS; v++) {
     peakData[v].resize(FFT_data.size() - 1, 0);
-    for (int i = 0; i < energies[v].size(); i++) {
-      if (energies[v][i] > 5*average_energies[v][i]) {
-        peakData[v][i] = 1;
-      } else {
-        peakData[v][i] = 0;
-      }
-    }
   }
-
-  /*
-  for (int v = 0; v < NUM_BANDS; v++) {
-    peakData[v].resize(FFT_data.size() - 1, 0);
-  }
+  int last_superpeak = -1000;
   for (int i = 0; i < energies[0].size(); i++) {
-    int value = 0;
+    float value = 0;
     int m = -1;
+    int count = 0;
+    int count2 = 0;
     for (int v = 0; v < NUM_BANDS; v++) {
-      if (energies[v][i] - 3*average_energies[v][i] > value) {
-        value = energies[v][i] - 3*average_energies[v][i];
+      if (energies[v][i] - 4 * average_energies[v][i] > value) {
+        value = energies[v][i] - 4 * average_energies[v][i];
         m = v;
       }
       peakData[v][i] = 0;
     }
     if (m > -1) {
-      peakData[m][i] = 1;
+      for (int v = 0; v < NUM_BANDS; v++) {
+        if ((energies[v][i] > 400 * average_energies[v][i]) && i > SAMPLE_HISTORY*2) {
+          printf("holyshit of %f on sample %d\n", energies[v][i] / average_energies[v][i], i);
+          count2++;
+        }
+        if ((energies[v][i] - 4 * average_energies[v][i]) / value > 0.9 && count < 2) {
+          peakData[v][i] = 1;
+          count++;
+        }
+      }
+    }
+    if (count2 > 1 && i - last_superpeak > 1400) {
+      printf("holyshit on sample %d\n", i);
+      for (int c = i-10; c < i; c++) {
+        for (int v = 0; v < NUM_BANDS; v++) {
+          peakData[v][c] = 0;
+        }
+      }
+      for (int v = 0; v < NUM_BANDS; v++) {
+        peakData[v][i] = 1;
+      }
+      last_superpeak = i;
     }
   }
-  */
 
   // clean up memory
   for (int i = 0; i < FFT_data.size(); i++) {

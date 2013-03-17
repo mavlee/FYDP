@@ -20,6 +20,7 @@ Game::Game(int width, int height, std::string musicFile) {
 
   // player cube
   playerCube = new Cube(0.f, 0.f, -(Z_NEAR + 200.f), 100.f, 100.f, 100.f, Cube::Multi);
+  //playerCube = new Cube(0.f, 0.f, -(Z_NEAR + 200.f), 1800.f, 300.f, 100.f, Cube::Multi);
 
   /*
   if (strcmp(musicFile.c_str(), "") != 0) {
@@ -85,10 +86,12 @@ void Game::generateGameFeatures() {
   Cube* obstacle;
   for (int i = 0; i < musicData[0].size(); i++) {
     for (int b = 0; b < NUM_BANDS; b++) {
-      if (musicData[b][i] > PEAK_THRESHOLD/* && (i - last > 10 || i == last)*/) {
-        //float pos = -NUM_BANDS/2*125.f + b*125;
-        float y = -b/4 * 125;
-        float x = -NUM_BANDS/8*125.f + b%4*125;
+      if (musicData[b][i] > PEAK_THRESHOLD && (i - last > 10 || i == last)) {
+        float pos = -NUM_BANDS/2*125.f + b*125;
+        //float y = (-b%2) * 125;
+        //float x = -NUM_BANDS/4*125.f + b/2*125;
+        float y = -b%4 * 125;
+        float x = -NUM_BANDS/8*125.f + b/4*125;
         //obstacle = new Cube(pos, 0, -(Z_NEAR + 200.f + i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec()), 100.f, 100.f, 100.f, Cube::Multi);
         obstacle = new Cube(x, y, -(Z_NEAR + 200.f + i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec()), 100.f, 100.f, 100.f, Cube::Multi);
         obstacles.push_back(obstacle);
