@@ -97,6 +97,7 @@ int Game::execute() {
       }
     }
 
+#ifndef USE_MAC_INCLUDES
     // Pauses the music when there is no player
     if (musicStarted && kinectConnected) {
       if (!hasPlayer() && !isPaused) {
@@ -113,6 +114,8 @@ int Game::execute() {
         lastHasPlayer = 0;
       }
     }
+#endif
+
     update();
     draw();
   }
