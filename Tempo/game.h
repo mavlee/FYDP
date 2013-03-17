@@ -71,7 +71,8 @@ private:
   void update();
 
   void generateGameFeatures();
-  bool checkForCollisions();
+  bool checkForNegativeCollisions();
+  bool checkForBonusCollisions();
   void updateScore();
 
 public:
