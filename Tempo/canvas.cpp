@@ -56,6 +56,7 @@ Canvas::Canvas(int width, int height) {
 }
 
 Canvas::~Canvas() {
+  cleanupCanvas();
   if (skyboxTexture) delete skyboxTexture;
   if (rectTexture) delete rectTexture;
   if (scoreText) delete scoreText;
@@ -87,10 +88,7 @@ void Canvas::initCanvas() {
   glLoadIdentity();
 
   // Initialize clear color
-  glClearColor( 0.f, 0.f, 0.f, 1.f );
-
-  //glEnable(GL_CULL_FACE); // commenting this out makes cubes more identifible due to random bug
-  glEnable(GL_DEPTH_TEST);
+  glClearColor( 0.1f, 0.1f, 0.1f, 1.f );
 
   //Check for error
   GLenum error = glGetError();
@@ -154,8 +152,13 @@ void Canvas::cleanupCanvas() {
 }
 
 void Canvas::draw(float shiftZ, std::list<Cube*> obstacles, int lifeRemaining, float progressPct, Cube::ColourSet currentColour) {
-  // Clear color buffer & depth buffer
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+
+  // Clear framebuffer
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  //glEnable(GL_CULL_FACE); // commenting this out makes cubes more identifible due to random bug
+  glEnable(GL_DEPTH_TEST);
 
   // Draw the skybox before anything else is drawn.
 #ifndef USE_MAC_INCLUDES
@@ -163,7 +166,7 @@ void Canvas::draw(float shiftZ, std::list<Cube*> obstacles, int lifeRemaining, f
     //drawSkybox(skyboxWidth, skyboxHeight, shiftZ);
   }
   glPushMatrix();
-  drawPlayer();
+  //drawPlayer();
   glPopMatrix();
 #endif
 
@@ -183,9 +186,9 @@ void Canvas::draw(float shiftZ, std::list<Cube*> obstacles, int lifeRemaining, f
 #endif
 
   // Draw ui text
-  fpsText->renderText(width, height, 0, height - 50, fpsString);
-  comboLevelText->renderText(width, height, 0, height - 150, comboLevelString);
-  pointsText->renderText(width, height, 0, height - 100, pointsString);
+  fpsText->renderText(width, height, 10, 10, fpsString);
+  comboLevelText->renderText(width, height, 10, height - 100, comboLevelString);
+  pointsText->renderText(width, height, 10, height - 50, pointsString);
 
   // Update screen
   SDL_GL_SwapBuffers();
@@ -319,50 +322,50 @@ void Canvas::drawObstacles(std::list<Cube*> obstacles) {
 }
 
 void Canvas::drawLife(int lifeRemaining) {
-  float padding = 20.0f;
-  float x = 0.0f;
-  float y = 0.0f;
+  const float padding = 20.0f;
+  const float x = 0.0f;
+  const float y = 0.0f;
+  const double size = 50;
 
-  std::stringstream life;
-  life << "Life Remaining: ";
-  lifeText->renderText(SCREEN_WIDTH, SCREEN_HEIGHT, x, y + padding, life.str());
+  // TODO remove
+  //std::stringstream life;
+  //life << "Life Remaining: ";
+  //lifeText->renderText(width, height, x, y + padding, life.str());
 
   // Initialize Projection Matrix
   glMatrixMode( GL_PROJECTION );
-  // Save current matrix.
   glPushMatrix();
   glLoadIdentity();
+  glOrtho(0, width, height, 0, 0, 1);
 
-  glFrustum( 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, Z_NEAR, Z_FAR);
-
+  // Set attributes for ortho texture drawing
   glMatrixMode(GL_MODELVIEW);
-
   glPushAttrib(GL_ENABLE_BIT);
   glEnable(GL_TEXTURE_2D);
   glDisable(GL_DEPTH_TEST);
   glDisable(GL_LIGHTING);
-  glDisable(GL_BLEND);
+  glEnable(GL_BLEND);
 
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-  //Set texture parameters
+  //Set texture stretching parameters
   glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
   glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 
-  double size = 50;
-
-  glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-
-  int i = 0;
-
   glBindTexture(GL_TEXTURE_2D, LIFE);
   glBegin(GL_QUADS);
-  for (i; i < lifeRemaining; i++) {
-    glTexCoord2f( 1.0f, 0.0f ); glVertex3f( x + 235 + size * (i+1) + padding * i , y + padding + 0        , -1100.0f );
-    glTexCoord2f( 0.0f, 0.0f ); glVertex3f( x + 235 + size * (i  ) + padding * i , y + padding + 0        , -1100.0f );
-    glTexCoord2f( 0.0f, 1.0f ); glVertex3f( x + 235 + size * (i  ) + padding * i , y + padding + 0 + size , -1100.0f );
-    glTexCoord2f( 1.0f, 1.0f ); glVertex3f( x + 235 + size * (i+1) + padding * i , y + padding + 0 + size , -1100.0f );
+  for (int i = 0; i < lifeRemaining; i++) {
+    glTexCoord2f( 1.0f, 0.0f ); glVertex3f( x + 235 + size * (i+1) + padding * i , y + padding + 0        , 0.f );
+    glTexCoord2f( 0.0f, 0.0f ); glVertex3f( x + 235 + size * (i  ) + padding * i , y + padding + 0        , 0.f );
+    glTexCoord2f( 0.0f, 1.0f ); glVertex3f( x + 235 + size * (i  ) + padding * i , y + padding + 0 + size , 0.f );
+    glTexCoord2f( 1.0f, 1.0f ); glVertex3f( x + 235 + size * (i+1) + padding * i , y + padding + 0 + size , 0.f );
   }
   glEnd();
+
+  // Reset attributes, projection matrix
+  glDisable(GL_TEXTURE_2D);
+  glEnable(GL_DEPTH_TEST);
+  glEnable(GL_LIGHTING);
+  glDisable(GL_BLEND);
 
   glMatrixMode(GL_MODELVIEW);
   glPopMatrix();
@@ -372,7 +375,105 @@ void Canvas::drawLife(int lifeRemaining) {
   glPopAttrib();
 }
 
+void Canvas::drawProgress(float progressPct) {
+  float padding = 20.0f;
+  float x = 500.0f;
+  float y = height - 50.0f;
+  float border = 4.0f;
+
+  //TODO remove
+  //std::stringstream progress;
+  //progress << "Progress";
+  //lifeText->renderText(width, height, x, y + padding, progress.str());
+
+  // Initialize Projection Matrix
+  glMatrixMode( GL_PROJECTION );
+  glPushMatrix();
+  glLoadIdentity();
+  glOrtho(0, width, height, 0, 0, 1);
+
+  glMatrixMode(GL_MODELVIEW);
+  glPushAttrib(GL_ENABLE_BIT);
+  glDisable(GL_DEPTH_TEST);
+  glDisable(GL_LIGHTING);
+  glEnable(GL_BLEND);
+
+  glColor4f(0.3f, 0.3f, 0.3f, 0.9f);
+  // top bar
+  glBegin(GL_QUADS);
+    glVertex3f(width/4.f - border, y + padding, 0);
+    glVertex3f(3.f*width/4.f + border, y + padding, 0);
+    glVertex3f(3.f*width/4.f + border, y + padding + border, 0);
+    glVertex3f(width/4.f - border, y + padding + border, 0);
+  glEnd();
+
+  // bottom bar
+  glBegin(GL_QUADS);
+    glVertex3f(width/4.f - border, y - border, 0);
+    glVertex3f(3.f*width/4.f + border, y - border, 0);
+    glVertex3f(3.f*width/4.f + border, y, 0);
+    glVertex3f(width/4.f - border, y, 0);
+  glEnd(); 
+
+  // left bar
+  glBegin(GL_QUADS);
+    glVertex3f(width/4.f - border, y, 0);
+    glVertex3f(width/4.f, y, 0);
+    glVertex3f(width/4.f, y + padding, 0);
+    glVertex3f(width/4.f - border, y + padding, 0);
+  glEnd(); 
+
+  // right bar
+  glBegin(GL_QUADS);
+    glVertex3f(3.f*width/4.f, y, 0);
+    glVertex3f(3.f*width/4.f + border, y, 0);
+    glVertex3f(3.f*width/4.f + border, y + padding, 0);
+    glVertex3f(3.f*width/4.f, y + padding, 0);
+  glEnd();
+
+  // progress bar
+  glColor4f(0.4f, 0.4f, 0.4f, 0.9f);
+  glBegin(GL_QUADS);
+    glVertex3d(width/4.f, y, 0);
+    glVertex3d(width/4.f + width/2.f*progressPct, y, 0);
+    glVertex3d(width/4.f + width/2.f*progressPct, y + padding, 0);
+    glVertex3d(width/4.f, y + padding, 0);
+  glEnd();
+/*
+  glBindTexture(GL_TEXTURE_2D, PB);
+  glBegin(GL_QUADS);
+    glTexCoord2f( 1.0f, 0.0f ); glVertex3f( x + pbWidth * 2/3 , y + padding + pbHeight * 2 , -1100.0f );
+    glTexCoord2f( 0.0f, 0.0f ); glVertex3f( x - pbWidth * 1/3 , y + padding + pbHeight * 2 , -1100.0f );
+    glTexCoord2f( 0.0f, 1.0f ); glVertex3f( x - pbWidth * 1/3 , y + padding + pbHeight * 3 , -1100.0f );
+    glTexCoord2f( 1.0f, 1.0f ); glVertex3f( x + pbWidth * 2/3 , y + padding + pbHeight * 3 , -1100.0f );
+  glEnd();
+
+  glBindTexture(GL_TEXTURE_2D, PRO);
+  glBegin(GL_QUADS);
+    glTexCoord2f( 1.0f, 0.0f ); glVertex3f( x - pbWidth * 1/3 + pbWidth * progressPct + border , y + padding + pbHeight * 2 + border , -1100.0f );
+    glTexCoord2f( 0.0f, 0.0f ); glVertex3f( x - pbWidth * 1/3                         + border , y + padding + pbHeight * 2 + border , -1100.0f );
+    glTexCoord2f( 0.0f, 1.0f ); glVertex3f( x - pbWidth * 1/3                         + border , y + padding + pbHeight * 3 - border , -1100.0f );
+    glTexCoord2f( 1.0f, 1.0f ); glVertex3f( x - pbWidth * 1/3 + pbWidth * progressPct + border , y + padding + pbHeight * 3 - border , -1100.0f );
+  glEnd();
+  */
+
+  // Reset attributes, projection matrix
+  glEnable(GL_DEPTH_TEST);
+  glEnable(GL_LIGHTING);
+  glDisable(GL_BLEND);
+
+  glMatrixMode(GL_MODELVIEW);
+  glPopMatrix();
+
+  glMatrixMode(GL_PROJECTION);
+  glPopMatrix();
+  glPopAttrib();
+}
+
+
 void Canvas::drawHighscore(int points, int* highscores, bool highscoreAchieved, int lifeRemaining) {
+	glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   std::stringstream highscore_caption;
@@ -402,69 +503,10 @@ void Canvas::drawHighscore(int points, int* highscores, bool highscoreAchieved, 
   SDL_GL_SwapBuffers();
 }
 
-void Canvas::drawProgress(float progressPct) {
-  float padding = 20.0f;
-  float x = 500.0f;
-  float y = 500.0f;
-
-  std::stringstream progress;
-  progress << "Progress";
-  lifeText->renderText(SCREEN_WIDTH, SCREEN_HEIGHT, x, y + padding, progress.str());
-
-  // Initialize Projection Matrix
-  glMatrixMode( GL_PROJECTION );
-  // Save current matrix.
-  glPushMatrix();
-  glLoadIdentity();
-
-  glFrustum( 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, Z_NEAR, Z_FAR);
-
-  glMatrixMode(GL_MODELVIEW);
-
-  glPushAttrib(GL_ENABLE_BIT);
-  glEnable(GL_TEXTURE_2D);
-  glDisable(GL_DEPTH_TEST);
-  glDisable(GL_LIGHTING);
-  glDisable(GL_BLEND);
-
-  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-  //Set texture parameters
-  glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-  glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-
-  glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-
-  int i = 0;
-  // this border is predefined by the image files and the offset required to place one on top of the other.
-  float border = 12.0f;
-
-  glBindTexture(GL_TEXTURE_2D, PB);
-  glBegin(GL_QUADS);
-    glTexCoord2f( 1.0f, 0.0f ); glVertex3f( x + pbWidth * 2/3 , y + padding + pbHeight * 2 , -1100.0f );
-    glTexCoord2f( 0.0f, 0.0f ); glVertex3f( x - pbWidth * 1/3 , y + padding + pbHeight * 2 , -1100.0f );
-    glTexCoord2f( 0.0f, 1.0f ); glVertex3f( x - pbWidth * 1/3 , y + padding + pbHeight * 3 , -1100.0f );
-    glTexCoord2f( 1.0f, 1.0f ); glVertex3f( x + pbWidth * 2/3 , y + padding + pbHeight * 3 , -1100.0f );
-  glEnd();
-
-  glBindTexture(GL_TEXTURE_2D, PRO);
-  glBegin(GL_QUADS);
-    glTexCoord2f( 1.0f, 0.0f ); glVertex3f( x - pbWidth * 1/3 + pbWidth * progressPct + border , y + padding + pbHeight * 2 + border , -1100.0f );
-    glTexCoord2f( 0.0f, 0.0f ); glVertex3f( x - pbWidth * 1/3                         + border , y + padding + pbHeight * 2 + border , -1100.0f );
-    glTexCoord2f( 0.0f, 1.0f ); glVertex3f( x - pbWidth * 1/3                         + border , y + padding + pbHeight * 3 - border , -1100.0f );
-    glTexCoord2f( 1.0f, 1.0f ); glVertex3f( x - pbWidth * 1/3 + pbWidth * progressPct + border , y + padding + pbHeight * 3 - border , -1100.0f );
-  glEnd();
-
-  glMatrixMode(GL_MODELVIEW);
-  glPopMatrix();
-
-  glMatrixMode(GL_PROJECTION);
-  glPopMatrix();
-  glPopAttrib();
-}
 
 void Canvas::setFPSText(float fps) {
   std::stringstream fpsCaption;
-  fpsCaption << "Average FPS: " << fps;
+  fpsCaption << fps; 
   fpsString = fpsCaption.str();
 }
 

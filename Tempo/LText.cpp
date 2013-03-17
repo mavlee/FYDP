@@ -9,7 +9,7 @@ Text::Text(int width, int height) {
 		font = TTF_OpenFont("res/fonts/EunjinNakseo.ttf", 28);
 	}
 	// TODO: i don't know how to declare color directly...
-	SDL_Color mer = { 255, 169, 255, 0 };
+	SDL_Color mer = { 255, 255, 255, 0 };
 	color = mer;
 	surface = SDL_SetVideoMode( width, height, SCREEN_BPP, SDL_OPENGL );
 }
@@ -75,7 +75,7 @@ void Text::renderText(int width, int height, GLfloat x, GLfloat y, std::string t
 	glPushMatrix();
 	glLoadIdentity();
 
-	glColor3f( 0.0f, 0.6f, 1.0f);
+	glColor4f( 0.4f, 0.4f, 0.4f, 0.9f);
 	glBegin(GL_QUADS);
 	  glTexCoord2f(0.0f, 0.0f); glVertex3f(x, y, 0);
 	  glTexCoord2f(0.0f, 1.0f); glVertex3f(x, y + surface->h, 0);
