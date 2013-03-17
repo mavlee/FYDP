@@ -22,6 +22,7 @@ class MusicHandler {
 
     int getNumBands();
     const vector<vector<float> >& getPeakData();
+    const vector<float>& getIntensityData();
 
     void play();
     void pause();
@@ -34,13 +35,13 @@ class MusicHandler {
     void toCsv(string name, vector<vector<float> > vec);
     void error(string msg);
     int analyze();
-    int analyze2();
     int preparePlayback();
     void reset();
 
     string musicFilename;
     DWORD floatable; // floating-point channel support?
     vector<vector<float> > peakData;
+    vector<float> intensityData;
     DWORD playbackChan;	// the channel... HMUSIC or HSTREAM
     DWORD numChans;
 };
