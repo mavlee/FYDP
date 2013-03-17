@@ -253,11 +253,14 @@ void Game::generateGameFeatures() {
   }
 
   for (int i = 0; i < musicData[0].size(); i++) {
+    int color = 0;
     for (int r = 0; r < NUM_ROWS; r++) {
       for (int c = 0; c < NUM_COLUMNS; c++) {
         if (peakMarker[i][r][c] > 0 && (i - last > 10 || i == last)) {
+          if (!color)
+            color = generateColour();
           //obstacle = new Cube(c, r, -(OFFSET_FROM_CAMERA + i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec()), SHAPE_X, SHAPE_Y, SHAPE_Z, Cube::ColourSet(peakMarker[i][r][c]));
-          obstacle = new Cube(c, r, -distances[i], SHAPE_X, SHAPE_Y, SHAPE_Z, Cube::ColourSet(peakMarker[i][r][c]));
+          obstacle = new Cube(c, r, -distances[i], SHAPE_X, SHAPE_Y, SHAPE_Z, Cube::ColourSet(color));
           obstacles.push_back(obstacle);
           last = i;
         }
