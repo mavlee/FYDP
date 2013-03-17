@@ -1,5 +1,6 @@
 #include "LOpenGL.h"
 #include <stdio.h>
+#include <iomanip>
 #include "canvas.h"
 #include "constants.h"
 #include "image_loader.h"
@@ -188,10 +189,13 @@ void Canvas::draw(float shiftZ, std::list<Cube*> obstacles, int lifeRemaining, f
   drawProgress(progressPct);
   glPopMatrix();
 
+  float padding = 5.0f;
+  float x = 20.0f;
+
   // Draw ui text
-  fpsText->renderText(width, height, 10, 10, fpsString);
-  comboLevelText->renderText(width, height, 10, height - 100, comboLevelString);
-  pointsText->renderText(width, height, 10, height - 50, pointsString);
+  fpsText->renderText(width, height, x, 10, fpsString);
+  comboLevelText->renderText(width, height, x, height - 100 - padding, comboLevelString);
+  pointsText->renderText(width, height, x, height - 50 - padding, pointsString);
 
   // Update screen
   SDL_GL_SwapBuffers();
@@ -472,28 +476,31 @@ void Canvas::drawHighscore(int points, int* highscores, bool highscoreAchieved, 
   glLoadIdentity();
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+  float x = SCREEN_WIDTH / 2 - 150;
+  float y = 150;
+
   std::stringstream highscore_caption;
   if (lifeRemaining == 0) {
     std::stringstream game_over;
     game_over << "Game Over";
-    scoreText->renderText(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH / 2, 100, game_over.str());
+    scoreText->renderText(SCREEN_WIDTH, SCREEN_HEIGHT, x , y - 50 , game_over.str());
   }
   if (highscoreAchieved) {
     highscore_caption << "New Highscore! Score: " << points;
-    scoreText->renderText(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH / 2, 150, highscore_caption.str());
+    scoreText->renderText(SCREEN_WIDTH, SCREEN_HEIGHT, x , y      , highscore_caption.str());
   } else {
     highscore_caption << "Score: " << points;
-    scoreText->renderText(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH / 2, 150, highscore_caption.str());
+    scoreText->renderText(SCREEN_WIDTH, SCREEN_HEIGHT, x , y      , highscore_caption.str());
   }
   int i = 0;
   for (i; i < 10; i++) {
     std::stringstream highscore_line;
-    highscore_line <<  "Record " << i + 1 << ":       " << highscores[i];
-    scoreText->renderText(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH / 2, 150 + (i + 1) * 50, highscore_line.str());
+    highscore_line <<  "Record " << setfill(' ') << setw(3) << i + 1 << ":       " << highscores[i];
+    scoreText->renderText(SCREEN_WIDTH, SCREEN_HEIGHT, x, y + (i + 1) * 50, highscore_line.str());
   }
   std::stringstream restart_line;
   restart_line <<  "Press \'r\' to play again.";
-  scoreText->renderText(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH / 2, 150 + (11) * 50, restart_line.str());
+  scoreText->renderText(SCREEN_WIDTH, SCREEN_HEIGHT, x , y + (11) * 50, restart_line.str());
 
   glPopMatrix();
 
