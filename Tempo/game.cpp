@@ -112,7 +112,7 @@ int Game::execute() {
       if (!hasPlayer() && !isPaused) {
         if (lastHasPlayer == 0) {
           lastHasPlayer = timer.get_ticks();
-        } else if (timer.get_ticks() - lastHasPlayer 
+        } else if (timer.get_ticks() - lastHasPlayer
           >= MISSING_PLAYER_DELAY) {
             musicHandler->pause();
             isPaused = true;
@@ -170,7 +170,7 @@ void Game::generateGameFeatures() {
           count3++;
         }
         if (musicData[v][i] / value > 0.9 && count < 1) {
-          if (musicIntensityData[i] < 5) {
+          if (musicIntensityData[i] < 0.5) {
             //printf("low intensity on sample %d with intensity %f\n", i, musicIntensityData[i]);
             continue;
           }
@@ -235,11 +235,29 @@ void Game::generateGameFeatures() {
     }
   }
 
+  averageIntensity.resize(musicData[0].size());
+  for (int i = 0; i < musicData[0].size(); i++) {
+    for (int j = i; j < min(i+100,(int)musicData[0].size()); j++) {
+      averageIntensity[i] += musicIntensityData[j] / min(100.0, double(musicData[0].size() - i));
+    }
+  }
+
+  //vector<float> distances(musicData[0].size(), OFFSET_FROM_CAMERA);
+  distances.resize(musicData[0].size());//, OFFSET_FROM_CAMERA);
+  for (int i = 0; i < musicData[0].size(); i++) {
+    //distances[i] += OFFSET_FROM_CAMERA;
+    //distances[i] += i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec();
+    for (int j = i; j < musicData[0].size(); j++) {
+      distances[j] += averageIntensity[i]*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec();
+    }
+  }
+
   for (int i = 0; i < musicData[0].size(); i++) {
     for (int r = 0; r < NUM_ROWS; r++) {
       for (int c = 0; c < NUM_COLUMNS; c++) {
         if (peakMarker[i][r][c] > 0 && (i - last > 10 || i == last)) {
-          obstacle = new Cube(c, r, -(i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec()), SHAPE_X, SHAPE_Y, SHAPE_Z, Cube::ColourSet(peakMarker[i][r][c]));
+          //obstacle = new Cube(c, r, -(OFFSET_FROM_CAMERA + i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec()), SHAPE_X, SHAPE_Y, SHAPE_Z, Cube::ColourSet(peakMarker[i][r][c]));
+          obstacle = new Cube(c, r, -distances[i], SHAPE_X, SHAPE_Y, SHAPE_Z, Cube::ColourSet(peakMarker[i][r][c]));
           obstacles.push_back(obstacle);
           last = i;
         }
@@ -343,7 +361,11 @@ void Game::update() {
         updateScore();
 
         // Update positions
-        shiftZ += SHIFT_INTERVAL_PER_SECOND * diff / 1000;
+        //shiftZ += SHIFT_INTERVAL_PER_SECOND * diff / 1000;
+        //shiftZ += musicIntensityData[musicHandler->getPositionInSec()*43] * SHIFT_INTERVAL_PER_SECOND * diff / 1000;
+        //shiftZ += averageIntensity[lastUpdate*43/1000] * SHIFT_INTERVAL_PER_SECOND * diff / 1000;
+        shiftZ += averageIntensity[musicHandler->getPositionInSec()*43] * SHIFT_INTERVAL_PER_SECOND * diff / 1000;
+        //shiftZ += distances[(lastUpdate+diff)*43.0/1000] - distances[lastUpdate*43.0/1000];
         lastUpdate += diff;
 
         // Update text
@@ -414,6 +436,9 @@ void Game::handleEvent(SDL_Event& event) {
         // Zoom out
         gProjectionScale = 2.f;
       } else if( gProjectionScale == 2.f ) {
+        // Zoom in
+        gProjectionScale = 0.25f;
+      } else if( gProjectionScale == 0.25f ) {
         // Zoom in
         gProjectionScale = 0.5f;
       } else if( gProjectionScale == 0.5f ) {
