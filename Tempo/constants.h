@@ -32,4 +32,7 @@ const int PLAYER_DRAW_HEIGHT = KINECT_DEPTH_HEIGHT*3.5;
 const int TOTAL_LIFE_COUNT = 10;
 
 const int START_DELAY = 5000;
+
+// Time before pausing when player is missing (ms)
+const int MISSING_PLAYER_DELAY = 5000;
 #endif

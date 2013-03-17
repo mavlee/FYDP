@@ -10,6 +10,7 @@
 #include "util.h"
 #include "file_dialog.h"
 #include "highscore.h"
+#include "kinect_controller.h"
 
 #define LEFT 0
 #define RIGHT 1
@@ -84,6 +85,7 @@ void Game::reset(string song) {
 int Game::execute() {
   SDL_Event event;
   quitGame = false;
+  int lastHasPlayer = 0;
 
   while (!quitGame) {
     while (SDL_PollEvent(&event)) {
@@ -94,6 +96,22 @@ int Game::execute() {
       }
     }
 
+    // Pauses the music when there is no player
+    if (musicStarted) {
+      if (!hasPlayer() && !isPaused) {
+        if (lastHasPlayer == 0) {
+          lastHasPlayer = timer.get_ticks();
+        } else if (timer.get_ticks() - lastHasPlayer 
+          >= MISSING_PLAYER_DELAY) {
+            musicHandler->pause();
+            isPaused = true;
+        }
+      } else if (hasPlayer() && isPaused) {
+        musicHandler->play();
+        isPaused = false;
+        lastHasPlayer = 0;
+      }
+    }
     update();
     draw();
   }
@@ -278,10 +296,10 @@ void Game::draw() {
     // Current method to indicate colour to hit. Integrate colour into something else later
     // TODO remove
     glBegin(GL_QUADS);
-      //glColor3fv(cubeColours[currentColour][0]); glVertex3f(  SCREEN_WIDTH/2       , -SCREEN_HEIGHT/2 , -1100.0f );
-      //glColor3fv(cubeColours[currentColour][0]); glVertex3f(  SCREEN_WIDTH/2 - 100 , -SCREEN_HEIGHT/2 , -1100.0f );
-      //glColor3fv(cubeColours[currentColour][0]); glVertex3f(  SCREEN_WIDTH/2 - 100 ,  SCREEN_HEIGHT/2 , -1100.0f );
-      //glColor3fv(cubeColours[currentColour][0]); glVertex3f(  SCREEN_WIDTH/2       ,  SCREEN_HEIGHT/2 , -1100.0f );
+    //glColor3fv(cubeColours[currentColour][0]); glVertex3f(  SCREEN_WIDTH/2       , -SCREEN_HEIGHT/2 , -1100.0f );
+    //glColor3fv(cubeColours[currentColour][0]); glVertex3f(  SCREEN_WIDTH/2 - 100 , -SCREEN_HEIGHT/2 , -1100.0f );
+    //glColor3fv(cubeColours[currentColour][0]); glVertex3f(  SCREEN_WIDTH/2 - 100 ,  SCREEN_HEIGHT/2 , -1100.0f );
+    //glColor3fv(cubeColours[currentColour][0]); glVertex3f(  SCREEN_WIDTH/2       ,  SCREEN_HEIGHT/2 , -1100.0f );
     glEnd();
     glPopMatrix();
 

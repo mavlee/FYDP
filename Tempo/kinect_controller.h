@@ -65,5 +65,7 @@ void ShutdownKinect(HANDLE hKinectProcess);
 
 void changePlayerColour(PLAYER_COLOUR colour);
 
+bool hasPlayer();
+
 #endif
 #endif

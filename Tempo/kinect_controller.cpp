@@ -106,18 +106,21 @@ bool ProcessSkeletalEvent() {
 
   // Gets skeleton frame
   if (SUCCEEDED(kinectSensor->NuiSkeletonGetNextFrame(0, &skeletonFrame))) {
-    for (int i = 0; i < NUI_SKELETON_COUNT; i++) {
+    if (playerId == 0) {
+      for (int i = 0; i < NUI_SKELETON_COUNT; i++) {
 
-      // Save the Id of the first player found
-      // Only change Ids when the found player exits the field of view
-      if (skeletonFrame.SkeletonData[i].eTrackingState != NUI_SKELETON_NOT_TRACKED
-        && playerId == 0) {
-          playerId = i + 1;
-      } else if (playerId > 0
-        && skeletonFrame.SkeletonData[playerId - 1].eTrackingState ==
-        NUI_SKELETON_NOT_TRACKED) {
-          playerId = 0;
+        // Save the Id of the first player found
+        // Only change Ids when the found player exits the field of view
+        if (skeletonFrame.SkeletonData[i].eTrackingState 
+          != NUI_SKELETON_NOT_TRACKED
+          && playerId == 0) {
+            playerId = i + 1;
+        }
       }
+    }  else if (playerId > 0
+      && skeletonFrame.SkeletonData[playerId - 1].eTrackingState 
+      == NUI_SKELETON_NOT_TRACKED) {
+        playerId = 0;
     }
   } else {
     return false;
@@ -296,9 +299,9 @@ bool ProcessDepthEvent() {
       i++;
     }
 
-    shortDepthArray = FilterDepthArray(shortDepthArray, width/2, height/2);
+    //shortDepthArray = FilterDepthArray(shortDepthArray, width/2, height/2);
 
-    shortDepthArray = AverageDepthArray(shortDepthArray);
+    //shortDepthArray = AverageDepthArray(shortDepthArray);
 
     curr = curr - 76800;
     i = 0;
@@ -366,6 +369,13 @@ void ShutdownKinect(HANDLE hKinectProcess) {
 
 void changePlayerColour(PLAYER_COLOUR colour) {
   playerColour = colour;
+}
+
+bool hasPlayer() {
+  if (playerId)
+    return true;
+  else
+    return false;
 }
 
 
