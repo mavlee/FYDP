@@ -44,7 +44,7 @@ private:
   Cube::ColourSet currentColour;
   float lastColourChange;
 
-  bool starting;
+  bool musicStarted;
   int isPaused;
 
   // after game variables
