@@ -26,7 +26,7 @@ int* readHighScores(std::string musicFile) {
 
 void writeHighScores(std::string musicFile) {
   std::ofstream ofile;
-  ofile.open(musicFile);
+  ofile.open(musicFile.c_str());
   int i = 0;
   for (i; i < 10; i++) {
     ofile << highscores[i] << ',';
