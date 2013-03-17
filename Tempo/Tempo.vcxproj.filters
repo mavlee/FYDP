@@ -14,6 +14,7 @@
     <ClCompile Include="util.cpp" />
     <ClCompile Include="highscore.cpp" />
     <ClCompile Include="cubeConstants.cpp" />
+    <ClCompile Include="colours.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="canvas.h" />
@@ -30,6 +31,7 @@
     <ClInclude Include="timer.h" />
     <ClInclude Include="util.h" />
     <ClInclude Include="highscore.h" />
+    <ClInclude Include="colours.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\res\fonts\EunjinNakseo.ttf" />
