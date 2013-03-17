@@ -19,11 +19,11 @@ void Object::setCentre(float x, float y, float z) {
 
 Cube::Cube(int x, int y, float centreZ,
   float width, float height, float depth, ColourSet color) {
-    //float y = -b%4 * 125;
-    //float x = -NUM_BANDS/8*125.f + b/4*125;
-    // TODO fix magic numbers
-    float centreY = 2.f*125.f - x * 125.f;
-    float centreX = -2.f*125.f + y*125.f;
+    const float spacingX = SHAPE_X + 30;
+    const float spacingY = SHAPE_Y + 25;
+    float centreX = -spacingX*(NUM_COLUMNS - 1)/2 + x*spacingX;
+    float centreY = -spacingY*(NUM_ROWS - 1)/2 + y*spacingY;
+    //centreX = centreY = 100;
     zFront = centreZ + depth / 2;
     zBack = centreZ - depth / 2;
     wLeft = centreX - width / 2;
@@ -60,14 +60,10 @@ Cube::Cube(int x, int y, float centreZ,
 }
 
 void Cube::draw() {
-  int i, j;
-  int currentVer;
-
-  // Render the cube
   glBegin( GL_QUADS );
-  for (i = 0; i < nFaces; i++) {
-    for (j = 0; j < 4; j++) {
-      currentVer = face[i].ver[j];
+  for (int i = 0; i < nFaces; i++) {
+    for (int j = 0; j < 4; j++) {
+      int currentVer = face[i].ver[j];
       glColor3fv(ver[currentVer].col);
       glVertex3fv(ver[currentVer].pos);
     }

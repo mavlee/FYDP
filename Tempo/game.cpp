@@ -183,7 +183,7 @@ void Game::generateGameFeatures() {
         if (peakMarker[i][r][c] == 1 && (i - last > 10 || i == last)) {
           //int x = b % 4;
           //int y = b % 6;
-          obstacle = new Cube(r, c, -(OFFSET_FROM_CAMERA + i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec()), SHAPE_X, SHAPE_Y, SHAPE_Z, Cube::ColourSet(rand() % 4 + 1));
+          obstacle = new Cube(c, r, -(OFFSET_FROM_CAMERA + i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec()), SHAPE_X, SHAPE_Y, SHAPE_Z, Cube::ColourSet(rand() % 4 + 1));
           obstacles.push_back(obstacle);
           last = i;
         }
@@ -253,10 +253,10 @@ void Game::draw() {
     // Current method to indicate colour to hit. Integrate colour into something else later
     // TODO remove
     glBegin(GL_QUADS);
-      glColor3fv(cubeColours[currentColour][0]); glVertex3f(  SCREEN_WIDTH/2       , -SCREEN_HEIGHT/2 , -1100.0f );
-      glColor3fv(cubeColours[currentColour][0]); glVertex3f(  SCREEN_WIDTH/2 - 100 , -SCREEN_HEIGHT/2 , -1100.0f );
-      glColor3fv(cubeColours[currentColour][0]); glVertex3f(  SCREEN_WIDTH/2 - 100 ,  SCREEN_HEIGHT/2 , -1100.0f );
-      glColor3fv(cubeColours[currentColour][0]); glVertex3f(  SCREEN_WIDTH/2       ,  SCREEN_HEIGHT/2 , -1100.0f );
+      //glColor3fv(cubeColours[currentColour][0]); glVertex3f(  SCREEN_WIDTH/2       , -SCREEN_HEIGHT/2 , -1100.0f );
+      //glColor3fv(cubeColours[currentColour][0]); glVertex3f(  SCREEN_WIDTH/2 - 100 , -SCREEN_HEIGHT/2 , -1100.0f );
+      //glColor3fv(cubeColours[currentColour][0]); glVertex3f(  SCREEN_WIDTH/2 - 100 ,  SCREEN_HEIGHT/2 , -1100.0f );
+      //glColor3fv(cubeColours[currentColour][0]); glVertex3f(  SCREEN_WIDTH/2       ,  SCREEN_HEIGHT/2 , -1100.0f );
     glEnd();
     glPopMatrix();
 
