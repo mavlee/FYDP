@@ -372,11 +372,13 @@ void Game::update() {
       writeHighScores(fileName);
       finished = true;
     }
-    string song = selectMusicFileDialog();
-    while (!strcmp(song.c_str(), "\0")) {
-      song = selectMusicFileDialog();
+    if (restart) {
+      string song = selectMusicFileDialog();
+      while (!strcmp(song.c_str(), "\0")) {
+        song = selectMusicFileDialog();
+      }
+      reset(song);
     }
-    reset(song);
   }
 }
 
