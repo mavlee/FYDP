@@ -47,7 +47,6 @@ Canvas::Canvas(int width, int height) {
   initCanvas();
   scoreText = new Text(width, height);
   lifeText = new Text(width, height);
-  changePlayerColour(PLAYER_BLUE);
 }
 
 Canvas::~Canvas() {
@@ -196,7 +195,7 @@ void Canvas::drawPlayer() {
   glEnable(GL_TEXTURE_2D);
   glTexEnvf(GL_TEXTURE_2D,GL_TEXTURE_ENV_MODE,GL_MODULATE);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  
+
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE);
   glBindTexture(GL_TEXTURE_2D, playerDepthId);
@@ -206,8 +205,8 @@ void Canvas::drawPlayer() {
     glTexCoord2f(0.0f, 0.0f); glVertex3f(-PLAYER_DRAW_WIDTH, PLAYER_DRAW_HEIGHT, -1100.0f);
     glTexCoord2f(0.0f, 1.0f); glVertex3f(-PLAYER_DRAW_WIDTH, -PLAYER_DRAW_HEIGHT, -1100.0f);
     glTexCoord2f(1.0f, 1.0f); glVertex3f(PLAYER_DRAW_WIDTH, -PLAYER_DRAW_HEIGHT, -1100.0f);
-  glEnd(); 
-  
+  glEnd();
+
   glMatrixMode(GL_MODELVIEW);
   glPopMatrix();
 
