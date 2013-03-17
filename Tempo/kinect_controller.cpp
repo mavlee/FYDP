@@ -319,10 +319,11 @@ bool ProcessDepthEvent() {
         depthData->depthData[index + 1] = (BYTE)255*playerG[playerColour];
         depthData->depthData[index + 2] = (BYTE)255*playerB[playerColour];
         depthData->depthData[index+3] = (BYTE)255;
+        for (int j = index; j < index + 4; j++)
+          depthData->depthData[j] = (BYTE)255;
       } else {
         for (int j = index; j < index + 4; j++)
           depthData->depthData[j] = (BYTE)0;
-        depthData->depthData[index+3] = (BYTE)255;
       }
       index += 4;
     }
