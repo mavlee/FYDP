@@ -351,11 +351,9 @@ void Game::handleEvent(SDL_Event& event) {
     case PAUSE_KEY:
       isPaused = !isPaused;
       if (isPaused) {
-        timer.pause();
-        if (musicStarted) musicHandler->pause();
+        pause();
       } else {
-        timer.unpause();
-        if (musicStarted) musicHandler->play();
+        resume();
       }
       break;
     case QUIT_KEY:
@@ -385,15 +383,13 @@ void Game::handleEvent(SDL_Event& event) {
       restart = true;
       break;
     case STOP_KEY:
-      musicHandler->pause();
-      timer.pause();
+      pause();
       string song = selectMusicFileDialog();
       if (strcmp(song.c_str(), "\0")) {
         reset(song);
       } else {
         // User pressed cancel, move along
-        musicHandler->play();
-        timer.unpause();
+        resume();
       }
       break;
     }
@@ -404,4 +400,14 @@ void Game::handleEvent(SDL_Event& event) {
     }
     break;
   }
+}
+
+void Game::pause() {
+  timer.pause();
+  if (musicStarted) musicHandler->pause();
+}
+
+void Game::resume() {
+  timer.unpause();
+  if (musicStarted) musicHandler->play();
 }
