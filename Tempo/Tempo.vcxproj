@@ -72,6 +72,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="canvas.cpp" />
+    <ClCompile Include="cubeConstants.cpp" />
     <ClCompile Include="file_dialog.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="highscore.cpp" />

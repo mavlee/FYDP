@@ -125,7 +125,7 @@ void Game::generateGameFeatures() {
 // this probably shouldn't be void in the end, some tamper with points somehow too
 bool Game::checkForCollisions() {
   for (std::list<Cube*>::const_iterator iterator = obstacles.begin(), end = obstacles.end(); iterator != end; ++iterator) {
-    if (!(*iterator)->collided) {
+    if (!(*iterator)->collided && (*iterator)->colour == currentColour) {
       if ((*iterator)->zFront > shiftZ + playerCube->zBack && (*iterator)->zBack < shiftZ + playerCube->zBack ) {
         if (((*iterator)->wRight > playerCube->wLeft + cameraX && (*iterator)->wLeft < playerCube->wLeft + cameraX)
           || ((*iterator)->wLeft < playerCube->wRight + cameraX && (*iterator)->wRight > playerCube->wRight + cameraX)) {
@@ -157,14 +157,20 @@ void Game::updateScore() {
 
 void Game::draw() {
   if (!finished) {
-    canvas->draw(shiftZ, obstacles, lifeRemaining, progressPct);
+    canvas->draw(shiftZ, obstacles, lifeRemaining, progressPct, currentColour);
 
     // Render the cube
     glPushMatrix();
     glTranslatef(cameraX, cameraY, 0);
     glTranslatef(0, 0, shiftZ);
-    glColor3f( 0.f, 1.f, 1.f);
     playerCube->draw();
+    
+    // Current method to indicate colour to hit. Integrate colour into something else later
+    glBegin(GL_QUADS);
+    glColor3fv(cubeColours[currentColour][0]); glVertex3f(  SCREEN_WIDTH/2       , -SCREEN_HEIGHT/2 , -1100.0f );
+    glColor3fv(cubeColours[currentColour][0]); glVertex3f(  SCREEN_WIDTH/2 - 100 , -SCREEN_HEIGHT/2 , -1100.0f );
+    glColor3fv(cubeColours[currentColour][0]); glVertex3f(  SCREEN_WIDTH/2 - 100 ,  SCREEN_HEIGHT/2 , -1100.0f );
+    glColor3fv(cubeColours[currentColour][0]); glVertex3f(  SCREEN_WIDTH/2       ,  SCREEN_HEIGHT/2 , -1100.0f );
     glEnd();
     glPopMatrix();
 
@@ -208,6 +214,16 @@ void Game::update() {
     updateScore();
 
     progressPct = musicHandler->getPositionInSec() / musicHandler->getLengthInSec();
+
+    // change colour every 5%
+    if (progressPct >= lastColourChange + 0.05f) {
+      Cube::ColourSet newColour = Cube::ColourSet(rand() % 7);
+      while (currentColour == newColour) {
+        newColour = Cube::ColourSet(rand() % 7);
+      }
+      currentColour = newColour;
+      lastColourChange = progressPct;
+    }
 
     // Update positions
     int xDir = 0;

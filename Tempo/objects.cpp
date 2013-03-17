@@ -1,7 +1,6 @@
 #include "LOpenGL.h"
 #include "objects.h"
 #include "constants.h"
-#include "cubeConstants.h"
 
 int cubeFaces[6][4] = {
   {0, 1, 2, 3},
