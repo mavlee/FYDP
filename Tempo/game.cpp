@@ -34,6 +34,23 @@ Game::Game(int width, int height) {
   // TODO remove
   // also, this has nothing to do with the near plane
   playerCube = new Cube(0.f, 0.f, -OFFSET_FROM_CAMERA, SHAPE_X, SHAPE_Y, SHAPE_Z, Cube::Multi);
+  //playerCube = new Cube(0.f, 0.f, -(Z_NEAR + 200.f), 100.f, 100.f, 100.f, Cube::Multi);
+  //playerCube = new Cube(0.f, 0.f, -(Z_NEAR + 200.f), 1800.f, 300.f, 100.f, Cube::Multi);
+
+  /*
+  if (strcmp(musicFile.c_str(), "") != 0) {
+    musicHandler->setMusicFile("C:\\FYDP\\Tempo\\res\\music\\clocks.mp3");
+  } else {
+    //musicHandler->setMusicFile("res/music/clocks.mp3");
+    if (strcmp(musicFile.c_str(), "C:\\FYDP\\Tempo\\res\\music\\clocks.mp3") != 0) {
+      printf("this is the right file");
+      musicHandler->setMusicFile(musicFile);
+    } else {
+      printf("reverting back to clocks\n");
+      musicHandler->setMusicFile("C:\\FYDP\\Tempo\\res\\music\\clocks.mp3");
+    }
+  }
+  */
 
   reset();
 }
@@ -111,10 +128,14 @@ void Game::generateGameFeatures() {
   Cube* obstacle;
   for (int i = 0; i < musicData[0].size(); i++) {
     for (int b = 0; b < NUM_BANDS; b++) {
-      if (musicData[b][i] > PEAK_THRESHOLD/* && (i - last > 10 || i == last)*/) {
-        float y = -b/4 * 125;
-        float x = -NUM_BANDS/8*125.f + b%4*125;
-        obstacle = new Cube(x, y, -(OFFSET_FROM_CAMERA + i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec()), SHAPE_X, SHAPE_Y, SHAPE_Z, Cube::ColourSet(rand() % 7));
+      if (musicData[b][i] > PEAK_THRESHOLD && (i - last > 10 || i == last)) {
+        float pos = -NUM_BANDS/2*125.f + b*125;
+        //float y = (-b%2) * 125;
+        //float x = -NUM_BANDS/4*125.f + b/2*125;
+        float y = -b%4 * 125;
+        float x = -NUM_BANDS/8*125.f + b/4*125;
+        //obstacle = new Cube(pos, 0, -(Z_NEAR + 200.f + i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec()), 100.f, 100.f, 100.f, Cube::Multi);
+        obstacle = new Cube(x, y, -(Z_NEAR + 200.f + i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec()), 100.f, 100.f, 100.f, Cube::Multi);
         obstacles.push_back(obstacle);
         last = i;
       }
@@ -164,7 +185,7 @@ void Game::draw() {
     glTranslatef(cameraX, cameraY, 0);
     glTranslatef(0, 0, shiftZ);
     playerCube->draw();
-    
+
     // Current method to indicate colour to hit. Integrate colour into something else later
     glBegin(GL_QUADS);
     glColor3fv(cubeColours[currentColour][0]); glVertex3f(  SCREEN_WIDTH/2       , -SCREEN_HEIGHT/2 , -1100.0f );
