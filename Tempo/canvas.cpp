@@ -175,7 +175,6 @@ void Canvas::draw(float shiftZ, std::list<Cube*> obstacles, int lifeRemaining, f
   drawObstacles(obstacles);
   glPopMatrix();
 
-#ifndef USE_MAC_INCLUDES
   glPushMatrix();
   drawLife(lifeRemaining);
   glPopMatrix();
@@ -183,7 +182,6 @@ void Canvas::draw(float shiftZ, std::list<Cube*> obstacles, int lifeRemaining, f
   glPushMatrix();
   drawProgress(progressPct);
   glPopMatrix();
-#endif
 
   // Draw ui text
   fpsText->renderText(width, height, 10, 10, fpsString);
@@ -413,7 +411,7 @@ void Canvas::drawProgress(float progressPct) {
     glVertex3f(3.f*width/4.f + border, y - border, 0);
     glVertex3f(3.f*width/4.f + border, y, 0);
     glVertex3f(width/4.f - border, y, 0);
-  glEnd(); 
+  glEnd();
 
   // left bar
   glBegin(GL_QUADS);
@@ -421,7 +419,7 @@ void Canvas::drawProgress(float progressPct) {
     glVertex3f(width/4.f, y, 0);
     glVertex3f(width/4.f, y + padding, 0);
     glVertex3f(width/4.f - border, y + padding, 0);
-  glEnd(); 
+  glEnd();
 
   // right bar
   glBegin(GL_QUADS);
@@ -506,7 +504,7 @@ void Canvas::drawHighscore(int points, int* highscores, bool highscoreAchieved, 
 
 void Canvas::setFPSText(float fps) {
   std::stringstream fpsCaption;
-  fpsCaption << fps; 
+  fpsCaption << fps;
   fpsString = fpsCaption.str();
 }
 
