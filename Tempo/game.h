@@ -65,7 +65,7 @@ private:
   std::list<Cube*> obstacles;
 
   // private functions
-  void reset();
+  void reset(string song);
 
   void handleEvent(SDL_Event& event);
   void draw();
