@@ -388,7 +388,7 @@ void Game::handleEvent(SDL_Event& event) {
       musicHandler->pause();
       timer.pause();
       string song = selectMusicFileDialog();
-      if (!strcmp(song.c_str(), "\0")) {
+      if (strcmp(song.c_str(), "\0")) {
         reset(song);
       } else {
         // User pressed cancel, move along
