@@ -372,7 +372,7 @@ void Canvas::drawProgress(float progressPct) {
   glDisable(GL_LIGHTING);
   glEnable(GL_BLEND);
 
-  glColor4f(0.3f, 0.3f, 0.3f, 0.9f);
+  glColor4fv(TEXT_COLOUR);
   // top bar
   glBegin(GL_QUADS);
     glVertex3f(width/4.f - border, y + padding, 0);
@@ -406,7 +406,7 @@ void Canvas::drawProgress(float progressPct) {
   glEnd();
 
   // progress bar
-  glColor4f(0.4f, 0.4f, 0.4f, 0.9f);
+  glColor4fv(PROGRESS_BAR);
   glBegin(GL_QUADS);
     glVertex3d(width/4.f, y, 0);
     glVertex3d(width/4.f + width/2.f*progressPct, y, 0);

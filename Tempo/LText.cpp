@@ -75,7 +75,7 @@ void Text::renderText(int width, int height, GLfloat x, GLfloat y, std::string t
 	glPushMatrix();
 	glLoadIdentity();
 
-	glColor4f( 0.4f, 0.4f, 0.4f, 0.9f);
+	glColor4fv(TEXT_COLOUR);
 	glBegin(GL_QUADS);
 	  glTexCoord2f(0.0f, 0.0f); glVertex3f(x, y, 0);
 	  glTexCoord2f(0.0f, 1.0f); glVertex3f(x, y + surface->h, 0);

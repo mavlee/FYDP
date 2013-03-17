@@ -1,6 +1,8 @@
 #ifndef CONSTANTS
 #define CONSTANTS
 
+#include "colours.h"
+
 const int COLOR_MODE_CYAN = 0;
 const int COLOR_MODE_MULTI = 1;
 const int SCREEN_WIDTH = 1280;
@@ -36,4 +38,5 @@ const int START_DELAY = 5000;
 
 // Time before pausing when player is missing (ms)
 const int MISSING_PLAYER_DELAY = 5000;
+
 #endif
