@@ -70,6 +70,10 @@ void Game::reset(string song) {
   lastUpdate = 0;
   frames = 0;
 
+  // Arbitrary numbers for colours
+  prevC1 = 1000;
+  prevC2 = 1000;
+
   if (strcmp(song.c_str(), "\0")) {
     printf("New song must be chosen");
   }
@@ -165,7 +169,7 @@ void Game::generateGameFeatures() {
 
           int rand_r = rand() % 4;
           int rand_c = rand() % 6;
-          peakMarker[i][rand_r][rand_c] = rand() % 4 + 1;
+          peakMarker[i][rand_r][rand_c] = generateColour();
           count++;
         }
       }
@@ -180,7 +184,7 @@ void Game::generateGameFeatures() {
         }
         int rand_r = rand() % 4;
         int rand_c = rand() % 6;
-        peakMarker[last_superpeak][rand_r][rand_c] = rand() % 4 + 1;
+        peakMarker[last_superpeak][rand_r][rand_c] = generateColour();
       }
       if ((i - last_superpeak < 500 && holyshittotal > maxholyshittotal) || i - last_superpeak > 1400) {
         //printf("holyshit on sample %d\n", i);
@@ -193,7 +197,7 @@ void Game::generateGameFeatures() {
         }
         for (int r = 0; r < NUM_ROWS; r++) {
           for (int c = 0; c < NUM_COLUMNS; c++) {
-            peakMarker[i][r][c] = rand() % 4 + 1;
+            peakMarker[i][r][c] = generateColour();
           }
         }
         last_superpeak = i;
@@ -201,7 +205,7 @@ void Game::generateGameFeatures() {
       }
     } else if (count2 > 0) {
       //printf("wall with gap on sample %d\n", i);
-      int color = rand() % 4 + 1;
+      int color = generateColour();
       int rand_c = rand() % 5;
       for (int r = 0; r < NUM_ROWS; r++) {
         for (int c = 0; c < NUM_COLUMNS; c++) {
@@ -213,7 +217,7 @@ void Game::generateGameFeatures() {
         peakMarker[i][r][rand_c+1] = 0;
       }
     } else if (count3 > 0) {
-      int color = rand() % 4 + 1;
+      int color = generateColour();
       int rand_c = rand() % 6;
       int rand_c2 = (rand_c + 1) % 6;
       for (int r = 0; r < NUM_ROWS; r++) {
@@ -234,6 +238,16 @@ void Game::generateGameFeatures() {
       }
     }
   }
+}
+
+int Game::generateColour() {
+  int newColour = rand() % 4 + 1;
+  while (newColour == prevC1 || newColour == prevC2) {
+    newColour = rand() % 4 + 1;
+  }
+  prevC1 = prevC2;
+  prevC2 = newColour;
+  return newColour;
 }
 
 bool Game::checkForNegativeCollisions() {
