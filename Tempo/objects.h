@@ -31,13 +31,11 @@ class Object {
 class Cube: public Object {
 	public:
 		enum ColourSet {
-			Multi = 0,
+			Player = 0,
 			C1 = 1,
 			C2 = 2,
 			C3 = 3,
             C4 = 4,
-            C5 = 5,
-            C6 = 6,
 		};
 
 		// used for collision detection
