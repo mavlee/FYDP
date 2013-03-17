@@ -19,9 +19,9 @@ const int NUM_COLUMNS = 6;
 const float SHAPE_X = SCALE*100.f;
 const float SHAPE_Y = SCALE*100.f;
 const float SHAPE_Z = SCALE*50.f;
-const float OFFSET_FROM_CAMERA = Z_NEAR + 200.f;
+const float OFFSET_FROM_CAMERA = SCALE*(Z_NEAR + 100.f);
 
-const float SHIFT_INTERVAL_PER_SECOND = 1000.f;
+const float SHIFT_INTERVAL_PER_SECOND = 700.f;
 
 const int KINECT_DEPTH_WIDTH = 320;
 const int KINECT_DEPTH_HEIGHT = 240;

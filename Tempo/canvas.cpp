@@ -51,10 +51,6 @@ Canvas::Canvas(int width, int height) {
   fpsText = new Text(width, height);
   comboLevelText = new Text(width, height);
   pointsText = new Text(width, height);
-  // Init text
-  setFPSText(0);
-  setPointsText(0);
-  setComboLevelText(0);
 }
 
 Canvas::~Canvas() {
@@ -71,7 +67,7 @@ Canvas::~Canvas() {
 void Canvas::initCanvas() {
   // Initialize player texture
   for (int i = 0; i < KINECT_DEPTH_HEIGHT*KINECT_DEPTH_WIDTH*4; i++) {
-    depthData[i] = (BYTE)0;
+    depthData[i] = (BYTE)255;
   }
 
   // Start SDL
@@ -81,15 +77,29 @@ void Canvas::initCanvas() {
   screen = SDL_SetVideoMode(width, height, SCREEN_BPP, SDL_OPENGL);
   //Initialize SDL ttf. Must be called prior to all SDL_ttf functions.
   TTF_Init();
+  // AA
+  SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1); // On/off
+  SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4); // Level
+  // Set the caption on the window.
+  SDL_WM_SetCaption("Tempo", NULL);
+  // Other GL attributes
+  SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+  SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+  SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+  SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
   // Initialize Projection Matrix
   glMatrixMode( GL_PROJECTION );
   glLoadIdentity();
-  glFrustum( -SCALE*width/2, SCALE*width/2, SCALE*height/2, -SCALE*height/2, SCALE*Z_NEAR, SCALE*Z_FAR);
+  double s = 0.1;
+  glFrustum( -s*SCALE*width/2, s*SCALE*width/2, s*SCALE*height/2, -s*SCALE*height/2, s*SCALE*Z_NEAR, SCALE*Z_FAR);
 
   // Initialize Modelview Matrix
   glMatrixMode( GL_MODELVIEW );
   glLoadIdentity();
+
 
   // Initialize clear color
   glClearColor( 0.1f, 0.1f, 0.1f, 1.f );
@@ -140,9 +150,6 @@ void Canvas::initCanvas() {
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, KINECT_DEPTH_WIDTH, KINECT_DEPTH_HEIGHT, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, (GLvoid*) depthData);
   glBindTexture(GL_TEXTURE_2D, 0);
-
-  // Set the caption on the window.
-  SDL_WM_SetCaption("Tempo", NULL);
 }
 
 void Canvas::cleanupCanvas() {
@@ -163,29 +170,18 @@ void Canvas::draw(float shiftZ, std::list<Cube*> obstacles, int lifeRemaining, f
   //glEnable(GL_CULL_FACE); // commenting this out makes cubes more identifible due to random bug
   glEnable(GL_DEPTH_TEST);
 
-  // Draw the skybox before anything else is drawn.
-#ifndef USE_MAC_INCLUDES
-  if (skyboxLoaded) {
-    //drawSkybox(skyboxWidth, skyboxHeight, shiftZ);
-  }
-#endif
-
   /** Draw 3D stuff **/
   glPushMatrix();
-  glTranslatef(0, 0, shiftZ);
+  glTranslatef(0, 0, shiftZ + OFFSET_FROM_CAMERA);
   drawObstacles(obstacles);
   glPopMatrix();
 
   /** Draw 2D overlays **/
 #ifndef USE_MAC_INCLUDES
   glPushMatrix();
-  drawPlayer(lifeRemaining);
+  drawPlayer2(lifeRemaining);
   glPopMatrix();
 #endif
-
-  glPushMatrix();
-  //drawLife(lifeRemaining);
-  glPopMatrix();
 
   glPushMatrix();
   drawProgress(progressPct);
@@ -236,13 +232,14 @@ void Canvas::drawPlayer(int lifeRemaining) {
   int drawWidth = kinectAspect * drawHeight;
   int xOffset = (width - drawWidth)/2;
 
+  float z = 0;
   glBindTexture(GL_TEXTURE_2D, playerDepthId);
   glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, KINECT_DEPTH_WIDTH, KINECT_DEPTH_HEIGHT, GL_BGRA_EXT, GL_UNSIGNED_BYTE, (GLvoid*)depthData);
   glBegin(GL_QUADS);
-    glTexCoord2f(1.0f, 1.0f); glVertex3f(xOffset + drawWidth, height, 0);
-    glTexCoord2f(0.0f, 1.0f); glVertex3f(xOffset, height, 0);
-    glTexCoord2f(0.0f, 0.0f); glVertex3f(xOffset, 0, 0);
-    glTexCoord2f(1.0f, 0.0f); glVertex3f(xOffset + drawWidth, 0, 0);
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(xOffset + drawWidth, height, z);
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(xOffset, height, z);
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(xOffset, 0, z);
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(xOffset + drawWidth, 0, z);
   glEnd();
 
   // Reset attributes, projection matrix
@@ -254,86 +251,49 @@ void Canvas::drawPlayer(int lifeRemaining) {
   glPopAttrib();
 }
 
-void Canvas::drawSkybox(int width, int height, float shiftZ) {
-
-  // Initialize Projection Matrix
-  glMatrixMode( GL_PROJECTION );
-  // Save current matrix.
-  glPushMatrix();
-  glLoadIdentity();
-
-  glFrustum( -1, 1, -1, 1, 1, Z_FAR);
-
+void Canvas::drawPlayer2(int lifeRemaining) {
+  // Set attributes for texture drawing
   glMatrixMode(GL_MODELVIEW);
-
   glPushAttrib(GL_ENABLE_BIT);
   glEnable(GL_TEXTURE_2D);
-  glDisable(GL_DEPTH_TEST);
-  glDisable(GL_LIGHTING);
-  glDisable(GL_BLEND);
+  glEnable(GL_BLEND);
 
-  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-  //Set texture parameters
+  // Set texture settings
   glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
   glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-  double size;
-  if (width >= height) {
-    size = width;
+  // Set colour according to HP
+  const float MIN_COLOUR = 0.4;
+  float colour = (1.f - MIN_COLOUR) * 1.f*lifeRemaining/TOTAL_LIFE_COUNT;
+  if (lifeRemaining <= 1) {
+    glColor4f(colour, 0, 0, 0.7);
   } else {
-    size = height;
+    glColor4f(colour, colour, colour, 0.7);
   }
 
-  glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+  float kinectAspect = 1.f*KINECT_DEPTH_HEIGHT/KINECT_DEPTH_HEIGHT;
+  float z = OFFSET_FROM_CAMERA;
+  int drawHeight = height*(z/Z_NEAR);
+  int drawWidth = kinectAspect * drawHeight;
 
-  double e = 0.001;
-
-  glBindTexture(GL_TEXTURE_2D, SKYBOX);
+  glBindTexture(GL_TEXTURE_2D, playerDepthId);
+  glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, KINECT_DEPTH_WIDTH, KINECT_DEPTH_HEIGHT, GL_BGRA_EXT, GL_UNSIGNED_BYTE, (GLvoid*)depthData);
   glBegin(GL_QUADS);
-  // Four sides
-  // Front
-  glTexCoord2f( 1.0/4.0, 2.0/3.0 ); glVertex3f(          -size/2,          -size/2,  -size );
-  glTexCoord2f( 2.0/4.0, 2.0/3.0 ); glVertex3f(           size/2,          -size/2,  -size );
-  glTexCoord2f( 2.0/4.0, 1.0/3.0 ); glVertex3f(           size/2,           size/2,  -size );
-  glTexCoord2f( 1.0/4.0, 1.0/3.0 ); glVertex3f(          -size/2,           size/2,  -size );
-
-  // Left
-  glTexCoord2f( 0.0/4.0, 2.0/3.0 ); glVertex3f(  -SCREEN_WIDTH/2,          -size/2,    0.0 );
-  glTexCoord2f( 1.0/4.0, 2.0/3.0 ); glVertex3f(  -SCREEN_WIDTH/2,          -size/2,  -size );
-  glTexCoord2f( 1.0/4.0, 1.0/3.0 ); glVertex3f(  -SCREEN_WIDTH/2,           size/2,  -size );
-  glTexCoord2f( 0.0/4.0, 1.0/3.0 ); glVertex3f(  -SCREEN_WIDTH/2,           size/2,    0.0 );
-
-  // Right
-  glTexCoord2f( 2.0/4.0, 2.0/3.0 ); glVertex3f(   SCREEN_WIDTH/2,          -size/2,  -size );
-  glTexCoord2f( 3.0/4.0, 2.0/3.0 ); glVertex3f(   SCREEN_WIDTH/2,          -size/2,    0.0 );
-  glTexCoord2f( 3.0/4.0, 1.0/3.0 ); glVertex3f(   SCREEN_WIDTH/2,           size/2,    0.0 );
-  glTexCoord2f( 2.0/4.0, 1.0/3.0 ); glVertex3f(   SCREEN_WIDTH/2,           size/2,  -size );
-
-  // Bottom
-  glTexCoord2f( 1.0/4.0, 3.0/3.0 ); glVertex3f(          -size/2, -SCREEN_HEIGHT/2,    0.0 );
-  glTexCoord2f( 2.0/4.0, 3.0/3.0 ); glVertex3f(           size/2, -SCREEN_HEIGHT/2,    0.0 );
-  glTexCoord2f( 2.0/4.0, 2.0/3.0 ); glVertex3f(           size/2, -SCREEN_HEIGHT/2,  -size );
-  glTexCoord2f( 1.0/4.0, 2.0/3.0 ); glVertex3f(          -size/2, -SCREEN_HEIGHT/2,  -size );
-
-  // Top
-  glTexCoord2f( 1.0/4.0, 1.0/3.0 ); glVertex3f(          -size/2,  SCREEN_HEIGHT/2,  -size );
-  glTexCoord2f( 2.0/4.0, 1.0/3.0 ); glVertex3f(           size/2,  SCREEN_HEIGHT/2,  -size );
-  glTexCoord2f( 2.0/4.0, 0.0/3.0 ); glVertex3f(           size/2,  SCREEN_HEIGHT/2,    0.0 );
-  glTexCoord2f( 1.0/4.0, 0.0/3.0 ); glVertex3f(          -size/2,  SCREEN_HEIGHT/2,    0.0 );
-
-  // We never rotate the screen. No need to draw the back surface.
-
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(drawWidth/2, drawHeight/2, -z);
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(-drawWidth/2, drawHeight/2, -z);
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(-drawWidth/2, -drawHeight/2, -z);
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(drawWidth/2, -drawHeight/2, -z);
   glEnd();
 
+  // Reset attributes
   glMatrixMode(GL_MODELVIEW);
-  glPopMatrix();
-
-  glMatrixMode(GL_PROJECTION);
   glPopMatrix();
   glPopAttrib();
 }
 
 void Canvas::drawObstacles(std::list<Cube*> obstacles) {
+  glEnable(GL_MULTISAMPLE_ARB);
   for (std::list<Cube*>::iterator i = obstacles.begin(); i != obstacles.end(); i++) {
     if (rectLoaded) {
       //(*i)->draw(&RECTANGLE);
@@ -342,6 +302,7 @@ void Canvas::drawObstacles(std::list<Cube*> obstacles) {
       (*i)->draw();
     }
   }
+  glDisable(GL_MULTISAMPLE_ARB);
 }
 
 void Canvas::drawLife(int lifeRemaining) {
@@ -349,11 +310,6 @@ void Canvas::drawLife(int lifeRemaining) {
   const float x = 0.0f;
   const float y = 0.0f;
   const double size = 50;
-
-  // TODO remove
-  //std::stringstream life;
-  //life << "Life Remaining: ";
-  //lifeText->renderText(width, height, x, y + padding, life.str());
 
   // Initialize Projection Matrix
   glMatrixMode( GL_PROJECTION );
