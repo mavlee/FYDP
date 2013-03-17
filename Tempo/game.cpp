@@ -77,7 +77,7 @@ void Game::reset(string song) {
   generateGameFeatures();
 
   timer.start();
-  starting = true;
+  musicStarted = false;
 }
 
 // the game's main loop
@@ -284,11 +284,11 @@ void Game::update() {
     int diff = timer.get_ticks() - lastUpdate;
 
     if (timer.get_ticks() < START_DELAY) {
-      //return;
+      shiftZ = SHIFT_INTERVAL_PER_SECOND*(timer.get_ticks() - START_DELAY)/1000.f;
     } else {
-      if (starting) {
+      if (!musicStarted) {
         musicHandler->play();
-        starting = false;
+        musicStarted = true;
         lastUpdate = timer.get_ticks();
       } else {
         // calculate score
@@ -351,9 +351,11 @@ void Game::handleEvent(SDL_Event& event) {
     case PAUSE_KEY:
       isPaused = !isPaused;
       if (isPaused) {
-        musicHandler->pause();
+        timer.pause();
+        if (musicStarted) musicHandler->pause();
       } else {
-        musicHandler->play();
+        timer.unpause();
+        if (musicStarted) musicHandler->play();
       }
       break;
     case QUIT_KEY:
