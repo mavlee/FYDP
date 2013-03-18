@@ -179,7 +179,7 @@ void Canvas::draw(float shiftZ, std::list<Cube*> obstacles, int lifeRemaining, f
   /** Draw 2D overlays **/
 #ifndef USE_MAC_INCLUDES
   glPushMatrix();
-  drawPlayer2(lifeRemaining);
+  drawPlayer2(lifeRemaining, currentColour);
   glPopMatrix();
 #endif
 
@@ -251,7 +251,7 @@ void Canvas::drawPlayer(int lifeRemaining) {
   glPopAttrib();
 }
 
-void Canvas::drawPlayer2(int lifeRemaining) {
+void Canvas::drawPlayer2(int lifeRemaining, Cube::ColourSet colour) {
   // Set attributes for texture drawing
   glMatrixMode(GL_MODELVIEW);
   glPushAttrib(GL_ENABLE_BIT);
@@ -265,13 +265,8 @@ void Canvas::drawPlayer2(int lifeRemaining) {
 
   // Set colour according to HP
   const float MIN_COLOUR = 0.4;
-  float colour = (1.f - MIN_COLOUR) * 1.f*lifeRemaining/TOTAL_LIFE_COUNT;
-  if (lifeRemaining <= 1) {
-    glColor4f(colour, 0, 0, 0.7);
-  } else {
-    glColor4f(colour, colour, colour, 0.7);
-  }
-
+  glColor4f(cubeColours[colour][0][0], cubeColours[colour][0][1], cubeColours[colour][0][2], 0.7*lifeRemaining/10.0f);
+  
   float kinectAspect = 1.f*KINECT_DEPTH_HEIGHT/KINECT_DEPTH_HEIGHT;
   float z = OFFSET_FROM_CAMERA;
   int drawHeight = height*(z/Z_NEAR);
