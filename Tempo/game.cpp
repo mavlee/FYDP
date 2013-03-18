@@ -261,8 +261,8 @@ void Game::generateGameFeatures() {
         if (peakMarker[i][r][c] > 0 && (i - last > 10 || i == last)) {
           if (!color)
             color = generateColour();
-          //obstacle = new Cube(c, r, -(OFFSET_FROM_CAMERA + i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec()), SHAPE_X, SHAPE_Y, SHAPE_Z, Cube::ColourSet(peakMarker[i][r][c]));
-          obstacle = new Cube(c, r, -distances[i], SHAPE_X, SHAPE_Y, SHAPE_Z, Cube::ColourSet(color));
+          obstacle = new Cube(c, r, -(OFFSET_FROM_CAMERA + i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec()), SHAPE_X, SHAPE_Y, SHAPE_Z, Cube::ColourSet(peakMarker[i][r][c]));
+          //obstacle = new Cube(c, r, -distances[i], SHAPE_X, SHAPE_Y, SHAPE_Z, Cube::ColourSet(color));
           obstacles.push_back(obstacle);
           last = i;
         }
@@ -337,7 +337,7 @@ void Game::updateScore() {
   } else if (collision == 1) {
     // TODO: change colour to the block you hit
   }
-  
+
   collision = checkForBonusCollisions();
   if (collision) {
     comboLevel++;
