@@ -58,6 +58,7 @@ void Game::reset(string song) {
   canvas->setComboLevelText(0);
 
   progressPct = 0.0f;
+  lastColourChange = 0.0f;
 
   isPaused = false;
   restart = false;
