@@ -40,7 +40,7 @@ public:
 
   void initCanvas(); // inits GL
   void cleanupCanvas(); // cleans up GL
-  void draw(float shiftZ, std::list<Cube*> obstacles, float progressPct, Cube::ColourSet currentColour, int comboLevel);
+  void draw(float shiftZ, std::vector<Cube*> obstacles, float progressPct, Cube::ColourSet currentColour, int comboLevel);
   void drawHighscore(int points, int* highscores, bool highscoreAchieved);
   void setFPSText(float fps);
   void setComboLevelText(int comboLevel);
