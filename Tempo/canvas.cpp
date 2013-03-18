@@ -162,7 +162,7 @@ void Canvas::cleanupCanvas() {
   SDL_Quit();
 }
 
-void Canvas::draw(float shiftZ, std::list<Cube*> obstacles, float progressPct, Cube::ColourSet currentColour, int comboLevel) {
+void Canvas::draw(float shiftZ, std::vector<Cube*> obstacles, float progressPct, Cube::ColourSet currentColour, int comboLevel) {
   // Reset and clear
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
