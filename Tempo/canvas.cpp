@@ -69,7 +69,7 @@ Canvas::~Canvas() {
 void Canvas::initCanvas() {
   // Initialize player texture
   for (int i = 0; i < KINECT_DEPTH_HEIGHT*KINECT_DEPTH_WIDTH*4; i++) {
-    depthData[i] = (BYTE)255;
+    depthData[i] = (BYTE)0;
   }
 
   // Start SDL
@@ -165,7 +165,7 @@ void Canvas::cleanupCanvas() {
   SDL_Quit();
 }
 
-void Canvas::draw(float shiftZ, std::vector<Cube*> obstacles, float progressPct, Cube::ColourSet currentColour, int comboLevel) {
+void Canvas::draw(float shiftZ, std::vector<Cube*>& obstacles, float progressPct, std::vector<int>& closeCubes, Cube::ColourSet currentColour, int comboLevel) {
   // Reset and clear
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
@@ -175,9 +175,12 @@ void Canvas::draw(float shiftZ, std::vector<Cube*> obstacles, float progressPct,
 
   /** Draw 3D stuff **/
   glPushMatrix();
-  //glTranslatef(0, 0, shiftZ + OFFSET_FROM_CAMERA);
   glTranslatef(0, 0, shiftZ);
   drawObstacles(obstacles);
+  drawGrid(closeCubes, obstacles);
+  glPopMatrix();
+
+  glPushMatrix();
   glPopMatrix();
 
   /** Draw 2D overlays **/
@@ -191,10 +194,9 @@ void Canvas::draw(float shiftZ, std::vector<Cube*> obstacles, float progressPct,
   drawProgress(progressPct);
   glPopMatrix();
 
+  // Draw ui text
   float padding = 5.0f;
   float x = 20.0f;
-
-  // Draw ui text
   fpsText->renderText(width, height, x, 10, fpsString);
   comboLevelText->renderText(width, height, x, height - 100 - padding, comboLevelString);
   pointsText->renderText(width, height, x, height - 50 - padding, pointsString);
@@ -275,8 +277,7 @@ void Canvas::drawPlayer2(Cube::ColourSet colour, int comboLevel) {
   glPopAttrib();
 }
 
-void Canvas::drawObstacles(vector<Cube*> obstacles) {
-  glEnable(GL_MULTISAMPLE_ARB);
+void Canvas::drawObstacles(vector<Cube*>& obstacles) {
   for (vector<Cube*>::iterator i = obstacles.begin(); i != obstacles.end(); i++) {
     if (rectLoaded) {
       //(*i)->draw(&RECTANGLE);
@@ -285,7 +286,6 @@ void Canvas::drawObstacles(vector<Cube*> obstacles) {
       (*i)->draw();
     }
   }
-  glDisable(GL_MULTISAMPLE_ARB);
 }
 
 void Canvas::drawProgress(float progressPct) {
@@ -361,6 +361,82 @@ void Canvas::drawProgress(float progressPct) {
   glPopAttrib();
 }
 
+void Canvas::drawGrid(std::vector<int>& closeCubes, std::vector<Cube*>& obstacles) {
+  glMatrixMode(GL_MODELVIEW);
+  glPushAttrib(GL_ENABLE_BIT);
+  glEnable(GL_DEPTH_TEST);
+  glDisable(GL_LIGHTING);
+  glEnable(GL_BLEND);
+
+  float padding = 0.0f;
+  float w = 1.0*SHAPE_X;
+  float h = 1.0*SHAPE_Y;
+  for (int i = 0; i < obstacles.size(); i++) {
+    float border = 8.0f;
+    glColor4f(1, 1, 1, 0.7);
+
+    float z = obstacles[i]->zFront + 1;
+    int r = obstacles[i]->r;
+    int c = obstacles[i]->c;
+    float centreX = obstacles[i]->centre.x;
+    float centreY = obstacles[i]->centre.y;
+    for (int j = 0; j < closeCubes.size(); j++) {
+      if (closeCubes[j] == i) {
+        border *= 2;
+        glColor4f(1, 1, 1, 0.9);
+        break;
+      }
+    }
+    //float z = obstacles[closeCubes[i]]->zFront + 1;
+    //int r = obstacles[closeCubes[i]]->r;
+    //int c = obstacles[closeCubes[i]]->c;
+    //float centreX = obstacles[closeCubes[i]]->centre.x;
+    //float centreY = obstacles[closeCubes[i]]->centre.y;
+    // top bar
+    glBegin(GL_QUADS);
+      glVertex3f(centreX - w/2, padding + centreY + SHAPE_Y/2, z);
+      glVertex3f(centreX - w/2, padding + centreY + SHAPE_Y/2 - border, z);
+      glVertex3f(centreX + w/2, padding + centreY + SHAPE_Y/2 - border, z);
+      glVertex3f(centreX + w/2, padding + centreY + SHAPE_Y/2, z);
+    glEnd();
+
+    // bottom bar
+    glBegin(GL_QUADS);
+      glVertex3f(centreX - w/2, centreY - padding - SHAPE_Y/2, z);
+      glVertex3f(centreX + w/2, centreY - padding - SHAPE_Y/2, z);
+      glVertex3f(centreX + w/2, centreY - padding - SHAPE_Y/2 + border, z);
+      glVertex3f(centreX - w/2, centreY - padding - SHAPE_Y/2 + border, z);
+    glEnd();
+
+    // left bar
+    glBegin(GL_QUADS);
+      glVertex3f(centreX - padding - SHAPE_X/2, centreY - h/2, z);
+      glVertex3f(centreX - padding - SHAPE_X/2 + border, centreY - h/2, z);
+      glVertex3f(centreX - padding - SHAPE_X/2 + border, centreY + h/2, z);
+      glVertex3f(centreX - padding - SHAPE_X/2, centreY + h/2, z);
+    glEnd();
+
+    // right bar
+    glBegin(GL_QUADS);
+      glVertex3f(centreX + padding + SHAPE_X/2, centreY + h/2, z);
+      glVertex3f(centreX + padding + SHAPE_X/2 - border, centreY + h/2, z);
+      glVertex3f(centreX + padding + SHAPE_X/2 - border, centreY - h/2, z);
+      glVertex3f(centreX + padding + SHAPE_X/2, centreY - h/2, z);
+    glEnd();
+  }
+
+  // Reset attributes, projection matrix
+  glDisable(GL_DEPTH_TEST);
+  glEnable(GL_LIGHTING);
+  glDisable(GL_BLEND);
+
+  glMatrixMode(GL_MODELVIEW);
+  glPopMatrix();
+
+  //glMatrixMode(GL_PROJECTION);
+  //glPopMatrix();
+  glPopAttrib();
+}
 
 void Canvas::drawHighscore(int points, int* highscores, bool highscoreAchieved) {
   glPushMatrix();
