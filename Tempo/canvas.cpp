@@ -162,7 +162,7 @@ void Canvas::cleanupCanvas() {
   SDL_Quit();
 }
 
-void Canvas::draw(float shiftZ, std::list<Cube*> obstacles, int lifeRemaining, float progressPct, Cube::ColourSet currentColour) {
+void Canvas::draw(float shiftZ, std::list<Cube*> obstacles, float progressPct, Cube::ColourSet currentColour) {
   // Reset and clear
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
@@ -179,7 +179,7 @@ void Canvas::draw(float shiftZ, std::list<Cube*> obstacles, int lifeRemaining, f
   /** Draw 2D overlays **/
 #ifndef USE_MAC_INCLUDES
   glPushMatrix();
-  drawPlayer2(lifeRemaining, currentColour);
+  drawPlayer2(currentColour);
   glPopMatrix();
 #endif
 
@@ -220,7 +220,7 @@ void Canvas::drawPlayer(int lifeRemaining) {
 
   // Set colour according to HP
   const float MIN_COLOUR = 0.4;
-  float colour = (1.f - MIN_COLOUR) * 1.f*lifeRemaining/TOTAL_LIFE_COUNT;
+  float colour = (1.f - MIN_COLOUR) * 1.f*lifeRemaining/10;
   if (lifeRemaining <= 1) {
     glColor4f(colour, 0, 0, 0.7);
   } else {
@@ -251,7 +251,7 @@ void Canvas::drawPlayer(int lifeRemaining) {
   glPopAttrib();
 }
 
-void Canvas::drawPlayer2(int lifeRemaining, Cube::ColourSet colour) {
+void Canvas::drawPlayer2(Cube::ColourSet colour) {
   // Set attributes for texture drawing
   glMatrixMode(GL_MODELVIEW);
   glPushAttrib(GL_ENABLE_BIT);
@@ -265,7 +265,7 @@ void Canvas::drawPlayer2(int lifeRemaining, Cube::ColourSet colour) {
 
   // Set colour according to HP
   const float MIN_COLOUR = 0.4;
-  glColor4f(cubeColours[colour][0][0], cubeColours[colour][0][1], cubeColours[colour][0][2], 0.7*lifeRemaining/10.0f);
+  glColor4f(cubeColours[colour][0][0], cubeColours[colour][0][1], cubeColours[colour][0][2], 0.7f);
   
   float kinectAspect = 1.f*KINECT_DEPTH_HEIGHT/KINECT_DEPTH_HEIGHT;
   float z = OFFSET_FROM_CAMERA;
@@ -423,7 +423,7 @@ void Canvas::drawProgress(float progressPct) {
 }
 
 
-void Canvas::drawHighscore(int points, int* highscores, bool highscoreAchieved, int lifeRemaining) {
+void Canvas::drawHighscore(int points, int* highscores, bool highscoreAchieved) {
   glPushMatrix();
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -433,11 +433,6 @@ void Canvas::drawHighscore(int points, int* highscores, bool highscoreAchieved, 
   float y = 150;
 
   std::stringstream highscore_caption;
-  if (lifeRemaining == 0) {
-    std::stringstream game_over;
-    game_over << "Game Over";
-    scoreText->renderText(SCREEN_WIDTH, SCREEN_HEIGHT, x , y - 50 , game_over.str());
-  }
   if (highscoreAchieved) {
     highscore_caption << "New Highscore! Score: " << points;
     scoreText->renderText(SCREEN_WIDTH, SCREEN_HEIGHT, x , y      , highscore_caption.str());

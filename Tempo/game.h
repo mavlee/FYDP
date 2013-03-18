@@ -39,7 +39,6 @@ private:
   int points;
   int comboLevel;
   int combo;
-  int lifeRemaining;
   float progressPct;
   Cube::ColourSet currentColour;
   float lastColourChange;

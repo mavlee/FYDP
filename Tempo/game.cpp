@@ -57,7 +57,6 @@ void Game::reset(string song) {
   canvas->setPointsText(0);
   canvas->setComboLevelText(0);
 
-  lifeRemaining = TOTAL_LIFE_COUNT;
   progressPct = 0.0f;
 
   isPaused = false;
@@ -324,7 +323,6 @@ void Game::updateScore() {
   if (collision) {
     combo = 0;
     comboLevel = 1;
-    lifeRemaining--;
   }
   if (combo % 1000 == 0 && combo > 0) {
     comboLevel++;
@@ -335,9 +333,9 @@ void Game::updateScore() {
 
 void Game::draw() {
   if (!finished) {
-    canvas->draw(shiftZ, obstacles, lifeRemaining, progressPct, currentColour);
+    canvas->draw(shiftZ, obstacles, progressPct, currentColour);
   } else {
-    canvas->drawHighscore(points, highscores, highscoreAchieved, lifeRemaining);
+    canvas->drawHighscore(points, highscores, highscoreAchieved);
   }
 }
 
@@ -392,10 +390,7 @@ void Game::update() {
   }
 
   // Check for end of song
-  if (musicHandler->getPositionInSec() == musicHandler->getLengthInSec() || lifeRemaining == 0) {
-    if (lifeRemaining == 0) {
-      musicHandler->pause();
-    }
+  if (musicHandler->getPositionInSec() == musicHandler->getLengthInSec()) {
     if (!finished) {
       string fileName = musicHandler->getMusicFile();
       fileName = fileName.substr(fileName.find_last_of('\\') + 1);
