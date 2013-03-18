@@ -93,7 +93,7 @@ void Canvas::initCanvas() {
   // Initialize Projection Matrix
   glMatrixMode( GL_PROJECTION );
   glLoadIdentity();
-  double s = 0.1;
+  double s = 1; // hacky as fuck redux
   glFrustum( -s*SCALE*width/2, s*SCALE*width/2, s*SCALE*height/2, -s*SCALE*height/2, s*SCALE*Z_NEAR, SCALE*Z_FAR);
 
   // Initialize Modelview Matrix

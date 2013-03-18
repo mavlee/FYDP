@@ -20,7 +20,7 @@ const int NUM_COLUMNS = 6;
 
 const float SHAPE_X = SCALE*100.f;
 const float SHAPE_Y = SCALE*100.f;
-const float SHAPE_Z = SCALE*50.f;
+const float SHAPE_Z = SCALE*15.f;
 const float OFFSET_FROM_CAMERA = SCALE*(Z_NEAR);
 
 const float SHIFT_INTERVAL_PER_SECOND = 500.f;
