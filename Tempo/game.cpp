@@ -80,8 +80,8 @@ void Game::reset(string song) {
     delete obstacles[i];
     obstacles[i] = NULL;
   }
-
   obstacles.clear();
+  closeCubes.clear();
   shiftZ = 0.f;
   lastUpdate = 0;
   frames = 0;
@@ -164,6 +164,7 @@ void Game::generateGameFeatures() {
     // used to count number of superpeaks
     int wallCounter = 0;
     int twoColumnCounter = 0;
+    int horizontalBarCounter = 0;
     float holyshittotal = 0;
     if (i - last_superpeak > 1400) maxholyshittotal = 0;
     for (int v = 0; v < NUM_BANDS; v++) {
@@ -178,6 +179,9 @@ void Game::generateGameFeatures() {
           //printf("holyshit of %f on sample %d with intensity %f\n", musicData[v][i], i, musicIntensityData[i]);
           wallCounter++;
           holyshittotal += musicData[v][i] * musicIntensityData[i];
+        } else if (musicData[v][i] > 100 && i > SAMPLE_HISTORY*2) {
+          //printf("minor holyshit of %f on sample %d\n", musicData[v][i], i);
+          horizontalBarCounter++;
         } else if (musicData[v][i] > 50 && i > SAMPLE_HISTORY*2) {
           //printf("minor holyshit of %f on sample %d\n", musicData[v][i], i);
           twoColumnCounter++;
@@ -244,6 +248,16 @@ void Game::generateGameFeatures() {
         peakMarker[i][r][rand_c+1] = 0;
       }
       last_gap = i;
+    // horizontal bar
+    } else if (horizontalBarCounter > 0 && i - last_two_column > 0) {
+      int rand_r = 0;
+      if (rand() % 2 == 1) {
+        rand_r = 3;
+      }
+      for (int c = 0; c < NUM_COLUMNS; c++) {
+        peakMarker[i][rand_r][c] = 1;
+      }
+      last_two_column = i;
     // two columns
     } else if (twoColumnCounter > 0 && i - last_two_column > 0) {
       int rand_c = rand() % 6;
@@ -342,7 +356,7 @@ void Game::updateScore() {
 
 void Game::draw() {
   if (!finished) {
-    canvas->draw(shiftZ, obstacles, progressPct, currentColour, comboLevel);
+    canvas->draw(shiftZ, obstacles, progressPct, closeCubes, currentColour, comboLevel);
   } else {
     canvas->drawHighscore(points, highscores, highscoreAchieved);
   }
@@ -366,7 +380,6 @@ void Game::update() {
         musicStarted = true;
         lastUpdate = timer.get_ticks();
       } else {
-        //WIP collision stuff
 
         // calculate score
         // TODO: calculate score according to time, and not the frequency that frames are drawn
@@ -385,6 +398,14 @@ void Game::update() {
         canvas->setPointsText(points);
         canvas->setComboLevelText(comboLevel);
       }
+    }
+
+    // Close cubes
+    int i = prevObstacle;
+    closeCubes.clear();
+    while(abs(obstacles[i]->zFront) < shiftZ + OFFSET_FROM_CAMERA + 250.0) {
+      closeCubes.push_back(i);
+      i++;
     }
 
     progressPct = musicHandler->getPositionInSec() / musicHandler->getLengthInSec();

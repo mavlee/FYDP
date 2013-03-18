@@ -19,18 +19,15 @@ void Object::setCentre(float x, float y, float z) {
 
 Cube::Cube(int x, int y, float centreZ,
   float width, float height, float depth, ColourSet color) {
-
     this->width = width;
     this->height = height;
     this->depth = depth;
+    c = x; r = y;
 
-    const float spacingX = 1.8f * SHAPE_X;
-    const float spacingY = 1.25f * SHAPE_Y;
-    float centreX = -spacingX*(NUM_COLUMNS - 1)/2 + x*spacingX;
-    float centreY = -spacingY*(NUM_ROWS - 1)/2 + y*spacingY;
+    float centreX = -SPACING_X*(NUM_COLUMNS - 1)/2 + x*SPACING_X;
+    float centreY = -SPACING_Y*(NUM_ROWS - 1)/2 + y*SPACING_Y;
     centre.x = centreX;
     centre.y = centreY;
-    //centreX = centreY = 100;
     zFront = centreZ + depth / 2;
     zBack = centreZ - depth / 2;
     wLeft = centreX - width / 2;
@@ -107,4 +104,3 @@ void Cube::draw(GLuint* texture) {
   }
   glEnd();
 }
-
