@@ -26,13 +26,14 @@ private:
   std::string fpsString;
   std::string comboLevelString;
   std::string pointsString;
+  int comboLevel;
 
   void drawSkybox(int width, int height, float shiftZ);
   void drawObstacles(std::vector<Cube*>& obstacles);
-  void drawPlayer(int lifeRemaining);
-  void drawPlayer2(Cube::ColourSet, int comboLevel);
+  void drawPlayer(Cube::ColourSet, int comboLevel);
   void drawProgress(float progressPct);
   void drawGrid(std::vector<int>& closeCubes, std::vector<Cube*>& obstacles);
+  void drawCombo(Cube::ColourSet clr);
 
 public:
   BYTE depthData[KINECT_DEPTH_WIDTH*KINECT_DEPTH_HEIGHT*4];
