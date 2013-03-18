@@ -192,13 +192,13 @@ void Game::generateGameFeatures() {
           }
 
           int rand_r = rand() % 4;
-          int rand_c = rand() % 6;
-          /*
-          int rand_c = 0;
+          //int rand_c = rand() % 6;
+          
+          int rand_c = 1;
           if (rand() % 2 == 1) {
-            rand_c = 5;
+            rand_c = 4;
           }
-          */
+          
           peakMarker[i][rand_r][rand_c] = 1;
           count++;
         }
@@ -499,7 +499,7 @@ void Game::update() {
     // Close cubes
     int i = prevObstacle;
     closeCubes.clear();
-    while(abs(obstacles[i]->zFront) < shiftZ + OFFSET_FROM_CAMERA + 250.0) {
+    while(i < obstacles.size() - 1 && abs(obstacles[i]->zFront) < shiftZ + OFFSET_FROM_CAMERA + 250.0) {
       closeCubes.push_back(i);
       i++;
     }
