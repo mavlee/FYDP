@@ -244,11 +244,14 @@ void Game::generateGameFeatures() {
   //vector<float> distances(musicData[0].size(), OFFSET_FROM_CAMERA);
   distances.resize(musicData[0].size());//, OFFSET_FROM_CAMERA);
   for (int i = 0; i < musicData[0].size(); i++) {
+    distances[i] = 0;
     //distances[i] += OFFSET_FROM_CAMERA;
-    //distances[i] += i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec();
+    distances[i] += i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec();
+    /*
     for (int j = i; j < musicData[0].size(); j++) {
       distances[j] += averageIntensity[i]*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec();
     }
+    */
   }
 
   for (int i = 0; i < musicData[0].size(); i++) {
@@ -361,7 +364,7 @@ void Game::update() {
     int diff = timer.get_ticks() - lastUpdate;
 
     if (timer.get_ticks() < START_DELAY) {
-      shiftZ = averageIntensity[0]*SHIFT_INTERVAL_PER_SECOND*(timer.get_ticks() - START_DELAY)/1000.f;
+      shiftZ = SHIFT_INTERVAL_PER_SECOND*(timer.get_ticks() - START_DELAY)/1000.f;
     } else {
       if (!musicStarted) {
         musicHandler->play();
@@ -373,10 +376,10 @@ void Game::update() {
         updateScore();
 
         // Update positions
-        //shiftZ += SHIFT_INTERVAL_PER_SECOND * diff / 1000;
+        shiftZ += SHIFT_INTERVAL_PER_SECOND * diff / 1000;
         //shiftZ += musicIntensityData[musicHandler->getPositionInSec()*43] * SHIFT_INTERVAL_PER_SECOND * diff / 1000;
         //shiftZ += averageIntensity[lastUpdate*43/1000] * SHIFT_INTERVAL_PER_SECOND * diff / 1000;
-        shiftZ += averageIntensity[musicHandler->getPositionInSec()*43] * SHIFT_INTERVAL_PER_SECOND * diff / 1000;
+        //shiftZ += averageIntensity[musicHandler->getPositionInSec()*43] * SHIFT_INTERVAL_PER_SECOND * diff / 1000;
         //shiftZ += distances[(lastUpdate+diff)*43.0/1000] - distances[lastUpdate*43.0/1000];
         lastUpdate += diff;
 
