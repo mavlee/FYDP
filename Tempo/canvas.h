@@ -30,7 +30,7 @@ private:
   void drawSkybox(int width, int height, float shiftZ);
   void drawObstacles(std::list<Cube*> obstacles);
   void drawPlayer(int lifeRemaining);
-  void drawPlayer2(int lifeRemaining, Cube::ColourSet);
+  void drawPlayer2(Cube::ColourSet);
   void drawLife(int lifeRemaining);
   void drawProgress(float progressPct);
 
@@ -41,8 +41,8 @@ public:
 
   void initCanvas(); // inits GL
   void cleanupCanvas(); // cleans up GL
-  void draw(float shiftZ, std::list<Cube*> obstacles, int lifeRemaining, float progressPct, Cube::ColourSet currentColour);
-  void drawHighscore(int points, int* highscores, bool highscoreAchieved, int lifeRemaining);
+  void draw(float shiftZ, std::list<Cube*> obstacles, float progressPct, Cube::ColourSet currentColour);
+  void drawHighscore(int points, int* highscores, bool highscoreAchieved);
   void setFPSText(float fps);
   void setComboLevelText(int comboLevel);
   void setPointsText(int points);
