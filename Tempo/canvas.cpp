@@ -162,7 +162,7 @@ void Canvas::cleanupCanvas() {
   SDL_Quit();
 }
 
-void Canvas::draw(float shiftZ, std::list<Cube*> obstacles, float progressPct, Cube::ColourSet currentColour) {
+void Canvas::draw(float shiftZ, std::list<Cube*> obstacles, float progressPct, Cube::ColourSet currentColour, int comboLevel) {
   // Reset and clear
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
@@ -179,7 +179,7 @@ void Canvas::draw(float shiftZ, std::list<Cube*> obstacles, float progressPct, C
   /** Draw 2D overlays **/
 #ifndef USE_MAC_INCLUDES
   glPushMatrix();
-  drawPlayer2(currentColour);
+  drawPlayer2(currentColour, comboLevel);
   glPopMatrix();
 #endif
 
@@ -251,7 +251,7 @@ void Canvas::drawPlayer(int lifeRemaining) {
   glPopAttrib();
 }
 
-void Canvas::drawPlayer2(Cube::ColourSet colour) {
+void Canvas::drawPlayer2(Cube::ColourSet colour, int comboLevel) {
   // Set attributes for texture drawing
   glMatrixMode(GL_MODELVIEW);
   glPushAttrib(GL_ENABLE_BIT);
@@ -265,7 +265,10 @@ void Canvas::drawPlayer2(Cube::ColourSet colour) {
 
   // Set colour according to HP
   const float MIN_COLOUR = 0.4;
-  glColor4f(cubeColours[colour][0][0], cubeColours[colour][0][1], cubeColours[colour][0][2], 0.7f);
+  if (comboLevel > 10) {
+    comboLevel = 10;
+  }
+  glColor4f(cubeColours[colour][0][0], cubeColours[colour][0][1], cubeColours[colour][0][2], 0.2f + 0.05f * comboLevel);
   
   float kinectAspect = 1.f*KINECT_DEPTH_HEIGHT/KINECT_DEPTH_HEIGHT;
   float z = OFFSET_FROM_CAMERA;

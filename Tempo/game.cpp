@@ -333,7 +333,7 @@ void Game::updateScore() {
 
 void Game::draw() {
   if (!finished) {
-    canvas->draw(shiftZ, obstacles, progressPct, currentColour);
+    canvas->draw(shiftZ, obstacles, progressPct, currentColour, comboLevel);
   } else {
     canvas->drawHighscore(points, highscores, highscoreAchieved);
   }
