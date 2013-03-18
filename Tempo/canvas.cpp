@@ -265,10 +265,10 @@ void Canvas::drawPlayer2(Cube::ColourSet colour, int comboLevel) {
 
   // Set colour according to HP
   const float MIN_COLOUR = 0.4;
-  if (comboLevel > 10) {
-    comboLevel = 10;
+  if (comboLevel > MAX_LEVEL) {
+    comboLevel = MAX_LEVEL;
   }
-  glColor4f(cubeColours[colour][0][0], cubeColours[colour][0][1], cubeColours[colour][0][2], 0.2f + 0.05f * comboLevel);
+  glColor4f(cubeColours[colour][0][0], cubeColours[colour][0][1], cubeColours[colour][0][2], 0.2f + 0.5f * comboLevel / MAX_LEVEL);
   
   float kinectAspect = 1.f*KINECT_DEPTH_HEIGHT/KINECT_DEPTH_HEIGHT;
   float z = OFFSET_FROM_CAMERA;
