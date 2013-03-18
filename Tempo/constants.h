@@ -23,7 +23,7 @@ const float SHAPE_Y = SCALE*100.f;
 const float SHAPE_Z = SCALE*15.f;
 const float OFFSET_FROM_CAMERA = SCALE*(Z_NEAR);
 
-const float SHIFT_INTERVAL_PER_SECOND = 500.f;
+const float SHIFT_INTERVAL_PER_SECOND = 300.f;
 
 const int KINECT_DEPTH_WIDTH = 320;
 const int KINECT_DEPTH_HEIGHT = 240;
