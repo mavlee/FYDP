@@ -93,7 +93,7 @@ void Canvas::initCanvas() {
   // Initialize Projection Matrix
   glMatrixMode( GL_PROJECTION );
   glLoadIdentity();
-  double s = 0.1;
+  double s = 1;
   glFrustum( -s*SCALE*width/2, s*SCALE*width/2, s*SCALE*height/2, -s*SCALE*height/2, s*SCALE*Z_NEAR, SCALE*Z_FAR);
 
   // Initialize Modelview Matrix
@@ -270,7 +270,7 @@ void Canvas::drawPlayer2(Cube::ColourSet colour, int comboLevel) {
   }
   glColor4f(cubeColours[colour][0][0], cubeColours[colour][0][1], cubeColours[colour][0][2], 0.2f + 0.5f * comboLevel / MAX_LEVEL);
   
-  float kinectAspect = 1.f*KINECT_DEPTH_HEIGHT/KINECT_DEPTH_HEIGHT;
+  float kinectAspect = 1.f*KINECT_DEPTH_WIDTH/KINECT_DEPTH_HEIGHT;
   float z = OFFSET_FROM_CAMERA;
   int drawHeight = height*(z/Z_NEAR);
   int drawWidth = kinectAspect * drawHeight;
@@ -284,15 +284,46 @@ void Canvas::drawPlayer2(Cube::ColourSet colour, int comboLevel) {
     glTexCoord2f(1.0f, 0.0f); glVertex3f(drawWidth/2, -drawHeight/2, -z);
   glEnd();
 
+  // borders for player area
+  glColor4f(0.4, 0.4, 0.4, 0.4);
+  const float border = 1.f;
+  glBegin(GL_QUADS);
+    glVertex3f(drawWidth/2, drawHeight/2, -z);
+    glVertex3f(drawWidth/2, drawHeight/2 + border, -z);
+    glVertex3f(-drawWidth/2, drawHeight/2 + border, -z);
+    glVertex3f(-drawWidth/2, drawHeight/2, -z);
+  glEnd();
+
+  glBegin(GL_QUADS);
+    glVertex3f(-drawWidth/2, drawHeight/2, -z);
+    glVertex3f(-drawWidth/2, -drawHeight/2, -z);
+    glVertex3f(-drawWidth/2 - border, -drawHeight/2, -z);
+    glVertex3f(-drawWidth/2 - border, drawHeight/2, -z);
+  glEnd();
+
+  glBegin(GL_QUADS);
+    glVertex3f(-drawWidth/2, -drawHeight/2, -z);
+    glVertex3f(-drawWidth/2, -drawHeight/2 - border, -z);
+    glVertex3f(drawWidth/2, -drawHeight/2 - border, -z);
+    glVertex3f(drawWidth/2, -drawHeight/2, -z);
+  glEnd();
+
+  glBegin(GL_QUADS);
+    glVertex3f(drawWidth/2, drawHeight/2, -z);
+    glVertex3f(drawWidth/2, -drawHeight/2, -z);
+    glVertex3f(drawWidth/2 + border, -drawHeight/2, -z);
+    glVertex3f(drawWidth/2 + border, drawHeight/2, -z);
+  glEnd();
+
   // Reset attributes
   glMatrixMode(GL_MODELVIEW);
   glPopMatrix();
   glPopAttrib();
 }
 
-void Canvas::drawObstacles(std::list<Cube*> obstacles) {
+void Canvas::drawObstacles(vector<Cube*> obstacles) {
   glEnable(GL_MULTISAMPLE_ARB);
-  for (std::list<Cube*>::iterator i = obstacles.begin(); i != obstacles.end(); i++) {
+  for (vector<Cube*>::iterator i = obstacles.begin(); i != obstacles.end(); i++) {
     if (rectLoaded) {
       //(*i)->draw(&RECTANGLE);
       (*i)->draw();
