@@ -79,6 +79,7 @@ void Game::reset(string song) {
     delete obstacles[i];
     obstacles[i] = NULL;
   }
+
   obstacles.clear();
   shiftZ = 0.f;
   lastUpdate = 0;
@@ -380,28 +381,11 @@ void Game::update() {
         lastUpdate = timer.get_ticks();
       } else {
         //WIP collision stuff
-        //TODO epsilons
-        while(false) {
-          // cube crossed intersection plane?
-          if (obstacles[prevObstacle]->zFront > shiftZ) {
-            break;
-          }
 
-          // have intersection? check for collisions
-          int i = prevObstacle;
-          while(obstacles[i]->zFront < shiftZ) {
-            // cube past intersection plane?
-            if (obstacles[i]->zBack < shiftZ || obstacles[i]->collided) {
-              prevObstacle++;
-            } else {
-              // now this cube is sure to be crossing intersection; check with player shadow
-
-              // if collide, add index, increment prevObstacle, mark as collided
-            }
-            i++;
-          }
-          
-          // return list of collided cubes
+        while() {
+          // compare shift z to current cube
+          // shift index when shift z passes the back of current cube
+          // increase index until next cube's back isn't past shiftz
         }
 
         // calculate score
