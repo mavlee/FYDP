@@ -140,6 +140,8 @@ void Game::generateGameFeatures() {
   // TODO: rename variables when i'm more awake
   int last = 0;
   int last_superpeak = -1000;
+  int last_gap = -1000;
+  int last_two_column = -1000;
   float maxholyshittotal = 0;
   Cube* obstacle;
   for (int i = 0; i < musicData[0].size(); i++) {
@@ -149,8 +151,8 @@ void Game::generateGameFeatures() {
     // used to count number of peaks
     int count = 0;
     // used to count number of superpeaks
-    int count2 = 0;
-    int count3 = 0;
+    int wallCounter = 0;
+    int twoColumnCounter = 0;
     float holyshittotal = 0;
     if (i - last_superpeak > 1400) maxholyshittotal = 0;
     for (int v = 0; v < NUM_BANDS; v++) {
@@ -163,11 +165,11 @@ void Game::generateGameFeatures() {
       for (int v = 0; v < NUM_BANDS; v++) {
         if (musicData[v][i] > 200 && i > SAMPLE_HISTORY*2) {
           //printf("holyshit of %f on sample %d with intensity %f\n", musicData[v][i], i, musicIntensityData[i]);
-          count2++;
+          wallCounter++;
           holyshittotal += musicData[v][i] * musicIntensityData[i];
         } else if (musicData[v][i] > 50 && i > SAMPLE_HISTORY*2) {
           //printf("minor holyshit of %f on sample %d\n", musicData[v][i], i);
-          count3++;
+          twoColumnCounter++;
         }
         if (musicData[v][i] / value > 0.9 && count < 1) {
           if (musicIntensityData[i] < 0.5) {
@@ -177,12 +179,13 @@ void Game::generateGameFeatures() {
 
           int rand_r = rand() % 4;
           int rand_c = rand() % 6;
-          peakMarker[i][rand_r][rand_c] = generateColour();
+          peakMarker[i][rand_r][rand_c] = 1;
           count++;
         }
       }
     }
-    if (count2 > 1) {
+    // wall
+    if (wallCounter > 1) {
       if (i - last_superpeak < 500 && holyshittotal > maxholyshittotal) {
         //printf("erase holyshit sample %d\n", last_superpeak);
         for (int r = 0; r < NUM_ROWS; r++) {
@@ -192,7 +195,7 @@ void Game::generateGameFeatures() {
         }
         int rand_r = rand() % 4;
         int rand_c = rand() % 6;
-        peakMarker[last_superpeak][rand_r][rand_c] = generateColour();
+        peakMarker[last_superpeak][rand_r][rand_c] = 1;
       }
       if ((i - last_superpeak < 500 && holyshittotal > maxholyshittotal) || i - last_superpeak > 1400) {
         //printf("holyshit on sample %d\n", i);
@@ -205,15 +208,16 @@ void Game::generateGameFeatures() {
         }
         for (int r = 0; r < NUM_ROWS; r++) {
           for (int c = 0; c < NUM_COLUMNS; c++) {
-            peakMarker[i][r][c] = generateColour();
+            peakMarker[i][r][c] = 1;
           }
         }
         last_superpeak = i;
         maxholyshittotal = holyshittotal;
       }
-    } else if (count2 > 0) {
+    // wall with gap
+    } else if (wallCounter > 0 && i - last_gap > 500) {
       //printf("wall with gap on sample %d\n", i);
-      int color = generateColour();
+      int color = 1;
       int rand_c = rand() % 5;
       for (int r = 0; r < NUM_ROWS; r++) {
         for (int c = 0; c < NUM_COLUMNS; c++) {
@@ -224,14 +228,16 @@ void Game::generateGameFeatures() {
         peakMarker[i][r][rand_c] = 0;
         peakMarker[i][r][rand_c+1] = 0;
       }
-    } else if (count3 > 0) {
-      int color = generateColour();
+      last_gap = i;
+    // two columns
+    } else if (twoColumnCounter > 0 && i - last_two_column > 500) {
       int rand_c = rand() % 6;
       int rand_c2 = (rand_c + 1) % 6;
       for (int r = 0; r < NUM_ROWS; r++) {
-        peakMarker[i][r][rand_c] = color;
-        peakMarker[i][r][rand_c2] = color;
+        peakMarker[i][r][rand_c] = 1;
+        peakMarker[i][r][rand_c2] = 1;
       }
+      last_two_column = i;
     }
   }
 
