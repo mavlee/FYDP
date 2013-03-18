@@ -4,7 +4,7 @@
 #include "canvas.h"
 #include "LOpenGL.h"
 #include "LText.h"
-#include <list>
+#include <vector>
 #include "objects.h"
 #include "music_handler.h"
 #include "timer.h"
@@ -58,7 +58,7 @@ private:
   vector<float> distances;
   float shiftZ;
   Cube* playerCube;
-  std::list<Cube*> obstacles;
+  vector<Cube*> obstacles;
   int prevObstacle;
 
   // Used for obstacle generation
