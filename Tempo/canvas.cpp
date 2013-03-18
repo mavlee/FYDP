@@ -186,7 +186,7 @@ void Canvas::draw(float shiftZ, std::vector<Cube*>& obstacles, float progressPct
   /** Draw 2D overlays **/
 #ifndef USE_MAC_INCLUDES
   glPushMatrix();
-  drawPlayer2(currentColour, comboLevel);
+  drawPlayer(currentColour, comboLevel);
   glPopMatrix();
 #endif
 
@@ -194,19 +194,24 @@ void Canvas::draw(float shiftZ, std::vector<Cube*>& obstacles, float progressPct
   drawProgress(progressPct);
   glPopMatrix();
 
+  glPushMatrix();
+  drawCombo(currentColour);
+  glPopMatrix();
+
   // Draw ui text
   float padding = 5.0f;
   float x = 20.0f;
-  fpsText->renderText(width, height, x, 10, fpsString);
-  comboLevelText->renderText(width, height, x, height - 100 - padding, comboLevelString);
-  pointsText->renderText(width, height, x, height - 50 - padding, pointsString);
+  //fpsText->renderText(width, height, x, 10, fpsString);
+  //comboLevelText->renderText(width, height, x, height - 100 - padding, comboLevelString);
+  //pointsText->renderText(width, height, x, height - 50 - padding, pointsString);
+  pointsText->renderText(width, height, width/4, height - 90, pointsString);
 
   // Update screen
   SDL_GL_SwapBuffers();
 }
 
 
-void Canvas::drawPlayer2(Cube::ColourSet colour, int comboLevel) {
+void Canvas::drawPlayer(Cube::ColourSet colour, int comboLevel) {
   // Set attributes for texture drawing
   glMatrixMode(GL_MODELVIEW);
   glPushAttrib(GL_ENABLE_BIT);
@@ -223,7 +228,8 @@ void Canvas::drawPlayer2(Cube::ColourSet colour, int comboLevel) {
   if (comboLevel > MAX_LEVEL) {
     comboLevel = MAX_LEVEL;
   }
-  glColor4f(cubeColours[colour][0][0], cubeColours[colour][0][1], cubeColours[colour][0][2], 0.2f + 0.5f * comboLevel / MAX_LEVEL);
+  //glColor4f(cubeColours[colour][0][0], cubeColours[colour][0][1], cubeColours[colour][0][2], 0.2f + 0.5f * comboLevel / MAX_LEVEL);
+  glColor4f(1, 1, 1, 0.5);
 
   float kinectAspect = 1.f*KINECT_DEPTH_WIDTH/KINECT_DEPTH_HEIGHT;
 
@@ -242,7 +248,7 @@ void Canvas::drawPlayer2(Cube::ColourSet colour, int comboLevel) {
 
   // borders for player area
   glColor4f(0.4, 0.4, 0.4, 0.4);
-  const float border = 1.f;
+  const float border = 10.f;
   glBegin(GL_QUADS);
     glVertex3f(drawWidth/2, drawHeight/2, -z);
     glVertex3f(drawWidth/2, drawHeight/2 + border, -z);
@@ -279,12 +285,7 @@ void Canvas::drawPlayer2(Cube::ColourSet colour, int comboLevel) {
 
 void Canvas::drawObstacles(vector<Cube*>& obstacles) {
   for (vector<Cube*>::iterator i = obstacles.begin(); i != obstacles.end(); i++) {
-    if (rectLoaded) {
-      //(*i)->draw(&RECTANGLE);
-      (*i)->draw();
-    } else {
-      (*i)->draw();
-    }
+    (*i)->draw();
   }
 }
 
@@ -361,6 +362,61 @@ void Canvas::drawProgress(float progressPct) {
   glPopAttrib();
 }
 
+void Canvas::drawCombo(Cube::ColourSet colour) {
+  float padding = 10.0f;
+  float size = 40.0f;
+
+  float kinectAspect = 1.f*KINECT_DEPTH_WIDTH/KINECT_DEPTH_HEIGHT;
+  int drawWidth = kinectAspect * height;
+  int sideBarWidth = (width - drawWidth)/2 - padding;
+
+  // Initialize Projection Matrix
+  glMatrixMode( GL_PROJECTION );
+  glPushMatrix();
+  glLoadIdentity();
+  glOrtho(0, width, height, 0, 0, 1);
+
+  glMatrixMode(GL_MODELVIEW);
+  glPushAttrib(GL_ENABLE_BIT);
+  glDisable(GL_DEPTH_TEST);
+  glDisable(GL_LIGHTING);
+  glEnable(GL_BLEND);
+
+  //glColor4f(cubeColours[colour][0][0], cubeColours[colour][0][1], cubeColours[colour][0][2], 0.2f + 0.5f * comboLevel / MAX_LEVEL);
+  glColor4f(cubeColours[colour][0][0], cubeColours[colour][0][1], cubeColours[colour][0][2], 1);
+  int xOff[2];
+  xOff[0] = 0;
+  xOff[1] = width - sideBarWidth;
+
+  comboLevel = min(comboLevel, MAX_LEVEL);
+  for (int y = -comboLevel+1; y < comboLevel; y++) {
+    glBegin(GL_QUADS);
+      glVertex3f(0, height/2-size + y*(2*size + padding), 0);
+      glVertex3f(sideBarWidth, height/2-size + y*(2*size + padding), 0);
+      glVertex3f(sideBarWidth, height/2+size + y*(2*size + padding), 0);
+      glVertex3f(0, height/2+size + y*(2*size + padding), 0);
+    glEnd();
+    glBegin(GL_QUADS);
+      glVertex3f(width - sideBarWidth, height/2+size + y*(2*size + padding), 0);
+      glVertex3f(width - sideBarWidth, height/2-size + y*(2*size + padding), 0);
+      glVertex3f(width, height/2-size + y*(2*size + padding), 0);
+      glVertex3f(width, height/2+size + y*(2*size + padding), 0);
+    glEnd();
+  }
+
+  // Reset attributes, projection matrix
+  glEnable(GL_DEPTH_TEST);
+  glEnable(GL_LIGHTING);
+  glDisable(GL_BLEND);
+
+  glMatrixMode(GL_MODELVIEW);
+  glPopMatrix();
+
+  glMatrixMode(GL_PROJECTION);
+  glPopMatrix();
+  glPopAttrib();
+}
+
 void Canvas::drawGrid(std::vector<int>& closeCubes, std::vector<Cube*>& obstacles) {
   glMatrixMode(GL_MODELVIEW);
   glPushAttrib(GL_ENABLE_BIT);
@@ -387,11 +443,6 @@ void Canvas::drawGrid(std::vector<int>& closeCubes, std::vector<Cube*>& obstacle
         break;
       }
     }
-    //float z = obstacles[closeCubes[i]]->zFront + 1;
-    //int r = obstacles[closeCubes[i]]->r;
-    //int c = obstacles[closeCubes[i]]->c;
-    //float centreX = obstacles[closeCubes[i]]->centre.x;
-    //float centreY = obstacles[closeCubes[i]]->centre.y;
     // top bar
     glBegin(GL_QUADS);
       glVertex3f(centreX - w/2, padding + centreY + SHAPE_Y/2, z);
@@ -433,8 +484,6 @@ void Canvas::drawGrid(std::vector<int>& closeCubes, std::vector<Cube*>& obstacle
   glMatrixMode(GL_MODELVIEW);
   glPopMatrix();
 
-  //glMatrixMode(GL_PROJECTION);
-  //glPopMatrix();
   glPopAttrib();
 }
 
@@ -480,11 +529,12 @@ void Canvas::setFPSText(float fps) {
 
 void Canvas::setPointsText(int points) {
   std::stringstream pointsCaption;
-  pointsCaption << "Points: " << points;
+  pointsCaption << points;
   pointsString = pointsCaption.str();
 }
 
 void Canvas::setComboLevelText(int comboLevel) {
+  this->comboLevel = comboLevel;
   std::stringstream comboCaption;
   comboCaption << "Combo Level: " << comboLevel;
   comboLevelString = comboCaption.str();
