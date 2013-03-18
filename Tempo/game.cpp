@@ -69,6 +69,7 @@ void Game::reset(string song) {
   gProjectionScale = 1.f;
 
   // clear obstacles
+  prevObstacle = 0;
   obstacles.clear();
   shiftZ = 0.f;
   lastUpdate = 0;
@@ -368,6 +369,13 @@ void Game::update() {
         musicStarted = true;
         lastUpdate = timer.get_ticks();
       } else {
+        //WIP collision stuff
+        while() {
+          // compare shift z to current cube
+          // shift index when shift z passes the back of current cube
+          // increase index until next cube's back isn't past shiftz
+        }
+
         // calculate score
         // TODO: calculate score according to time, and not the frequency that frames are drawn
         updateScore();
