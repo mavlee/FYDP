@@ -7,6 +7,7 @@
 #include "image_loader.h"
 #include "kinect_controller.h"
 using std::vector;
+using std::min;
 
 char* skyboxPath = "res/images/skybox.png";
 bool skyboxLoaded = false;
