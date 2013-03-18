@@ -303,55 +303,6 @@ void Canvas::drawObstacles(std::list<Cube*> obstacles) {
   glDisable(GL_MULTISAMPLE_ARB);
 }
 
-void Canvas::drawLife(int lifeRemaining) {
-  const float padding = 20.0f;
-  const float x = 0.0f;
-  const float y = 0.0f;
-  const double size = 50;
-
-  // Initialize Projection Matrix
-  glMatrixMode( GL_PROJECTION );
-  glPushMatrix();
-  glLoadIdentity();
-  glOrtho(0, width, height, 0, 0, 1);
-
-  // Set attributes for ortho texture drawing
-  glMatrixMode(GL_MODELVIEW);
-  glPushAttrib(GL_ENABLE_BIT);
-  glEnable(GL_TEXTURE_2D);
-  glDisable(GL_DEPTH_TEST);
-  glDisable(GL_LIGHTING);
-  glEnable(GL_BLEND);
-
-  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-  //Set texture stretching parameters
-  glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-  glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-
-  glBindTexture(GL_TEXTURE_2D, LIFE);
-  glBegin(GL_QUADS);
-  for (int i = 0; i < lifeRemaining; i++) {
-    glTexCoord2f( 1.0f, 0.0f ); glVertex3f( x + 235 + size * (i+1) + padding * i , y + padding + 0        , 0.f );
-    glTexCoord2f( 0.0f, 0.0f ); glVertex3f( x + 235 + size * (i  ) + padding * i , y + padding + 0        , 0.f );
-    glTexCoord2f( 0.0f, 1.0f ); glVertex3f( x + 235 + size * (i  ) + padding * i , y + padding + 0 + size , 0.f );
-    glTexCoord2f( 1.0f, 1.0f ); glVertex3f( x + 235 + size * (i+1) + padding * i , y + padding + 0 + size , 0.f );
-  }
-  glEnd();
-
-  // Reset attributes, projection matrix
-  glDisable(GL_TEXTURE_2D);
-  glEnable(GL_DEPTH_TEST);
-  glEnable(GL_LIGHTING);
-  glDisable(GL_BLEND);
-
-  glMatrixMode(GL_MODELVIEW);
-  glPopMatrix();
-
-  glMatrixMode(GL_PROJECTION);
-  glPopMatrix();
-  glPopAttrib();
-}
-
 void Canvas::drawProgress(float progressPct) {
   float padding = 20.0f;
   float x = 500.0f;

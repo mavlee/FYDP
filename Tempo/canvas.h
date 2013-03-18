@@ -31,7 +31,6 @@ private:
   void drawObstacles(std::list<Cube*> obstacles);
   void drawPlayer(int lifeRemaining);
   void drawPlayer2(Cube::ColourSet, int comboLevel);
-  void drawLife(int lifeRemaining);
   void drawProgress(float progressPct);
 
 public:
