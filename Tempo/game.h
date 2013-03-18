@@ -62,6 +62,7 @@ private:
   float shiftZ;
   Cube* playerCube;
   std::list<Cube*> obstacles;
+  int prevObstacle;
 
   // Used for obstacle generation
   int generateColour();
