@@ -386,28 +386,8 @@ void Game::update() {
         //WIP collision stuff
 
         //TODO epsilons
-        while(false) {
-          // cube crossed intersection plane?
-          if (obstacles[prevObstacle]->zFront > shiftZ) {
-            break;
-          }
-
-          // have intersection? check for collisions
-          int i = prevObstacle;
-          while(obstacles[i]->zFront < shiftZ) {
-            // cube past intersection plane?
-            if (obstacles[i]->zBack < shiftZ || obstacles[i]->collided) {
-              prevObstacle++;
-            } else {
-              // now this cube is sure to be crossing intersection; check with player shadow
-
-              // if collide, add index, increment prevObstacle, mark as collided
-            }
-            i++;
-          }
-          
-          // return list of collided cubes
-        }
+        checkCollisions();
+      
 
         // calculate score
         // TODO: calculate score according to time, and not the frequency that frames are drawn
@@ -528,4 +508,85 @@ void Game::resume() {
 
 void Game::enableKinect() {
   kinectConnected = true;
+}
+
+int* Game::checkCollisions() {
+  vector<int> collidedCubes;
+  float shrinkRatio = 240.f/SCREEN_HEIGHT;
+
+  // note: use negative when dealing with cube coordinates
+
+  // cube crossed intersection plane?
+  if (-(obstacles[prevObstacle]->zFront) > shiftZ) {
+    return NULL;
+  }
+
+  // have intersection? check for collisions
+  // if cube back is less than shiftZ, it's behind the the collision plane
+  // while loop is opposite of above if statement
+  // basically, when the front of the cube has passed the collision plane (zFront < shiftZ) & zBack has not passed the collision plane (zBack > shiftZ), then check if the cube intersects with the player shadow
+
+  int cubeIndex = prevObstacle;
+  while(-obstacles[cubeIndex]->zFront < shiftZ) {
+    // cube past intersection plane?
+    if (-obstacles[cubeIndex]->zBack < shiftZ || obstacles[cubeIndex]->collided) {
+      if (prevObstacle < obstacles.size() - 1)
+        prevObstacle++;
+    } else {
+      Cube *cube = obstacles[cubeIndex];
+      float x = cube->centre.x/SCALE;
+      float y = cube->centre.y/SCALE;
+      float x_scaled = x * shrinkRatio;
+      float y_scaled = y * shrinkRatio;
+      int pixelX = (int)x_scaled + 160;
+      int pixelY = (int)y_scaled + 120;
+      int cornerX = pixelX - cube->width/2/SCALE*shrinkRatio;
+      int cornerY = pixelY - cube->height/2/SCALE*shrinkRatio;
+      float cubeTexture[320*240];
+
+      for (int i = 0; i < 320; i++) {
+        for (int j = 0; j < 240; j++) {
+          int index = j + i*240;
+          if (i >= cornerX && i <= cornerX + cube->width/SCALE*shrinkRatio) {
+            if (j >= cornerY && j <= cornerY + cube->height/SCALE*shrinkRatio) {
+              cubeTexture[index] = 1;
+            } else {
+              cubeTexture[index] = 0;
+            }
+          } else {
+            cubeTexture[index] = 0;
+          }
+        }
+      }
+
+      float playerTexture[320*240];
+      for (int i = 0; i < 320; i++) {
+        for (int j = 0; j < 240; j++) {
+          int index = j + i*240;
+          playerTexture[index] = canvas->depthData[index*4+3];
+          if (playerTexture[index] + cubeTexture[index] > 1) {
+            obstacles[cubeIndex]->collided = true;
+            collidedCubes.push_back(cubeIndex);
+            printf("collision at cube %d\n", cubeIndex);
+            break;
+          }
+        }
+        if (obstacles[cubeIndex]->collided)
+          break;
+      }
+
+      // now this cube is sure to be crossing intersection; check with player shadow
+      // if collide, add index, increment prevObstacle, mark as collided
+    }
+    if (cubeIndex < obstacles.size()- 1)
+      cubeIndex++;
+    else
+      break;
+  }
+
+  int* cubes = new int[collidedCubes.size()];
+  for (int i = 0; i < collidedCubes.size(); i++)
+    cubes[i] = collidedCubes[i];
+
+  return cubes;
 }
