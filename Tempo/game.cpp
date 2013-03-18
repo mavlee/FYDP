@@ -59,6 +59,7 @@ void Game::reset(string song) {
 
   progressPct = 0.0f;
   lastColourChange = 0.0f;
+  currentColour = Cube::ColourSet(rand() % 4 + 1);
 
   isPaused = false;
   restart = false;
