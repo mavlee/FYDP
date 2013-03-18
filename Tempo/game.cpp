@@ -69,6 +69,7 @@ void Game::reset(string song) {
   gProjectionScale = 1.f;
 
   // clear obstacles
+  prevObstacle = 0;
   obstacles.clear();
   shiftZ = 0.f;
   lastUpdate = 0;
