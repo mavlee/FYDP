@@ -67,6 +67,7 @@ class Cube: public Object {
     float width;
     float height;
     float depth;
+    int r, c;
 };
 
 #endif

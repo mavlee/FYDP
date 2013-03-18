@@ -28,10 +28,11 @@ private:
   std::string pointsString;
 
   void drawSkybox(int width, int height, float shiftZ);
-  void drawObstacles(std::vector<Cube*> obstacles);
+  void drawObstacles(std::vector<Cube*>& obstacles);
   void drawPlayer(int lifeRemaining);
   void drawPlayer2(Cube::ColourSet, int comboLevel);
   void drawProgress(float progressPct);
+  void drawGrid(std::vector<int>& closeCubes, std::vector<Cube*>& obstacles);
 
 public:
   BYTE depthData[KINECT_DEPTH_WIDTH*KINECT_DEPTH_HEIGHT*4];
@@ -41,7 +42,7 @@ public:
   void initCanvas(); // inits GL
   void cleanupCanvas(); // cleans up GL
 
-  void draw(float shiftZ, std::vector<Cube*> obstacles, float progressPct, Cube::ColourSet currentColour, int comboLevel);
+  void draw(float shiftZ, std::vector<Cube*>& obstacles, float progressPct, std::vector<int>& closeCubes, Cube::ColourSet currentColour, int comboLevel);
   void drawHighscore(int points, int* highscores, bool highscoreAchieved);
 
   void setFPSText(float fps);
