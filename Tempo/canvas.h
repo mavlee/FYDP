@@ -1,7 +1,7 @@
 #ifndef CANVAS_H
 #define CANVAS_H
 #include "LOpenGL.h"
-#include <list>
+#include <vector>
 #include "objects.h"
 #include "constants.h"
 #include "LText.h"
@@ -28,7 +28,7 @@ private:
   std::string pointsString;
 
   void drawSkybox(int width, int height, float shiftZ);
-  void drawObstacles(std::list<Cube*> obstacles);
+  void drawObstacles(std::vector<Cube*> obstacles);
   void drawPlayer(int lifeRemaining);
   void drawPlayer2(int lifeRemaining, Cube::ColourSet);
   void drawLife(int lifeRemaining);
@@ -41,7 +41,7 @@ public:
 
   void initCanvas(); // inits GL
   void cleanupCanvas(); // cleans up GL
-  void draw(float shiftZ, std::list<Cube*> obstacles, int lifeRemaining, float progressPct, Cube::ColourSet currentColour);
+  void draw(float shiftZ, std::vector<Cube*> obstacles, int lifeRemaining, float progressPct, Cube::ColourSet currentColour);
   void drawHighscore(int points, int* highscores, bool highscoreAchieved, int lifeRemaining);
   void setFPSText(float fps);
   void setComboLevelText(int comboLevel);
