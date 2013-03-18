@@ -352,7 +352,7 @@ void Game::update() {
     int diff = timer.get_ticks() - lastUpdate;
 
     if (timer.get_ticks() < START_DELAY) {
-      shiftZ = SHIFT_INTERVAL_PER_SECOND*(timer.get_ticks() - START_DELAY)/1000.f;
+      shiftZ = averageIntensity[0]*SHIFT_INTERVAL_PER_SECOND*(timer.get_ticks() - START_DELAY)/1000.f;
     } else {
       if (!musicStarted) {
         musicHandler->play();
