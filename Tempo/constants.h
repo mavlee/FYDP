@@ -9,7 +9,7 @@ const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 800;
 const int SCREEN_BPP = 32;
 const float SCREEN_TILT = -20.f;
-const float SCALE = 1.f/20; // hacky as fuck
+const float SCALE = 1.f; // hacky as fuck
 const float Z_FAR = 50000.0f;
 const float Z_NEAR = 1000.f;
 const float FPS_CAP = 1000.f / 60;
@@ -20,10 +20,10 @@ const int NUM_COLUMNS = 6;
 
 const float SHAPE_X = SCALE*100.f;
 const float SHAPE_Y = SCALE*100.f;
-const float SHAPE_Z = SCALE*50.f;
-const float OFFSET_FROM_CAMERA = SCALE*(Z_NEAR + 100.f);
+const float SHAPE_Z = SCALE*5.f;
+const float OFFSET_FROM_CAMERA = SCALE*(Z_NEAR);
 
-const float SHIFT_INTERVAL_PER_SECOND = 100.f;
+const float SHIFT_INTERVAL_PER_SECOND = 50.f;
 
 const int KINECT_DEPTH_WIDTH = 320;
 const int KINECT_DEPTH_HEIGHT = 240;

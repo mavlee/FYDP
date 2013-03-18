@@ -172,7 +172,8 @@ void Canvas::draw(float shiftZ, std::list<Cube*> obstacles, float progressPct, C
 
   /** Draw 3D stuff **/
   glPushMatrix();
-  glTranslatef(0, 0, shiftZ + OFFSET_FROM_CAMERA);
+  //glTranslatef(0, 0, shiftZ + OFFSET_FROM_CAMERA);
+  glTranslatef(0, 0, shiftZ);
   drawObstacles(obstacles);
   glPopMatrix();
 
@@ -269,7 +270,7 @@ void Canvas::drawPlayer2(Cube::ColourSet colour, int comboLevel) {
     comboLevel = MAX_LEVEL;
   }
   glColor4f(cubeColours[colour][0][0], cubeColours[colour][0][1], cubeColours[colour][0][2], 0.2f + 0.5f * comboLevel / MAX_LEVEL);
-  
+
   float kinectAspect = 1.f*KINECT_DEPTH_HEIGHT/KINECT_DEPTH_HEIGHT;
   float z = OFFSET_FROM_CAMERA;
   int drawHeight = height*(z/Z_NEAR);
