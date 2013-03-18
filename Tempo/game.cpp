@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string>
+#include <fstream>
 #include "LOpenGL.h"
 #include "canvas.h"
 #include "game.h"
@@ -383,8 +384,9 @@ void Game::update() {
         //WIP collision stuff
 
         //TODO epsilons
-        checkCollisions();
-      
+        vector<int> collisions = checkCollisions();
+        if (collisions.size() > 0)
+          printf("number of collisions: %d\n", collisions.size());
 
         // calculate score
         // TODO: calculate score according to time, and not the frequency that frames are drawn
@@ -507,15 +509,16 @@ void Game::enableKinect() {
   kinectConnected = true;
 }
 
-int* Game::checkCollisions() {
+vector<int> Game::checkCollisions() {
   vector<int> collidedCubes;
   float shrinkRatio = 240.f/SCREEN_HEIGHT;
+  float playerZ = shiftZ + OFFSET_FROM_CAMERA;
 
   // note: use negative when dealing with cube coordinates
 
   // cube crossed intersection plane?
-  if (-(obstacles[prevObstacle]->zFront) > shiftZ) {
-    return NULL;
+  if (-(obstacles[prevObstacle]->zFront) > playerZ) {
+    return collidedCubes;
   }
 
   // have intersection? check for collisions
@@ -524,9 +527,9 @@ int* Game::checkCollisions() {
   // basically, when the front of the cube has passed the collision plane (zFront < shiftZ) & zBack has not passed the collision plane (zBack > shiftZ), then check if the cube intersects with the player shadow
 
   int cubeIndex = prevObstacle;
-  while(-obstacles[cubeIndex]->zFront < shiftZ) {
+  while(-obstacles[cubeIndex]->zFront < playerZ) {
     // cube past intersection plane?
-    if (-obstacles[cubeIndex]->zBack < shiftZ || obstacles[cubeIndex]->collided) {
+    if (-obstacles[cubeIndex]->zBack < playerZ || obstacles[cubeIndex]->collided) {
       if (prevObstacle < obstacles.size() - 1)
         prevObstacle++;
     } else {
@@ -543,7 +546,7 @@ int* Game::checkCollisions() {
 
       for (int i = 0; i < 320; i++) {
         for (int j = 0; j < 240; j++) {
-          int index = j + i*240;
+          int index = j*320 + i;
           if (i >= cornerX && i <= cornerX + cube->width/SCALE*shrinkRatio) {
             if (j >= cornerY && j <= cornerY + cube->height/SCALE*shrinkRatio) {
               cubeTexture[index] = 1;
@@ -559,12 +562,12 @@ int* Game::checkCollisions() {
       float playerTexture[320*240];
       for (int i = 0; i < 320; i++) {
         for (int j = 0; j < 240; j++) {
-          int index = j + i*240;
-          playerTexture[index] = canvas->depthData[index*4+3];
-          if (playerTexture[index] + cubeTexture[index] > 1) {
+          int index = j*320 + i;
+          playerTexture[index] = canvas->depthData[index*4];
+          if (playerTexture[index] + cubeTexture[index] > 255) {
             obstacles[cubeIndex]->collided = true;
             collidedCubes.push_back(cubeIndex);
-            printf("collision at cube %d\n", cubeIndex);
+            printf("collision with cube %d\n", cubeIndex);
             break;
           }
         }
@@ -581,9 +584,5 @@ int* Game::checkCollisions() {
       break;
   }
 
-  int* cubes = new int[collidedCubes.size()];
-  for (int i = 0; i < collidedCubes.size(); i++)
-    cubes[i] = collidedCubes[i];
-
-  return cubes;
+  return collidedCubes;
 }
