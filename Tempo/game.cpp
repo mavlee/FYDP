@@ -32,7 +32,7 @@ Game::Game(int width, int height) {
   musicHandler = new MusicHandler();
   // TODO remove after player collision has been done
   // also, this has nothing to do with the near plane
-  playerCube = new Cube(0.f, 0.f, -OFFSET_FROM_CAMERA, SHAPE_X, SHAPE_Y, SHAPE_Z, Cube::Player);
+  playerCube = new Cube(0.f, 0.f, -OFFSET_FROM_CAMERA, SHAPE_X, SHAPE_Y, SHAPE_Z, Cube::NO_COLOUR);
 
   string song = selectMusicFileDialog();
   while (!strcmp(song.c_str(), "\0")) {
@@ -51,15 +51,13 @@ Game::~Game() {
 void Game::reset(string song) {
   // Init text
   points = 0;
-  combo = 0;
   comboLevel = 1;
   canvas->setFPSText(0);
   canvas->setPointsText(0);
   canvas->setComboLevelText(0);
 
   progressPct = 0.0f;
-  lastColourChange = 0.0f;
-  currentColour = Cube::ColourSet(rand() % 4 + 1);
+  currentColour = Cube::NO_COLOUR;
 
   isPaused = false;
   restart = false;
@@ -289,6 +287,7 @@ bool Game::checkForNegativeCollisions() {
             || ((*iterator)->wLeft < playerCube->wRight + cameraX && (*iterator)->wRight > playerCube->wRight + cameraX)) {
               (*iterator)->collided = true;
               printf("Collision detected at:\nCurrent Depth: %f\nCurrent Left: %f\nCurrent Right: %f\nDepth: %f\nLeft: %f\nRight: %f\n", shiftZ - playerCube->zBack, playerCube->wLeft + cameraX, playerCube->wRight + cameraX, (*iterator)->zFront, (*iterator)->wLeft, (*iterator)->wRight);
+              currentColour = (*iterator)->colour;
               return true;
           }
         }
@@ -319,17 +318,27 @@ bool Game::checkForBonusCollisions() {
 }
 
 void Game::updateScore() {
-  bool collision = checkForNegativeCollisions();
-
-  combo++;
+  int collision = checkForNegativeCollisions();
   if (collision) {
-    combo = 0;
     comboLevel = 1;
   }
-  if (combo % 1000 == 0 && combo > 0) {
+
+  if (collision > 1) {
+    // TODO: check if collision with multiple colours, if this occurs
+    bool multiColourCollision = false;
+    if (multiColourCollision) {
+      currentColour = Cube::NO_COLOUR;
+    } else {
+      // TODO: get the colour that you collided with.
+    }
+  } else if (collision == 1) {
+    // TODO: change colour to the block you hit
+  }
+  
+  collision = checkForBonusCollisions();
+  if (collision) {
     comboLevel++;
   }
-  collision = checkForBonusCollisions();
   points += (1 + 100 * collision) * comboLevel;
 }
 
@@ -379,16 +388,6 @@ void Game::update() {
     }
 
     progressPct = musicHandler->getPositionInSec() / musicHandler->getLengthInSec();
-
-    // change colour every 5%
-    if (progressPct >= lastColourChange + 0.05f) {
-      Cube::ColourSet newColour = Cube::ColourSet(rand() % 4 + 1);
-      while (currentColour == newColour) {
-        newColour = Cube::ColourSet(rand() % 4 + 1);
-      }
-      currentColour = newColour;
-      lastColourChange = progressPct;
-    }
   }
 
   // Check for end of song
