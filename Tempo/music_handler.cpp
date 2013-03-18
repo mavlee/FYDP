@@ -175,7 +175,7 @@ int MusicHandler::analyze() {
   }
   for (int i = 0; i < energies[0].size(); i++) {
     for (int v = 0; v < NUM_BANDS; v++) {
-      if (energies[v][i] - 4 * average_energies[v][i] > 0) {
+      if (energies[v][i] - 5 * average_energies[v][i] > 0) {
         peakData[v][i] = energies[v][i] / (average_energies[v][i]);
       } else {
         peakData[v][i] = 0;
