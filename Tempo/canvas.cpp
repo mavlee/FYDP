@@ -199,58 +199,6 @@ void Canvas::draw(float shiftZ, std::list<Cube*> obstacles, float progressPct, C
   SDL_GL_SwapBuffers();
 }
 
-void Canvas::drawPlayer(int lifeRemaining) {
-  // Initialize Projection Matrix
-  glMatrixMode( GL_PROJECTION );
-  glPushMatrix();
-  glLoadIdentity();
-  glOrtho(0, width, height, 0, 0, 1);
-
-  // Set attributes for texture drawing
-  glMatrixMode(GL_MODELVIEW);
-  glPushAttrib(GL_ENABLE_BIT);
-  glEnable(GL_TEXTURE_2D);
-  glDisable(GL_DEPTH_TEST);
-  glEnable(GL_BLEND);
-
-  // Set texture settings
-  glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-  glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-  // Set colour according to HP
-  const float MIN_COLOUR = 0.4;
-  float colour = (1.f - MIN_COLOUR) * 1.f*lifeRemaining/10;
-  if (lifeRemaining <= 1) {
-    glColor4f(colour, 0, 0, 0.7);
-  } else {
-    glColor4f(colour, colour, colour, 0.7);
-  }
-
-  float kinectAspect = 1.f*KINECT_DEPTH_HEIGHT/KINECT_DEPTH_HEIGHT;
-  int drawHeight = height;
-  int drawWidth = kinectAspect * drawHeight;
-  int xOffset = (width - drawWidth)/2;
-
-  float z = 0;
-  glBindTexture(GL_TEXTURE_2D, playerDepthId);
-  glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, KINECT_DEPTH_WIDTH, KINECT_DEPTH_HEIGHT, GL_BGRA_EXT, GL_UNSIGNED_BYTE, (GLvoid*)depthData);
-  glBegin(GL_QUADS);
-    glTexCoord2f(1.0f, 1.0f); glVertex3f(xOffset + drawWidth, height, z);
-    glTexCoord2f(0.0f, 1.0f); glVertex3f(xOffset, height, z);
-    glTexCoord2f(0.0f, 0.0f); glVertex3f(xOffset, 0, z);
-    glTexCoord2f(1.0f, 0.0f); glVertex3f(xOffset + drawWidth, 0, z);
-  glEnd();
-
-  // Reset attributes, projection matrix
-  glMatrixMode(GL_MODELVIEW);
-  glPopMatrix();
-
-  glMatrixMode(GL_PROJECTION);
-  glPopMatrix();
-  glPopAttrib();
-}
-
 void Canvas::drawPlayer2(Cube::ColourSet colour, int comboLevel) {
   // Set attributes for texture drawing
   glMatrixMode(GL_MODELVIEW);
