@@ -295,9 +295,9 @@ void Game::generateGameFeatures() {
 }
 
 int Game::generateColour() {
-  int newColour = rand() % 4 + 1;
+  int newColour = rand() % 3 + 1;
   while (newColour == prevC1 || newColour == prevC2) {
-    newColour = rand() % 4 + 1;
+    newColour = rand() % 3 + 1;
   }
   prevC1 = prevC2;
   prevC2 = newColour;
@@ -350,11 +350,11 @@ void Game::updateScore() {
     for (int i = 0; i < collidedObjects.size(); i++) {
       if (obstacles[collidedObjects[i]]->colour == currentColour) {
         comboLevel++;
-        points += 100 * comboLevel;
       } else {
         comboLevel = 1;
         collidedWrongColour.push_back(collidedObjects[i]);
       }
+      points += 100 * comboLevel;
     }
     if (collidedWrongColour.size() > 0) {
       if (collidedWrongColour.size() == 1) {
@@ -368,11 +368,7 @@ void Game::updateScore() {
             break;
           }
         }
-        if (sameColour) {
-          currentColour = obstacles[collidedWrongColour[0]]->colour;
-        } else {
-          currentColour = Cube::NO_COLOUR;
-        }
+        currentColour = obstacles[collidedWrongColour[0]]->colour;
       }
     }
   }
