@@ -182,6 +182,7 @@ void Game::generateGameFeatures() {
           //printf("minor holyshit of %f on sample %d\n", musicData[v][i], i);
           twoColumnCounter++;
         }
+        // individual piece
         if (musicData[v][i] / value > 0.9 && count < 1) {
           if (musicIntensityData[i] < 0.5) {
             //printf("low intensity on sample %d with intensity %f\n", i, musicIntensityData[i]);
@@ -189,7 +190,10 @@ void Game::generateGameFeatures() {
           }
 
           int rand_r = rand() % 4;
-          int rand_c = rand() % 6;
+          int rand_c = 0;
+          if (rand() % 2 == 1) {
+            rand_c = 5;
+          }
           peakMarker[i][rand_r][rand_c] = 1;
           count++;
         }
@@ -226,7 +230,7 @@ void Game::generateGameFeatures() {
         maxholyshittotal = holyshittotal;
       }
     // wall with gap
-    } else if (wallCounter > 0 && i - last_gap > 500) {
+    } else if (wallCounter > 0 && i - last_gap > 0) {
       //printf("wall with gap on sample %d\n", i);
       int color = 1;
       int rand_c = rand() % 5;
@@ -241,7 +245,7 @@ void Game::generateGameFeatures() {
       }
       last_gap = i;
     // two columns
-    } else if (twoColumnCounter > 0 && i - last_two_column > 500) {
+    } else if (twoColumnCounter > 0 && i - last_two_column > 0) {
       int rand_c = rand() % 6;
       int rand_c2 = (rand_c + 1) % 6;
       for (int r = 0; r < NUM_ROWS; r++) {
@@ -295,7 +299,8 @@ void Game::generateGameFeatures() {
 }
 
 int Game::generateColour() {
-  int newColour = rand() % 3 + 1;
+  return rand() % 3 + 1;
+  int newColour = rand() % 4 + 1;
   while (newColour == prevC1 || newColour == prevC2) {
     newColour = rand() % 3 + 1;
   }
