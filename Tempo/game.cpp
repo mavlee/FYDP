@@ -186,16 +186,19 @@ void Game::generateGameFeatures() {
         }
         // individual piece
         if (musicData[v][i] / maxValue > 0.9 && count < 1) {
-          if (musicIntensityData[i] < 0.5) {
+          if (musicIntensityData[i] < 0.5 || eventCounter > 0) {
             //printf("low intensity on sample %d with intensity %f\n", i, musicIntensityData[i]);
             continue;
           }
 
           int rand_r = rand() % 4;
+          int rand_c = rand() % 6;
+          /*
           int rand_c = 0;
           if (rand() % 2 == 1) {
             rand_c = 5;
           }
+          */
           peakMarker[i][rand_r][rand_c] = 1;
           count++;
         }
@@ -267,8 +270,11 @@ void Game::generateGameFeatures() {
             peakMarker[i][r][rand_c2] = 1;
           }
           break;
-        // 2 bottom left to top right diagonals
+        // bottom left to top right diagonal gap
         case 3:
+          peakMarker[i][0][0] = 1;
+          peakMarker[i][1][0] = 1;
+          peakMarker[i][0][1] = 1;
           peakMarker[i][0][2] = 1;
           peakMarker[i][1][1] = 1;
           peakMarker[i][2][0] = 1;
@@ -276,9 +282,18 @@ void Game::generateGameFeatures() {
           peakMarker[i][1][4] = 1;
           peakMarker[i][2][3] = 1;
           peakMarker[i][3][2] = 1;
+          peakMarker[i][1][5] = 1;
+          peakMarker[i][2][5] = 1;
+          peakMarker[i][3][5] = 1;
+          peakMarker[i][2][4] = 1;
+          peakMarker[i][3][4] = 1;
+          peakMarker[i][3][3] = 1;
           break;
-        // 2 top left to bottom right diagonals
+        // top left to bottom right diagonal gap
         case 4:
+          peakMarker[i][0][5] = 1;
+          peakMarker[i][1][5] = 1;
+          peakMarker[i][0][4] = 1;
           peakMarker[i][1][0] = 1;
           peakMarker[i][2][1] = 1;
           peakMarker[i][3][2] = 1;
@@ -286,6 +301,15 @@ void Game::generateGameFeatures() {
           peakMarker[i][1][3] = 1;
           peakMarker[i][2][4] = 1;
           peakMarker[i][3][5] = 1;
+          peakMarker[i][1][0] = 1;
+          peakMarker[i][2][0] = 1;
+          peakMarker[i][3][0] = 1;
+          peakMarker[i][2][1] = 1;
+          peakMarker[i][3][1] = 1;
+          peakMarker[i][3][2] = 1;
+          peakMarker[i][0][3] = 1;
+          peakMarker[i][1][4] = 1;
+          peakMarker[i][2][5] = 1;
           break;
         // weird t shape thing
         case 5:
