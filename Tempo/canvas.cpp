@@ -220,7 +220,8 @@ void Canvas::drawPlayer2(Cube::ColourSet colour, int comboLevel) {
   }
   glColor4f(cubeColours[colour][0][0], cubeColours[colour][0][1], cubeColours[colour][0][2], 0.2f + 0.5f * comboLevel / MAX_LEVEL);
 
-  float kinectAspect = 1.f*KINECT_DEPTH_HEIGHT/KINECT_DEPTH_HEIGHT;
+  
+  float kinectAspect = 1.f*KINECT_DEPTH_WIDTH/KINECT_DEPTH_HEIGHT;
 
   float z = OFFSET_FROM_CAMERA;
   int drawHeight = height*(z/Z_NEAR);
