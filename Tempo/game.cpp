@@ -245,13 +245,11 @@ void Game::generateGameFeatures() {
   distances.resize(musicData[0].size());//, OFFSET_FROM_CAMERA);
   for (int i = 0; i < musicData[0].size(); i++) {
     distances[i] = 0;
-    //distances[i] += OFFSET_FROM_CAMERA;
-    distances[i] += i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec();
-    /*
+    distances[i] += OFFSET_FROM_CAMERA;
+    //distances[i] += i*1.0*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec();
     for (int j = i; j < musicData[0].size(); j++) {
       distances[j] += averageIntensity[i]*SHIFT_INTERVAL_PER_SECOND/musicHandler->getPeakDataPerSec();
     }
-    */
   }
 
   for (int i = 0; i < musicData[0].size(); i++) {
