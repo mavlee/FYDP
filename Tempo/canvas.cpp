@@ -1,10 +1,12 @@
 #include "LOpenGL.h"
 #include <stdio.h>
 #include <iomanip>
+#include <vector>
 #include "canvas.h"
 #include "constants.h"
 #include "image_loader.h"
 #include "kinect_controller.h"
+using std::vector;
 
 char* skyboxPath = "res/images/skybox.png";
 bool skyboxLoaded = false;
