@@ -21,7 +21,7 @@ const int NUM_COLUMNS = 6;
 const float SHAPE_X = SCALE*100.f;
 const float SHAPE_Y = SCALE*100.f;
 const float SHAPE_Z = SCALE*15.f;
-const float SPACING_X = 1.8f * SHAPE_X;
+const float SPACING_X = 1.35f * SHAPE_X;
 const float SPACING_Y = 1.35f * SHAPE_Y;
 const float OFFSET_FROM_CAMERA = SCALE*(Z_NEAR);
 
