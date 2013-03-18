@@ -38,10 +38,8 @@ private:
   // data about the game
   int points;
   int comboLevel;
-  int combo;
   float progressPct;
   Cube::ColourSet currentColour;
-  float lastColourChange;
   bool kinectConnected;
 
   bool musicStarted;

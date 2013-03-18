@@ -31,7 +31,7 @@ class Object {
 class Cube: public Object {
 	public:
 		enum ColourSet {
-			Player = 0,
+			NO_COLOUR = 0,
 			C1 = 1,
 			C2 = 2,
 			C3 = 3,
