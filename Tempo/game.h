@@ -4,7 +4,7 @@
 #include "canvas.h"
 #include "LOpenGL.h"
 #include "LText.h"
-#include <list>
+#include <vector>
 #include "objects.h"
 #include "music_handler.h"
 #include "timer.h"
@@ -58,7 +58,9 @@ private:
   vector<float> distances;
   float shiftZ;
   Cube* playerCube;
-  std::list<Cube*> obstacles;
+
+  vector<Cube*> obstacles;
+
   int prevObstacle;
 
   // Used for obstacle generation
@@ -80,6 +82,8 @@ private:
 
   void pause();
   void resume();
+
+  vector<int> checkCollisions();
 
 public:
   BYTE depthData[KINECT_DEPTH_WIDTH*KINECT_DEPTH_HEIGHT*4];
