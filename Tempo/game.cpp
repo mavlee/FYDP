@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string>
 #include <fstream>
+#include <cmath>
 #include "LOpenGL.h"
 #include "canvas.h"
 #include "game.h"
@@ -277,8 +278,8 @@ void Game::generateGameFeatures() {
     }
   }
   for (int i = 0; i < musicData[0].size(); i++) {
-    if (averageIntensity[i] < 0.1) {
-      averageIntensity[i] = 0.1;
+    if (averageIntensity[i] < 0.3) {
+      averageIntensity[i] = 0.3;
     }
   }
 
