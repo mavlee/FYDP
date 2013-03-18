@@ -79,10 +79,7 @@ void Game::reset(string song) {
     delete obstacles[i];
     obstacles[i] = NULL;
   }
-<<<<<<< HEAD
 
-=======
->>>>>>> WIP collision
   obstacles.clear();
   shiftZ = 0.f;
   lastUpdate = 0;
