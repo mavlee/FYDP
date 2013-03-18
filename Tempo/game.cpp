@@ -152,43 +152,40 @@ void Game::generateGameFeatures() {
   // TODO: rename variables when i'm more awake
   int last = 0;
   int last_superpeak = -1000;
-  int last_gap = -1000;
-  int last_two_column = -1000;
+  int last_event = -1000;
   float maxholyshittotal = 0;
   Cube* obstacle;
   for (int i = 0; i < musicData[0].size(); i++) {
     // used to get the peak value at an instant
-    float value = 0;
-    int m = -1;
+    float maxValue = 0;
+    int maxValueIndex = -1;
     // used to count number of peaks
     int count = 0;
     // used to count number of superpeaks
     int wallCounter = 0;
     int twoColumnCounter = 0;
     int horizontalBarCounter = 0;
+    int eventCounter = 0;
     float holyshittotal = 0;
     if (i - last_superpeak > 1400) maxholyshittotal = 0;
     for (int v = 0; v < NUM_BANDS; v++) {
-      if (musicData[v][i] > value) {
-        value = musicData[v][i];
-        m = v;
+      if (musicData[v][i] > maxValue) {
+        maxValue = musicData[v][i];
+        maxValueIndex = v;
       }
     }
-    if (m > -1) {
+    if (maxValueIndex > -1) {
       for (int v = 0; v < NUM_BANDS; v++) {
         if (musicData[v][i] > 200 && i > SAMPLE_HISTORY*2) {
           //printf("holyshit of %f on sample %d with intensity %f\n", musicData[v][i], i, musicIntensityData[i]);
           wallCounter++;
           holyshittotal += musicData[v][i] * musicIntensityData[i];
-        } else if (musicData[v][i] > 100 && i > SAMPLE_HISTORY*2) {
-          //printf("minor holyshit of %f on sample %d\n", musicData[v][i], i);
-          horizontalBarCounter++;
         } else if (musicData[v][i] > 50 && i > SAMPLE_HISTORY*2) {
           //printf("minor holyshit of %f on sample %d\n", musicData[v][i], i);
-          twoColumnCounter++;
+          eventCounter++;
         }
         // individual piece
-        if (musicData[v][i] / value > 0.9 && count < 1) {
+        if (musicData[v][i] / maxValue > 0.9 && count < 1) {
           if (musicIntensityData[i] < 0.5) {
             //printf("low intensity on sample %d with intensity %f\n", i, musicIntensityData[i]);
             continue;
@@ -214,7 +211,10 @@ void Game::generateGameFeatures() {
           }
         }
         int rand_r = rand() % 4;
-        int rand_c = rand() % 6;
+        int rand_c = 0;
+        if (rand() % 2 == 1) {
+          rand_c = 5;
+        }
         peakMarker[last_superpeak][rand_r][rand_c] = 1;
       }
       if ((i - last_superpeak < 500 && holyshittotal > maxholyshittotal) || i - last_superpeak > 1400) {
@@ -234,40 +234,111 @@ void Game::generateGameFeatures() {
         last_superpeak = i;
         maxholyshittotal = holyshittotal;
       }
-    // wall with gap
-    } else if (wallCounter > 0 && i - last_gap > 0) {
-      //printf("wall with gap on sample %d\n", i);
-      int color = 1;
-      int rand_c = rand() % 5;
-      for (int r = 0; r < NUM_ROWS; r++) {
-        for (int c = 0; c < NUM_COLUMNS; c++) {
-          peakMarker[i][r][c] = color;
-        }
+    } else if (eventCounter > 0 && i - last_event > 0) {
+      int eventType = rand() % 8;
+      int rand_c, rand_r, rand_c2, start;
+      last_event = i;
+      switch (eventType) {
+        // wall with 2 column gap
+        case 0:
+          rand_c = rand() % 5;
+          for (int r = 0; r < NUM_ROWS; r++)
+            for (int c = 0; c < NUM_COLUMNS; c++)
+              peakMarker[i][r][c] = 1;
+          for (int r = 0; r < NUM_ROWS; r++) {
+            peakMarker[i][r][rand_c] = 0;
+            peakMarker[i][r][rand_c+1] = 0;
+          }
+          break;
+        // horizontal bar
+        case 1:
+          rand_r = 0;
+          if (rand() % 2 == 1)
+            rand_r = 3;
+          for (int c = 0; c < NUM_COLUMNS; c++)
+            peakMarker[i][rand_r][c] = 1;
+          break;
+        // two columns
+        case 2:
+          rand_c = rand() % 6;
+          rand_c2 = (rand_c + 1) % 6;
+          for (int r = 0; r < NUM_ROWS; r++) {
+            peakMarker[i][r][rand_c] = 1;
+            peakMarker[i][r][rand_c2] = 1;
+          }
+          break;
+        // 2 bottom left to top right diagonals
+        case 3:
+          peakMarker[i][0][2] = 1;
+          peakMarker[i][1][1] = 1;
+          peakMarker[i][2][0] = 1;
+          peakMarker[i][0][5] = 1;
+          peakMarker[i][1][4] = 1;
+          peakMarker[i][2][3] = 1;
+          peakMarker[i][3][2] = 1;
+          break;
+        // 2 top left to bottom right diagonals
+        case 4:
+          peakMarker[i][1][0] = 1;
+          peakMarker[i][2][1] = 1;
+          peakMarker[i][3][2] = 1;
+          peakMarker[i][0][2] = 1;
+          peakMarker[i][1][3] = 1;
+          peakMarker[i][2][4] = 1;
+          peakMarker[i][3][5] = 1;
+          break;
+        // weird t shape thing
+        case 5:
+          if (rand() % 2 == 1) {
+            rand_c = rand() % 4;
+            for (int r = 0; r < NUM_ROWS; r++)
+              peakMarker[i][r][rand_c] = 1;
+            peakMarker[i][1][rand_c+1] = 1;
+            peakMarker[i][1][rand_c+2] = 1;
+          } else {
+            rand_c = rand() % 4 + 2;
+            for (int r = 0; r < NUM_ROWS; r++)
+              peakMarker[i][r][rand_c] = 1;
+            peakMarker[i][1][rand_c-1] = 1;
+            peakMarker[i][1][rand_c-2] = 1;
+          }
+          break;
+        // diagonal box hax
+        case 6:
+          if (rand() % 2 == 1) {
+            peakMarker[i][0][2] = 1;
+            peakMarker[i][1][1] = 1;
+            peakMarker[i][2][0] = 1;
+            peakMarker[i][3][1] = 1;
+            peakMarker[i][3][3] = 1;
+            peakMarker[i][0][4] = 1;
+            peakMarker[i][2][4] = 1;
+            peakMarker[i][1][5] = 1;
+          } else {
+            peakMarker[i][0][1] = 1;
+            peakMarker[i][1][0] = 1;
+            peakMarker[i][2][1] = 1;
+            peakMarker[i][3][2] = 1;
+            peakMarker[i][0][3] = 1;
+            peakMarker[i][1][4] = 1;
+            peakMarker[i][2][5] = 1;
+            peakMarker[i][3][4] = 1;
+          }
+          break;
+        // half side and top bar
+        case 7:
+          start = 0;
+          if (rand() % 2 == 1)
+            start = 3;
+          for (int c = start; c < NUM_COLUMNS; c++)
+            for (int r = 0; r < NUM_ROWS; r++)
+              peakMarker[i][r][c] = 1;
+          for (int c = 0; c < NUM_COLUMNS; c++)
+            peakMarker[i][0][c] = 1;
+          break;
+        default:
+          break;
       }
-      for (int r = 0; r < NUM_ROWS; r++) {
-        peakMarker[i][r][rand_c] = 0;
-        peakMarker[i][r][rand_c+1] = 0;
-      }
-      last_gap = i;
-    // horizontal bar
-    } else if (horizontalBarCounter > 0 && i - last_two_column > 0) {
-      int rand_r = 0;
-      if (rand() % 2 == 1) {
-        rand_r = 3;
-      }
-      for (int c = 0; c < NUM_COLUMNS; c++) {
-        peakMarker[i][rand_r][c] = 1;
-      }
-      last_two_column = i;
-    // two columns
-    } else if (twoColumnCounter > 0 && i - last_two_column > 0) {
-      int rand_c = rand() % 6;
-      int rand_c2 = (rand_c + 1) % 6;
-      for (int r = 0; r < NUM_ROWS; r++) {
-        peakMarker[i][r][rand_c] = 1;
-        peakMarker[i][r][rand_c2] = 1;
-      }
-      last_two_column = i;
     }
   }
 
