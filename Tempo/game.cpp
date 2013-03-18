@@ -344,28 +344,38 @@ bool Game::checkForBonusCollisions() {
 }
 
 void Game::updateScore() {
-  int collision = checkForNegativeCollisions();
-  if (collision) {
-    comboLevel = 1;
-  }
-
-  if (collision > 1) {
-    // TODO: check if collision with multiple colours, if this occurs
-    bool multiColourCollision = false;
-    if (multiColourCollision) {
-      currentColour = Cube::NO_COLOUR;
-    } else {
-      // TODO: get the colour that you collided with.
+  vector<int> collidedObjects = checkCollisions();
+  if (collidedObjects.size() > 0) {
+    vector<int> collidedWrongColour;
+    for (int i = 0; i < collidedObjects.size(); i++) {
+      if (obstacles[collidedObjects[i]]->colour == currentColour) {
+        comboLevel++;
+        points += 100 * comboLevel;
+      } else {
+        comboLevel = 1;
+        collidedWrongColour.push_back(collidedObjects[i]);
+      }
     }
-  } else if (collision == 1) {
-    // TODO: change colour to the block you hit
+    if (collidedWrongColour.size() > 0) {
+      if (collidedWrongColour.size() == 1) {
+        currentColour = obstacles[collidedWrongColour[0]]->colour;
+      } else {
+        Cube::ColourSet firstColour = obstacles[collidedWrongColour[0]]->colour;
+        bool sameColour = true;
+        for (int i = 0; i < collidedWrongColour.size(); i++) {
+          if (obstacles[collidedWrongColour[i]]->colour != firstColour) {
+            sameColour = false;
+            break;
+          }
+        }
+        if (sameColour) {
+          currentColour = obstacles[collidedWrongColour[0]]->colour;
+        } else {
+          currentColour = Cube::NO_COLOUR;
+        }
+      }
+    }
   }
-
-  collision = checkForBonusCollisions();
-  if (collision) {
-    comboLevel++;
-  }
-  points += (1 + 100 * collision) * comboLevel;
 }
 
 void Game::draw() {
@@ -395,11 +405,6 @@ void Game::update() {
         lastUpdate = timer.get_ticks();
       } else {
         //WIP collision stuff
-
-        //TODO epsilons
-        vector<int> collisions = checkCollisions();
-        if (collisions.size() > 0)
-          printf("number of collisions: %d\n", collisions.size());
 
         // calculate score
         // TODO: calculate score according to time, and not the frequency that frames are drawn
