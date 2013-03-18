@@ -60,6 +60,7 @@ private:
   Cube* playerCube;
 
   vector<Cube*> obstacles;
+  vector<int> closeCubes;
 
   int prevObstacle;
 

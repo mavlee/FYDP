@@ -80,8 +80,8 @@ void Game::reset(string song) {
     delete obstacles[i];
     obstacles[i] = NULL;
   }
-
   obstacles.clear();
+  closeCubes.clear();
   shiftZ = 0.f;
   lastUpdate = 0;
   frames = 0;
@@ -342,7 +342,7 @@ void Game::updateScore() {
 
 void Game::draw() {
   if (!finished) {
-    canvas->draw(shiftZ, obstacles, progressPct, currentColour, comboLevel);
+    canvas->draw(shiftZ, obstacles, progressPct, closeCubes, currentColour, comboLevel);
   } else {
     canvas->drawHighscore(points, highscores, highscoreAchieved);
   }
@@ -366,7 +366,6 @@ void Game::update() {
         musicStarted = true;
         lastUpdate = timer.get_ticks();
       } else {
-        //WIP collision stuff
 
         // calculate score
         // TODO: calculate score according to time, and not the frequency that frames are drawn
@@ -385,6 +384,14 @@ void Game::update() {
         canvas->setPointsText(points);
         canvas->setComboLevelText(comboLevel);
       }
+    }
+
+    // Close cubes
+    int i = prevObstacle;
+    closeCubes.clear();
+    while(abs(obstacles[i]->zFront) < shiftZ + OFFSET_FROM_CAMERA + 250.0) {
+      closeCubes.push_back(i);
+      i++;
     }
 
     progressPct = musicHandler->getPositionInSec() / musicHandler->getLengthInSec();
