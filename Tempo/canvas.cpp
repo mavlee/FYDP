@@ -388,7 +388,7 @@ void Canvas::drawCombo(Cube::ColourSet colour) {
   xOff[0] = 0;
   xOff[1] = width - sideBarWidth;
 
-  comboLevel = min(comboLevel, MAX_LEVEL);
+  comboLevel = min((int)(comboLevel/5.0 + 0.9), MAX_LEVEL);
   for (int y = -comboLevel+1; y < comboLevel; y++) {
     glBegin(GL_QUADS);
       glVertex3f(0, height/2-size + y*(2*size + padding), 0);
