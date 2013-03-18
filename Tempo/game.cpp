@@ -304,45 +304,6 @@ int Game::generateColour() {
   return newColour;
 }
 
-bool Game::checkForNegativeCollisions() {
-  for (vector<Cube*>::const_iterator iterator = obstacles.begin(), end = obstacles.end(); iterator != end; ++iterator) {
-    if (!(*iterator)->collided) {
-      if ((*iterator)->colour != currentColour) {
-        if ((*iterator)->zFront > shiftZ + playerCube->zBack && (*iterator)->zBack < shiftZ + playerCube->zBack ) {
-          if (((*iterator)->wRight > playerCube->wLeft + cameraX && (*iterator)->wLeft < playerCube->wLeft + cameraX)
-            || ((*iterator)->wLeft < playerCube->wRight + cameraX && (*iterator)->wRight > playerCube->wRight + cameraX)) {
-              (*iterator)->collided = true;
-              printf("Collision detected at:\nCurrent Depth: %f\nCurrent Left: %f\nCurrent Right: %f\nDepth: %f\nLeft: %f\nRight: %f\n", shiftZ - playerCube->zBack, playerCube->wLeft + cameraX, playerCube->wRight + cameraX, (*iterator)->zFront, (*iterator)->wLeft, (*iterator)->wRight);
-              currentColour = (*iterator)->colour;
-              return true;
-          }
-        }
-      }
-    }
-  }
-
-  return false;
-}
-
-bool Game::checkForBonusCollisions() {
-  for (vector<Cube*>::const_iterator iterator = obstacles.begin(), end = obstacles.end(); iterator != end; ++iterator) {
-    if (!(*iterator)->collided) {
-      if ((*iterator)->colour == currentColour) {
-        if ((*iterator)->zFront > shiftZ + playerCube->zBack && (*iterator)->zBack < shiftZ + playerCube->zBack ) {
-          if (((*iterator)->wRight > playerCube->wLeft + cameraX && (*iterator)->wLeft < playerCube->wLeft + cameraX)
-            || ((*iterator)->wLeft < playerCube->wRight + cameraX && (*iterator)->wRight > playerCube->wRight + cameraX)) {
-              (*iterator)->collided = true;
-              printf("Collision detected at:\nCurrent Depth: %f\nCurrent Left: %f\nCurrent Right: %f\nDepth: %f\nLeft: %f\nRight: %f\n", shiftZ - playerCube->zBack, playerCube->wLeft + cameraX, playerCube->wRight + cameraX, (*iterator)->zFront, (*iterator)->wLeft, (*iterator)->wRight);
-              return true;
-          }
-        }
-      }
-    }
-  }
-
-  return false;
-}
-
 void Game::updateScore() {
   vector<int> collidedObjects = checkCollisions();
   if (collidedObjects.size() > 0) {
