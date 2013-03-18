@@ -193,12 +193,12 @@ void Game::generateGameFeatures() {
 
           int rand_r = rand() % 4;
           //int rand_c = rand() % 6;
-          
+
           int rand_c = 1;
           if (rand() % 2 == 1) {
             rand_c = 4;
           }
-          
+
           peakMarker[i][rand_r][rand_c] = 1;
           count++;
         }
@@ -272,6 +272,15 @@ void Game::generateGameFeatures() {
           break;
         // bottom left to top right diagonal gap
         case 3:
+          peakMarker[i][0][1] = 1;
+          peakMarker[i][0][2] = 1;
+          peakMarker[i][1][2] = 1;
+          peakMarker[i][1][3] = 1;
+          peakMarker[i][2][3] = 1;
+          peakMarker[i][2][4] = 1;
+          peakMarker[i][3][4] = 1;
+          peakMarker[i][3][5] = 1;
+          /*
           peakMarker[i][0][0] = 1;
           peakMarker[i][1][0] = 1;
           peakMarker[i][0][1] = 1;
@@ -288,9 +297,20 @@ void Game::generateGameFeatures() {
           peakMarker[i][2][4] = 1;
           peakMarker[i][3][4] = 1;
           peakMarker[i][3][3] = 1;
+          */
           break;
         // top left to bottom right diagonal gap
         case 4:
+          peakMarker[i][0][3] = 1;
+          peakMarker[i][0][4] = 1;
+          peakMarker[i][1][3] = 1;
+          peakMarker[i][1][2] = 1;
+          peakMarker[i][2][1] = 1;
+          peakMarker[i][2][2] = 1;
+          peakMarker[i][3][1] = 1;
+          peakMarker[i][3][0] = 1;
+
+          /*
           peakMarker[i][0][5] = 1;
           peakMarker[i][1][5] = 1;
           peakMarker[i][0][4] = 1;
@@ -310,6 +330,7 @@ void Game::generateGameFeatures() {
           peakMarker[i][0][3] = 1;
           peakMarker[i][1][4] = 1;
           peakMarker[i][2][5] = 1;
+          */
           break;
         // weird t shape thing
         case 5:
