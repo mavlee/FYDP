@@ -241,6 +241,11 @@ void Game::generateGameFeatures() {
       averageIntensity[i] += musicIntensityData[j] / min(100.0, double(musicData[0].size() - i));
     }
   }
+  for (int i = 0; i < musicData[0].size(); i++) {
+    if (averageIntensity[i] < 0.1) {
+      averageIntensity[i] = 0.1;
+    }
+  }
 
   //vector<float> distances(musicData[0].size(), OFFSET_FROM_CAMERA);
   distances.resize(musicData[0].size());//, OFFSET_FROM_CAMERA);
@@ -365,7 +370,7 @@ void Game::update() {
     int diff = timer.get_ticks() - lastUpdate;
 
     if (timer.get_ticks() < START_DELAY) {
-      shiftZ = SHIFT_INTERVAL_PER_SECOND*(timer.get_ticks() - START_DELAY)/1000.f;
+      shiftZ = averageIntensity[0]*SHIFT_INTERVAL_PER_SECOND*(timer.get_ticks() - START_DELAY)/1000.f;
     } else {
       if (!musicStarted) {
         musicHandler->play();
