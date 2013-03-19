@@ -3,6 +3,6 @@
 
 #include "constants.h"
 
-extern float cubeColours[4][8][3];
+extern float cubeColours[3][8][3];
 
 #endif CUBE_CONST_H

@@ -432,14 +432,7 @@ void Game::generateGameFeatures() {
 }
 
 int Game::generateColour() {
-  return rand() % 3 + 1;
-  int newColour = rand() % 4 + 1;
-  while (newColour == prevC1 || newColour == prevC2) {
-    newColour = rand() % 3 + 1;
-  }
-  prevC1 = prevC2;
-  prevC2 = newColour;
-  return newColour;
+  return rand() % 3;
 }
 
 void Game::updateScore() {
