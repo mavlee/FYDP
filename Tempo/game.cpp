@@ -192,12 +192,14 @@ void Game::generateGameFeatures() {
           }
 
           int rand_r = rand() % 4;
-          //int rand_c = rand() % 6;
+          int rand_c = rand() % 6;
 
-          int rand_c = 1;
+          /*
+          int rand_c = 2;
           if (rand() % 2 == 1) {
-            rand_c = 4;
+            rand_c = 3;
           }
+          */
 
           peakMarker[i][rand_r][rand_c] = 1;
           count++;
